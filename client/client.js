@@ -1,20 +1,11 @@
-// Main Minimongo Collections
-Sections = new Meteor.Collection("sections");
-
-Meteor.subscribe('lists', function () {
-  return;
-});
-
 // The current section of the website.
-Session.set('section', "home");
+Session.set('section', "Home");
 
 Template.content.section_is = function (section) {
   return Session.equals("section", section);
 };
 
-Template.navbar.sections = function () {
-  return Sections.find();
-}
+Template.navbar.sections = [{name: "Home"}, {name: "Sell"}, {name: "Buy"}];
 
 Template.navbar_item.active = function () {
   return Session.equals('section', this.name) ? 'active' : '';
@@ -34,13 +25,13 @@ Template.navbar_item.active = function () {
 
 var RustyRouter = Backbone.Router.extend({
   routes: {
-    "sell" : "sell", "buy" : "buy"
+    "Sell" : "sell", "Buy" : "buy"
   },
   sell: function () {
-    Session.set("section", "sell");
+    Session.set("section", "Sell");
   },
   buy: function () {
-    Session.set("section", "buy");
+    Session.set("section", "Buy");
   }
 });
 

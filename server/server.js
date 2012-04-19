@@ -23,7 +23,7 @@ Meteor.startup(function () {
     }
   ];
 
-  for (section in sections) {
-    Sections.insert(section);
-  }
+  Sections.insert(sections[0]);
+  Sections.insert(sections[1]);
+  Sections.insert(sections[2]);
 });
