@@ -17,10 +17,6 @@
   </div> <!-- /container -->
 </body>
 
-<template name="navbar_item">
-    <li class="{{active}}"><a href="/{{name}}">{{name}}</a></li>
-</template>
-
 <template name="navbar">
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
@@ -30,10 +26,11 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </a>
-        <a class="brand" href="/Home">ResellHotel.com</a>
+        <!-- TODO: Replace this with real Router controls -->
+        <a class="brand" href="/">ResellHotel.com</a>
         <div class="nav-collapse">
           <ul class="nav">
-            {{#each sections}}
+            {{#each navs}}
               {{> navbar_item}}
             {{/each}}
           </ul>
@@ -43,14 +40,19 @@
   </div>
 </template>
 
+<template name="navbar_item">
+    <!-- TODO: Replace this with real Router controls -->
+    <li class="{{active}}"><a href="/{{id}}">{{name}}</a></li>
+</template>
+
 <template name="content">
-  {{#if section_is "Home"}}
+  {{#if mode_is "showHome"}}
     {{> home}}
   {{/if}}
-  {{#if section_is "Sell"}}
+  {{#if mode_is "showSell"}}
     {{> sell}}
   {{/if}}
-  {{#if section_is "Buy"}}
+  {{#if mode_is "showBuy"}}
     {{> buy}}
   {{/if}}
 </template>
