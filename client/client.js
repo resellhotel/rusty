@@ -5,7 +5,7 @@ Template.content.section_is = function (section) {
   return Session.equals("section", section);
 };
 
-Template.navbar.sections = [{name: "Home"}, {name: "Sell"}, {name: "Buy"}];
+Template.navbar.sections = [{name: "Sell"}, {name: "Buy"}];
 
 Template.navbar_item.active = function () {
   return Session.equals('section', this.name) ? 'active' : '';

@@ -1,0 +1,20 @@
+.btn-bigass
+{
+  border-radius: 35px;
+
+  width: 220px;
+  height: 140px;
+
+  margin: 20px;
+  padding: 40px;
+
+  text-align: center;
+  vertical-align: middle;
+  font-weight: bold;
+  font-size: 600%;
+}
+
+.splash-choice
+{
+  text-align: center;
+}
