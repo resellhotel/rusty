@@ -1,5 +1,36 @@
 <template name="buy">
-  <div class="hello">
-    <h1>Hello Buyer!</h1>
-  </div>
+  <!-- TODO: Add in Buy search bar here -->
+  {{>buy_navbar}}
+  <div class="container container-buy">
+    <div class="hello">
+      <h1>Hello Buyer!</h1>
+    </div>
+  </div> <!-- /container -->
+</template>
+
+<template name="buy_navbar">
+  <!-- TODO: Shift the first item over to align with top-level navbar's brand logo -->
+  <header class="subhead">
+    <div class="subnav subnav-fixed">
+      <ul class="nav nav-pills">
+        <li class="dropdown">
+          <a>City:</a>
+        </li>
+        <li class="dropdown">
+          <a>State:</a>
+        <li>
+        <li class="dropdown">
+          <a>Checkin Date:</a>
+        <li>
+        <li class="dropdown">
+          <a>Checkout Date:</a>
+        <li>
+      </ul>
+    </div>
+  </header>
+</template>
+
+<template name="buy_navbar_item">
+  <li class="{{active}}"><a>{{name}}</a></li>
+  <li class="divider-vertical"></li>
 </template>
