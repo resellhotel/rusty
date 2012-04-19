@@ -17,34 +17,6 @@
   </div> <!-- /container -->
 </body>
 
-<template name="navbar">
-  <div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-      <div class="container">
-        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </a>
-        <!-- TODO: Replace this with real Router controls -->
-        <a class="brand" href="/">ResellHotel.com</a>
-        <div class="nav-collapse">
-          <ul class="nav">
-            {{#each navs}}
-              {{> navbar_item}}
-            {{/each}}
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </div>
-  </div>
-</template>
-
-<template name="navbar_item">
-    <!-- TODO: Replace this with real Router controls -->
-    <li class="{{active}}"><a href="/{{id}}">{{name}}</a></li>
-</template>
-
 <template name="content">
   {{#if mode_is "showHome"}}
     {{> home}}

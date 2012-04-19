@@ -12,7 +12,7 @@
           
           <p>Forward your confirmation email to us at <a href='mailto:sell@resellhotel.com'>sell@resellhotel.com</a> and our system will automagically generate a listing for you!</p>
 
-          <p>Don't have a confirmation email? It's ok! Fill out <a href='/sell/listings'>this form</a> instead.
+          <p>Don't have a confirmation email? It's ok! Fill out {{> link_to_anonListing}} instead.
           </p>
           <hr>
         </li>
@@ -33,4 +33,8 @@
     </div>
 
   </div>
+</template>
+
+<template name="link_to_anonListing">
+  <a>this form</a>
 </template>

@@ -1,0 +1,32 @@
+<template name="navbar">
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </a>
+        <!-- TODO: Replace this with real Router controls -->
+        {{> brand_logo}}
+        <div class="nav-collapse">
+          <ul class="nav">
+            <li class="divider-vertical"></li>
+            {{#each navs}}
+              {{> navbar_item}}
+            {{/each}}
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="brand_logo">
+  <a class="brand">ResellHotel.com</a>
+</template>
+
+<template name="navbar_item">
+  <li class="{{active}}"><a>{{name}}</a></li>
+  <li class="divider-vertical"></li>
+</template>

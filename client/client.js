@@ -11,11 +11,6 @@ Template.content.mode_is = function (mode) {
   return Session.equals("current_mode", mode);
 };
 
-Template.navbar.navs = [{id: "sell", name: "Sell"}, {id: "buy", name: "Buy"}];
-Template.navbar_item.active = function () {
-  return Session.equals('current_nav', this.name) ? 'active' : '';
-};
-
 // Template.hello.greeting = function () {
 //   return "Welcome to rusty.";
 // };
@@ -30,10 +25,15 @@ Template.navbar_item.active = function () {
 
 var RustyRouter = Backbone.Router.extend({
   routes: {
+    "" : "home",
     "buy" : "buy",
     "sell" : "sell",
     "sell/listings" : "anonListing",
     "sell/listings/:listing_id" : "anonListing"
+  },
+  home: function () {
+    Session.set("current_nav", "home");
+    Session.set("current_mode", "showHome");
   },
   sell: function () {
     Session.set("current_nav", "sell");

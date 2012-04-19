@@ -2,9 +2,17 @@
   <div class="hero-unit splash-choice">
     <h1>I want to ...</h1>
     <p>
-      <a class="btn btn-primary btn-large btn-bigass">Buy</a>
-      <a class="btn btn-primary btn-success btn-large btn-bigass">Sell</a>
+      {{>big_buy_button}}
+      {{>big_sell_button}}
     </p>
     <h1>... a hotel reservation</h1>
   </div>
+</template>
+
+<template name="big_buy_button">
+  <a class="btn btn-primary btn-large btn-bigass">Buy</a>
+</template>
+
+<template name="big_sell_button">
+  <a class="btn btn-primary btn-success btn-large btn-bigass">Sell</a>
 </template>
