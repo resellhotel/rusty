@@ -20,6 +20,20 @@
       </div>
     </div>
   </div>
+
+  {{#if needs_subnav}}
+    {{> subnav}}
+  {{/if}}
+</template>
+
+<template name="subnav">
+  <div class="subnav subnav-fixed">
+    <ul class="nav nav-pills">
+      {{#each subnavs}}
+        {{> navbar_item}}
+      {{/each}}
+    </ul>
+  </div>
 </template>
 
 <template name="brand_logo">

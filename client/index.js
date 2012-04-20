@@ -6,7 +6,7 @@ Session.set('current_nav', "home");
 Session.set('current_mode', "showHome");
 Session.set('listing_id', null);
 
-var modes = ["showHome", "showSell", "showBuy", "showAnonListing"];
+var modes = ["showHome", "showSell", "showBuy", "showAnonListing", "showAccount"];
 Template.content.mode_is = function (mode) {
   return Session.equals("current_mode", mode);
 };
@@ -17,7 +17,8 @@ var RustyRouter = Backbone.Router.extend({
     "buy" : "buy",
     "sell" : "sell",
     "sell/listings" : "anonListing",
-    "sell/listings/:listing_id" : "anonListing"
+    "sell/listings/:listing_id" : "anonListing",
+    "account" : "account"
   },
   home: function () {
     Session.set("current_nav", "home");
@@ -30,6 +31,10 @@ var RustyRouter = Backbone.Router.extend({
   sell: function () {
     Session.set("current_nav", "sell");
     Session.set("current_mode", "showSell");
+  },
+  account: function () {
+    Session.set("current_nav", "account");
+    Session.set("current_mode", "showAccount");
   },
   anonListing: function (listing_id) {
     Session.set("current_nav", "sell");
