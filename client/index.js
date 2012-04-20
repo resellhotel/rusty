@@ -11,18 +11,6 @@ Template.content.mode_is = function (mode) {
   return Session.equals("current_mode", mode);
 };
 
-// Template.hello.greeting = function () {
-//   return "Welcome to rusty.";
-// };
-
-// Template.hello.events = {
-//   'click input' : function () {
-//     // template data, if any, is available in 'this'
-//     if (typeof console !== 'undefined')
-//       console.log("You pressed the button");
-//   }
-// };
-
 var RustyRouter = Backbone.Router.extend({
   routes: {
     "" : "home",
@@ -35,6 +23,10 @@ var RustyRouter = Backbone.Router.extend({
     Session.set("current_nav", "home");
     Session.set("current_mode", "showHome");
   },
+  buy: function () {
+    Session.set("current_nav", "buy");
+    Session.set("current_mode", "showBuy");
+  },
   sell: function () {
     Session.set("current_nav", "sell");
     Session.set("current_mode", "showSell");
@@ -45,6 +37,16 @@ var RustyRouter = Backbone.Router.extend({
     if (listing_id) {
       Session.set("listing_id", listing_id);
       Session.set("current_mode", "showAnonListing");
+
+      // Initialize Datepickers
+      Meteor.setTimeout(function () {
+        $('#dp1').datepicker({
+          format: 'mm-dd-yyyy'
+        });
+        $('#dp2').datepicker({
+          format: 'mm-dd-yyyy'
+        });
+      }, 1000);
       return;
     }
 
@@ -55,10 +57,6 @@ var RustyRouter = Backbone.Router.extend({
       id = Session.get("listing_id");
 
     this.navigate("/sell/listings/"+id, true);
-  },
-  buy: function () {
-    Session.set("current_nav", "buy");
-    Session.set("current_mode", "showBuy");
   }
 });
 
