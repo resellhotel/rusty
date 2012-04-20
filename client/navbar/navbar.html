@@ -16,6 +16,7 @@
               {{> navbar_item}}
             {{/each}}
           </ul>
+          {{> login_button}}
         </div><!--/.nav-collapse -->
       </div>
     </div>
@@ -23,6 +24,15 @@
 
   {{#if needs_subnav}}
     {{> subnav}}
+  {{/if}}
+</template>
+
+<template name="login_button">
+  {{#if logged_in}}
+    <!-- TODO: Have the username link to account/profile -->
+    <p class="navbar-text pull-right">Logged in as <a>{{username}}</a></p>
+  {{else}}
+    <p class="navbar-text pull-right">Log In</p>
   {{/if}}
 </template>
 

@@ -5,6 +5,7 @@ Meteor.subscribe('anonListings');
 Session.set('current_nav', "home");
 Session.set('current_mode', "showHome");
 Session.set('listing_id', null);
+Session.set('username', null);
 
 var modes = ["showHome", "showSell", "showBuy", "showAnonListing", "showAccount"];
 Template.content.mode_is = function (mode) {
@@ -43,24 +44,15 @@ var RustyRouter = Backbone.Router.extend({
       Session.set("listing_id", listing_id);
       Session.set("current_mode", "showAnonListing");
 
-      // Initialize Datepickers
+      // Initialize Datepickers, TODO: tie this to their template's generation
       Meteor.setTimeout(function () {
-        $('#dp1').datepicker({
-          format: 'mm-dd-yyyy'
-        });
-        $('#dp2').datepicker({
-          format: 'mm-dd-yyyy'
-        });
+        $('#dp1').datepicker({ format: 'mm-dd-yyyy'});
+        $('#dp2').datepicker({ format: 'mm-dd-yyyy'});
       }, 1000);
       return;
     }
 
-    var id;
-    if (Session.equals("listing_id", null))
-      id = AnonListings.insert({});
-    else
-      id = Session.get("listing_id");
-
+    var id = Session.equals("listing_id", null) ? AnonListings.insert({}) : Session.get("listing_id");
     this.navigate("/sell/listings/"+id, true);
   }
 });
