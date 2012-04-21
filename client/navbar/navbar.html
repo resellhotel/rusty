@@ -21,10 +21,6 @@
       </div>
     </div>
   </div>
-
-  {{#if needs_subnav}}
-    {{> subnav}}
-  {{/if}}
 </template>
 
 <template name="login_button">
@@ -51,6 +47,16 @@
 </template>
 
 <template name="navbar_item">
-  <li class="{{active}}"><a>{{name}}</a></li>
-  <li class="divider-vertical"></li>
+  {{#if type_is "link"}}
+    <li class="{{active}}"><a>{{name}}</a></li>
+    <li class="divider-vertical"></li>
+  {{/if}}
+  {{#if type_is "input"}}
+    <li><a>{{name}}</a></li>
+    <li><input type="text" class="input-small add-margin-top"></li>
+  {{/if}}
+  {{#if type_is "date"}}
+    <li><a>{{name}}</a></li>
+    <li><input type="text" class="input-small add-margin-top" value="05-19-2012" id="dp-buy-{{id}}"></li>
+  {{/if}}
 </template>
