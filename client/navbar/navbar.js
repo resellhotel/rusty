@@ -22,15 +22,6 @@ Template.login_button.username = function () {
   return Session.get("username");
 }
 
-Template.login_button.events = {
-  'mousedown': function (evt) {
-    if (Session.equals("username", null))
-      showLoginOverlay();
-    else
-      Router.navigate("/account/profile", true);
-  }
-};
-
 Template.navbar.needs_subnav = function () {
   return Session.equals("current_nav", "buy") || Session.equals("current_nav", "account");
 };

@@ -6,6 +6,7 @@ Session.set('current_nav', "home");
 Session.set('current_mode', "showHome");
 Session.set('listing_id', null);
 Session.set('username', null);
+Session.set('loginNav', "login");
 
 var modes = ["showHome", "showSell", "showBuy", "showAnonListing", "showAccount"];
 Template.content.mode_is = function (mode) {
