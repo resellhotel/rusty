@@ -1,0 +1,13 @@
+<template name="visitors">
+</ul>
+  {{#each visitors}}
+  <li>
+    {{> visitor}}
+  </li>
+  {{/each}}
+</ul>
+</template>
+
+<template name="visitor">
+  <div><pre>{{string}}</pre></div>
+</template>

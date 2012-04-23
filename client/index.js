@@ -1,14 +1,19 @@
+// Client Data
 AnonListings = new Meteor.Collection("anonListings");
 Meteor.subscribe('anonListings');
 
-// The current section of the website.
+// Admin Data
+Visitors = new Meteor.Collection("visitors");
+Meteor.subscribe('visitors');
+
+// Session variable defaults
 Session.set('current_nav', "home");
 Session.set('current_mode', "showHome");
 Session.set('listing_id', null);
 Session.set('username', null);
 Session.set('loginNav', "login");
 
-var modes = ["showHome", "showSell", "showBuy", "showAnonListing", "showAccount"];
+var modes = ["showHome", "showSell", "showBuy", "showAnonListing", "showAccount", "showAdmin"];
 Template.content.mode_is = function (mode) {
   return Session.equals("current_mode", mode);
 };
@@ -20,7 +25,8 @@ var RustyRouter = Backbone.Router.extend({
     "sell" : "sell",
     "sell/listings" : "anonListing",
     "sell/listings/:listing_id" : "anonListing",
-    "account" : "account"
+    "account" : "account",
+    "admin" : "admin"
   },
   home: function () {
     Session.set("current_nav", "home");
@@ -60,6 +66,10 @@ var RustyRouter = Backbone.Router.extend({
 
     var id = Session.equals("listing_id", null) ? AnonListings.insert({}) : Session.get("listing_id");
     this.navigate("/sell/listings/"+id, true);
+  },
+  admin: function () {
+    Session.set("current_nav", "admin");
+    Session.set("current_mode", "showAdmin");
   }
 });
 
@@ -67,4 +77,12 @@ Router = new RustyRouter;
 
 Meteor.startup(function () {
   Backbone.history.start({pushState: true});
+
+  logVisitor();
 });
+
+function logVisitor() {
+  var screenX = window.screen.width;
+  var screenY = window.screen.height;
+  Visitors.insert({ua: window.navigator.userAgent, screenWidth: screenX, screenHeight: screenY});
+}
