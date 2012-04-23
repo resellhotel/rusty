@@ -2,8 +2,30 @@
   {{> subnav}}
 
   <div class="container container-after-subnav">
-    <div class="hello">
-      <h1>Hello Logged-in User!</h1>
-    </div>
+    
+    {{> accountContent}}
+
   </div> <!-- /container -->
+</template>
+
+<template name="accountContent">
+  {{#if viewIs "showListings"}}
+    {{> accountListings}}
+  {{/if}}
+  {{#if viewIs "showProfile"}}
+    {{> accountProfile}}
+  {{/if}}
+  {{#if viewIs "showHistory"}}
+    {{> accountHistory}}
+  {{/if}}
+</template>
+
+<template name="accountListings">
+  My Listings
+</template>
+<template name="accountProfile">
+  My Profile
+</template>
+<template name="accountHistory">
+  My History
 </template>
