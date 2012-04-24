@@ -13,12 +13,12 @@ var RustyRouter = Backbone.Router.extend({
     "admin" : "admin"
   },
   home: function () {
-    Session.set("current_nav", "home");
-    Session.set("current_mode", "showHome");
+    Session.set("mode", "home");
+    Session.set("view", "showHome");
   },
   buy: function () {
-    Session.set("current_nav", "buy");
-    Session.set("current_mode", "showBuy");
+    Session.set("mode", "buy");
+    Session.set("view", "showBuy");
 
     Meteor.setTimeout(function () {
       $('#dp-buy-checkin').datepicker({ format: 'mm-dd-yyyy'});
@@ -26,37 +26,37 @@ var RustyRouter = Backbone.Router.extend({
     }, 1000);
   },
   sell: function () {
-    Session.set("current_nav", "sell");
-    Session.set("current_mode", "showSell");
+    Session.set("mode", "sell");
+    Session.set("view", "showSell");
   },
   account: function () {
-    Session.set("current_nav", "account");
-    Session.set("current_mode", "showAccount");
+    Session.set("mode", "account");
+    Session.set("view", "showAccount");
   },
   accountListings: function () {
-    Session.set("current_nav", "account");
-    Session.set("current_mode", "showAccount");
+    Session.set("mode", "account");
+    Session.set("view", "showAccount");
     Session.set("accountNav", "listings");
     Session.set("accountView", "showListings");
   },
   accountHistory: function () {
-    Session.set("current_nav", "account");
-    Session.set("current_mode", "showAccount");
+    Session.set("mode", "account");
+    Session.set("view", "showAccount");
     Session.set("accountNav", "history");
     Session.set("accountView", "showHistory");
   },
   accountProfile: function () {
-    Session.set("current_nav", "account");
-    Session.set("current_mode", "showAccount");
+    Session.set("mode", "account");
+    Session.set("view", "showAccount");
     Session.set("accountNav", "profile");
     Session.set("accountView", "showProfile");
   },
   anonListing: function (listing_id) {
-    Session.set("current_nav", "sell");
+    Session.set("mode", "sell");
 
     if (listing_id) {
       Session.set("listing_id", listing_id);
-      Session.set("current_mode", "showAnonListing");
+      Session.set("view", "showAnonListing");
 
       // Initialize Datepickers, TODO: tie this to their template's generation
       Meteor.setTimeout(function () {
@@ -70,8 +70,8 @@ var RustyRouter = Backbone.Router.extend({
     this.navigate("/sell/listings/"+id, true);
   },
   admin: function () {
-    Session.set("current_nav", "admin");
-    Session.set("current_mode", "showAdmin");
+    Session.set("mode", "admin");
+    Session.set("view", "showAdmin");
   }
 });
 Router = new RustyRouter;

@@ -5,7 +5,7 @@ Template.navbar.navs = function () {
 }
 
 Template.navbar_item.active = function () {
-  return Session.equals('current_nav', this.id) ? 'active' : '';
+  return Session.equals('mode', this.id) ? 'active' : '';
 };
 
 Template.navbar_item.type_is = function (type) {
@@ -29,13 +29,13 @@ Template.login_button.username = function () {
 
 Template.subnav.subnavs = function () {
   var subnavs = [];
-  if (Session.equals("current_nav", "buy")) {
+  if (Session.equals("mode", "buy")) {
     // TODO: These are navs but instead form elements, change this.
     subnavs =[{type: "input", id: "city", name: "City"},
               {type: "input", id: "state", name: "State"},
               {type: "date", id: "checkin", name: "Checkin Date"},
               {type: "date", id: "checkout", name: "Checkout Date"}];
-  } else if (Session.equals("current_nav", "account")) {
+  } else if (Session.equals("mode", "account")) {
     subnavs =[{type: "link", id: "account/listings", name: "Listings"},
               {type: "link", id: "account/history", name: "History"},
               {type: "link", id: "account/profile", name: "Profile"}];
