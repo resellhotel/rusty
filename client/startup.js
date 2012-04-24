@@ -19,6 +19,21 @@ App = {
   userID: function () {
     return Session.get("userID");
   },
+  login: function(userID, userPassword) {
+    // TODO: Add in real auth.
+    if (Users.find({id: userID}).count() == 0) {
+      Users.insert({id: userID, password: userPassword});
+    }
+
+    // Update the session state
+    Session.set("userID", userID);
+    console.log("password: "+userPassword);
+
+    App.dismissLogin();
+  },
+  logout: function() {
+    Session.set("userID", null);
+  },
   promptLogin: function (message) {
     alert(message);
     $("#loginModal").modal('show');

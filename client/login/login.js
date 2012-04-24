@@ -6,15 +6,7 @@ Template.loginForm.events = {
     var userID = $(inputs[0]).val();
     var userPassword = $(inputs[1]).val();
 
-    // TODO: Actually attempt to authenticate the user
-    if (Users.find({id: userID}).count() == 0) {
-      Users.insert({id: userID, password: userPassword});
-    }
-
-    // Update the session state
-    Session.set("userID", userID);
-    console.log(userPassword);
-
-    App.dismissLogin();
+    App.login(userID, userPassword);
+    // TODO: Pass in a callback to login to handle what happens on success/failure.
   }
 }

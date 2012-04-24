@@ -78,7 +78,7 @@ Template.loginNav.userID = function () {
 Template.loginNav.events = {
   'click #logoutButton': function (evt) {
     evt.preventDefault();
-    Session.set("userID", null);
+    App.logout();
   }
 }
 
