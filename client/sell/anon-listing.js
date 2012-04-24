@@ -1,9 +1,11 @@
 Template.uploadReservationButton.events = {
   'mousedown': function (evt) {
     if (App.isLoggedIn()) {
-      // TODO: Attach this reservation to this user.
+      var listingID = Session.get('anonListingID');
+      var userID = Session.get('userID');
+      App.attachListingToUser(listingID, userID);
     } else {
-      App.promptLogin("In order to upload a reservation, please login or create a new account.");
+      App.promptLogin("You'll need to login (or create an account) first before you can upload a reservation.");
     }
   }
 };

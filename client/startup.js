@@ -5,20 +5,24 @@ Session.set('view', "showHome");
 Session.set("accountNav", "listings");
 Session.set("accountView", "showListings");
 
-Session.set('username', null);
+Session.set('userID', null);
 Session.set('anonListingID', null);
 
 // Common Application Logic
 App = {
   isLoggedIn: function () {
-    !Session.equals("username", null);
+    !Session.equals("userID", null);
   },
-  username: function () {
-    Session.get("username");
+  userID: function () {
+    Session.get("userID");
   },
   promptLogin: function (message) {
     alert(message);
     $("#loginModal").modal('show');
+  },
+  attachListingToUser: function(listingID, userID) {
+    var listing = AnonListings.findOne({id: listingID});
+    Users.update({id: userID}, {listings: {$addToSet: listing}});
   }
 };
 

@@ -71,8 +71,8 @@ Template.login_button.logged_in = function () {
   return App.isLoggedIn();
 }
 
-Template.login_button.username = function () {
-  return App.username();
+Template.login_button.userID = function () {
+  return App.userID();
 }
 
 // --- Brand Logo ---

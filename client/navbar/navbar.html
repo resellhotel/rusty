@@ -25,8 +25,8 @@
 
 <template name="login_button">
   {{#if logged_in}}
-    <!-- TODO: Have the username link to account/profile -->
-    <p class="navbar-text pull-right">Logged in as <a>{{username}}</a></p>
+    <!-- TODO: Have this link to account/profile -->
+    <p class="navbar-text pull-right">Logged in as <a>{{userID}}</a></p>
   {{else}}
     <a class="btn pull-right" data-toggle="modal" data-target="#loginModal">Log In</a>
   {{/if}}
