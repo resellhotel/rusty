@@ -21,22 +21,19 @@
 </body>
 
 <template name="content">
-  {{#if mode_is "showHome"}}
+  {{#if currentSectionIs "home"}}
     {{> home}}
   {{/if}}
-  {{#if mode_is "showSell"}}
+  {{#if currentSectionIs "sell"}}
     {{> sell}}
   {{/if}}
-  {{#if mode_is "showBuy"}}
+  {{#if currentSectionIs "buy"}}
     {{> buy}}
   {{/if}}
-  {{#if mode_is "showAnonListing"}}
-    {{> anonListing}}
-  {{/if}}
-  {{#if mode_is "showAccount"}}
+  {{#if currentSectionIs "account"}}
     {{> account}}
   {{/if}}
-  {{#if mode_is "showAdmin"}}
-    {{> visitors}}
+  {{#if currentSectionIs "admin"}}
+    {{> admin}}
   {{/if}}
 </template>

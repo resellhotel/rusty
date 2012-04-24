@@ -1,3 +1,10 @@
+// Default session data
+Session.set('listing_id', null);
+Session.set('username', null);
+Session.set('loginNav', "login");
+Session.set('currentSection', "home");
+Session.set('currentSubSection', null);
+
 // Default client-side setup
 Meteor.startup(function () {
   Backbone.history.start({pushState: true});

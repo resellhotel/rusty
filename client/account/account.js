@@ -1,10 +1,10 @@
 // Default session data
 Session.set("accountNav", "listings");
-Session.set("accountView", "showListings");
+Session.set("accountView", "profile");
 
 var accountNavs = ["profile", "history", "listsings"];
 var accountViews = ["showProfile", "showHistory", "showListings"];
 
-Template.accountContent.viewIs = function (view) {
-  return Session.equals("accountView", view);
-};
+Template.accountContent.currentSectionIs = function (section) {
+  return Session.equals("accountSection", section); 
+}

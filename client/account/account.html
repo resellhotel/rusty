@@ -9,13 +9,13 @@
 </template>
 
 <template name="accountContent">
-  {{#if viewIs "showListings"}}
+  {{#if currentSectionIs "listings"}}
     {{> accountListings}}
   {{/if}}
-  {{#if viewIs "showProfile"}}
+  {{#if currentSectionIs "profile"}}
     {{> accountProfile}}
   {{/if}}
-  {{#if viewIs "showHistory"}}
+  {{#if currentSectionIs "history"}}
     {{> accountHistory}}
   {{/if}}
 </template>
