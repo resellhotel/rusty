@@ -5,7 +5,7 @@ Template.navbar.navs = function () {
 }
 
 Template.navbar_item.active = function () {
-  return Session.equals('current_nav', this.name) ? 'active' : '';
+  return Session.equals('current_nav', this.id) ? 'active' : '';
 };
 
 Template.navbar_item.type_is = function (type) {
