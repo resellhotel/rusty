@@ -1,8 +1,18 @@
+// --- Navbar ----
 Template.navbar.navs = function () {
-  return [{type: "link", id: "sell", name: "Sell"},
+  if (Session.equals("isAdmin", true)) {
+    return [{type: "link", id: "sell", name: "Sell"},
+          {type: "link", id: "buy", name: "Buy"},
+          {type: "link", id: "account", name: "Account"},
+          {type: "link", id: "admin", name: "Admin"}];
+  } else {
+    return [{type: "link", id: "sell", name: "Sell"},
           {type: "link", id: "buy", name: "Buy"},
           {type: "link", id: "account", name: "Account"}];
+  }
 }
+
+// --- Navbar Item ---
 
 Template.navbar_item.active = function () {
   return Session.equals('mode', this.id) ? 'active' : '';
@@ -19,14 +29,8 @@ Template.navbar_item.events = {
   }
 };
 
-Template.login_button.logged_in = function () {
-  return !Session.equals("username", null);
-}
 
-Template.login_button.username = function () {
-  return Session.get("username");
-}
-
+// --- Sub Navbar ---
 Template.subnav.subnavs = function () {
   var subnavs = [];
   if (Session.equals("mode", "buy")) {
@@ -43,6 +47,35 @@ Template.subnav.subnavs = function () {
   return subnavs;
 }
 
+// --- Sub Navbar Item ---
+
+Template.subnavbar_item.active = function () {
+  return Session.equals('view', this.id) ? 'active' : '';
+};
+
+Template.subnavbar_item.type_is = function (type) {
+  return this.type == type;
+};
+
+Template.subnavbar_item.events = {
+  'mousedown': function (evt) {
+    if (this.type == "link")
+      Router.navigate(this.id, true);
+  }
+};
+
+
+// --- Login Button ---
+
+Template.login_button.logged_in = function () {
+  return !Session.equals("username", null);
+}
+
+Template.login_button.username = function () {
+  return Session.get("username");
+}
+
+// --- Brand Logo ---
 Template.brand_logo.events = {
   'mousedown': function (evt) { // select list
     Router.navigate("/", true);

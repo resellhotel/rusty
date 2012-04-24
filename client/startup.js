@@ -1,6 +1,10 @@
 // Default session data
 Session.set('mode', "home");
+Session.set('accountMode', 'listings');
 Session.set('view', "showHome");
+Session.set("accountNav", "listings");
+Session.set("accountView", "showListings");
+
 Session.set('username', null);
 Session.set('anonListingID', null);
 

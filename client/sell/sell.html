@@ -1,4 +1,12 @@
 <template name="sell">
+  {{#if view_is "listings"}}
+    {{> anonListing}}
+  {{else}}
+    {{> sellInstructions}}
+  {{/if}}
+</template>
+
+<template name="sellInstructions">
   <div class="hero-unit slim-top-hero-unit">
 
     <div class="page-header">

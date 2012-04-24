@@ -1,10 +1,3 @@
-// Default session data
-Session.set("accountNav", "listings");
-Session.set("accountView", "showListings");
-
-var accountNavs = ["profile", "history", "listsings"];
-var accountViews = ["showProfile", "showHistory", "showListings"];
-
-Template.accountContent.viewIs = function (view) {
-  return Session.equals("accountView", view);
+Template.account.view_is = function (view) {
+  return Session.equals("view", view);
 };

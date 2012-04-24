@@ -3,21 +3,17 @@
 
   <div class="container container-after-subnav">
     
-    {{> accountContent}}
+    {{#if view_is "listings"}}
+      {{> accountListings}}
+    {{/if}}
+    {{#if view_is "profile"}}
+      {{> accountProfile}}
+    {{/if}}
+    {{#if view_is "history"}}
+      {{> accountHistory}}
+    {{/if}}
 
   </div> <!-- /container -->
-</template>
-
-<template name="accountContent">
-  {{#if viewIs "showListings"}}
-    {{> accountListings}}
-  {{/if}}
-  {{#if viewIs "showProfile"}}
-    {{> accountProfile}}
-  {{/if}}
-  {{#if viewIs "showHistory"}}
-    {{> accountHistory}}
-  {{/if}}
 </template>
 
 <template name="accountListings">

@@ -14,11 +14,11 @@ var RustyRouter = Backbone.Router.extend({
   },
   home: function () {
     Session.set("mode", "home");
-    Session.set("view", "showHome");
+    Session.set("view", "home");
   },
   buy: function () {
     Session.set("mode", "buy");
-    Session.set("view", "showBuy");
+    Session.set("view", "search");
 
     Meteor.setTimeout(function () {
       $('#dp-buy-checkin').datepicker({ format: 'mm-dd-yyyy'});
@@ -27,36 +27,30 @@ var RustyRouter = Backbone.Router.extend({
   },
   sell: function () {
     Session.set("mode", "sell");
-    Session.set("view", "showSell");
+    Session.set("view", "instructions");
   },
   account: function () {
     Session.set("mode", "account");
-    Session.set("view", "showAccount");
+    Session.set("view", "listings");
   },
   accountListings: function () {
     Session.set("mode", "account");
-    Session.set("view", "showAccount");
-    Session.set("accountNav", "listings");
-    Session.set("accountView", "showListings");
+    Session.set("view", "listings");
   },
   accountHistory: function () {
     Session.set("mode", "account");
-    Session.set("view", "showAccount");
-    Session.set("accountNav", "history");
-    Session.set("accountView", "showHistory");
+    Session.set("view", "history");
   },
   accountProfile: function () {
     Session.set("mode", "account");
-    Session.set("view", "showAccount");
-    Session.set("accountNav", "profile");
-    Session.set("accountView", "showProfile");
+    Session.set("view", "profile");
   },
   anonListing: function (anonListingID) {
     Session.set("mode", "sell");
+    Session.set("view", "listings");
 
     if (anonListingID) {
       Session.set("anonListingID", anonListingID);
-      Session.set("view", "showAnonListing");
 
       // Initialize Datepickers, TODO: tie this to their template's generation
       Meteor.setTimeout(function () {
@@ -71,7 +65,7 @@ var RustyRouter = Backbone.Router.extend({
   },
   admin: function () {
     Session.set("mode", "admin");
-    Session.set("view", "showAdmin");
+    Session.set("view", "visitors");
   }
 });
 Router = new RustyRouter;
