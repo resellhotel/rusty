@@ -16,17 +16,17 @@
               {{> navbar_item}}
             {{/each}}
           </ul>
-          {{> login_button}}
+          {{> loginNav}}
         </div><!--/.nav-collapse -->
       </div>
     </div>
   </div>
 </template>
 
-<template name="login_button">
+<template name="loginNav">
   {{#if logged_in}}
     <!-- TODO: Have this link to account/profile -->
-    <p class="navbar-text pull-right">Logged in as <a>{{userID}}</a></p>
+    <p class="navbar-text pull-right">Logged in as <a>{{userID}}</a>, <a id="logoutButton">logout</a></p>
   {{else}}
     <a class="btn pull-right" data-toggle="modal" data-target="#loginModal">Log In</a>
   {{/if}}

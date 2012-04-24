@@ -65,15 +65,23 @@ Template.subnavbar_item.events = {
 };
 
 
-// --- Login Button ---
+// --- Login/Logout Button ---
 
-Template.login_button.logged_in = function () {
+Template.loginNav.logged_in = function () {
   return App.isLoggedIn();
 }
 
-Template.login_button.userID = function () {
+Template.loginNav.userID = function () {
   return App.userID();
 }
+
+Template.loginNav.events = {
+  'click #logoutButton': function (evt) {
+    evt.preventDefault();
+    Session.set("userID", null);
+  }
+}
+
 
 // --- Brand Logo ---
 Template.brand_logo.events = {

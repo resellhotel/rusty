@@ -5,20 +5,26 @@ Session.set('view', "showHome");
 Session.set("accountNav", "listings");
 Session.set("accountView", "showListings");
 
+// User data
 Session.set('userID', null);
+
+// Seller upload tool state
 Session.set('anonListingID', null);
 
 // Common Application Logic
 App = {
   isLoggedIn: function () {
-    !Session.equals("userID", null);
+    return !Session.equals("userID", null);
   },
   userID: function () {
-    Session.get("userID");
+    return Session.get("userID");
   },
   promptLogin: function (message) {
     alert(message);
     $("#loginModal").modal('show');
+  },
+  dismissLogin: function () {
+    $("#loginModal").modal('hide');
   },
   attachListingToUser: function(callback) {
     if (App.isLoggedIn()) {
