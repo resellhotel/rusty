@@ -20,9 +20,17 @@ App = {
     alert(message);
     $("#loginModal").modal('show');
   },
-  attachListingToUser: function(listingID, userID) {
-    var listing = AnonListings.findOne({id: listingID});
-    Users.update({id: userID}, {listings: {$addToSet: listing}});
+  attachListingToUser: function(callback) {
+    if (App.isLoggedIn()) {
+      var listingID = Session.get('anonListingID');
+      var listing = AnonListings.findOne({id: listingID});
+
+      var userID = Session.get('userID');
+      Users.update({id: userID}, {listings: {$addToSet: listing}}, callback);
+      // TODO: Put up a spiny while the update finishes.
+    } else {
+      App.promptLogin("You'll need to login (or create an account) first before you can upload a reservation.");
+    }
   }
 };
 
