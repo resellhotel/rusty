@@ -5,7 +5,7 @@ var RustyRouter = Backbone.Router.extend({
     "buy" : "buy",
     "sell" : "sell",
     "sell/listings" : "anonListing",
-    "sell/listings/:listing_id" : "anonListing",
+    "sell/listings/:anonListingID" : "anonListing",
     "account" : "account",
     "account/listings" : "accountListings",
     "account/profile" : "accountProfile",
@@ -51,11 +51,11 @@ var RustyRouter = Backbone.Router.extend({
     Session.set("accountNav", "profile");
     Session.set("accountView", "showProfile");
   },
-  anonListing: function (listing_id) {
+  anonListing: function (anonListingID) {
     Session.set("mode", "sell");
 
-    if (listing_id) {
-      Session.set("listing_id", listing_id);
+    if (anonListingID) {
+      Session.set("anonListingID", anonListingID);
       Session.set("view", "showAnonListing");
 
       // Initialize Datepickers, TODO: tie this to their template's generation
@@ -66,7 +66,7 @@ var RustyRouter = Backbone.Router.extend({
       return;
     }
 
-    var id = Session.equals("listing_id", null) ? AnonListings.insert({}) : Session.get("listing_id");
+    var id = Session.equals("anonListingID", null) ? AnonListings.insert({}) : Session.get("anonListingID");
     this.navigate("/sell/listings/"+id, true);
   },
   admin: function () {

@@ -1,9 +1,8 @@
 // Default session data
-Session.set('listing_id', null);
-Session.set('username', null);
-Session.set('loginNav', "login");
 Session.set('mode', "home");
 Session.set('view', "showHome");
+Session.set('username', null);
+Session.set('anonListingID', null);
 
 // Default client-side setup
 Meteor.startup(function () {
