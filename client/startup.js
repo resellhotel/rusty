@@ -8,6 +8,20 @@ Session.set("accountView", "showListings");
 Session.set('username', null);
 Session.set('anonListingID', null);
 
+// Common Application Logic
+App = {
+  isLoggedIn: function () {
+    !Session.equals("username", null);
+  },
+  username: function () {
+    Session.get("username");
+  },
+  promptLogin: function (message) {
+    alert(message);
+    $("#loginModal").modal('show');
+  }
+};
+
 // Default client-side setup
 Meteor.startup(function () {
   Backbone.history.start({pushState: true});

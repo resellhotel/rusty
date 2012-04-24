@@ -68,11 +68,11 @@ Template.subnavbar_item.events = {
 // --- Login Button ---
 
 Template.login_button.logged_in = function () {
-  return !Session.equals("username", null);
+  return App.isLoggedIn();
 }
 
 Template.login_button.username = function () {
-  return Session.get("username");
+  return App.username();
 }
 
 // --- Brand Logo ---
