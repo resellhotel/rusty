@@ -1,59 +1,63 @@
-<template name="anonListing">
+<template name="listingDraft">
   <h2>Hotel Reservation Upload Tool</h2>
   <br>
-  <form class="well form-horizontal">
+  <form id="anonListingForm" class="well form-horizontal">
 
     <fieldset>
       <legend>Reservation Info</legend>
 
       <div class="control-group">
-        <label class="control-label" for="input01">Confirmation Number</label>
+        <label class="control-label" for="confirmationNumber">Confirmation Number</label>
         <div class="controls">
-          <input type="text" class="input-xlarge" id="input01" placeholder="e.g. Rx1234567">
+          <input type="text" name="confirmationNumber" class="input-xlarge" id="confirmationNumber" placeholder="e.g. Rx1234567" value="{{confirmationNumber}}"></input>
           <span class="help-inline">(Add help text here!)</span>
           <p class="help-block">(Or add help text below in a full block!)</p>
         </div>
       </div>
+
       <div class="control-group">
-        <label class="control-label" for="input01">Confirmation Source</label>
+        <label class="control-label" for="confirmationSource">Confirmation Source</label>
         <div class="controls">
-          <input type="text" class="input-xlarge" id="input01" placeholder="e.g. Orbitz, Starwood">
+          <input type="text" name="confirmationSource" class="input-xlarge" id="confirmationSource" placeholder="e.g. Orbitz, Starwood" value="{{confirmationSource}}">
           <span class="help-inline">This is the business that the confirmation number came from.</span>
         </div>
       </div>
+
       <div class="control-group">
         <label class="control-label" for="dp1">Check-in Date</label>
         <div class="controls">
-          <input type="date" class="span2" value="05-19-2012" id="dp1" >
+          <input type="date" name="checkinDate" class="span2" id="dp1" value="{{checkinDate}}">
         </div>
       </div>
+
       <div class="control-group">
         <label class="control-label" for="dp2">Check-out Date</label>
         <div class="controls">
-          <input type="date" class="span2" value="05-21-2012" id="dp2" >
+          <input type="date" name="checkoutDate" class="span2" id="dp2" value="{{checkoutDate}}">
         </div>
       </div>
+
     </fieldset>
 
     <fieldset>
       <legend>Hotel Info</legend>
 
       <div class="control-group">
-        <label class="control-label" for="input01">Hotel Name</label>
+        <label class="control-label" for="hotelName">Hotel Name</label>
         <div class="controls">
-          <input type="text" class="input-xlarge" id="input01" placeholder="e.g. Park Plaza Hotel">
+          <input type="text" name="hotelName" class="input-xlarge" id="hotelName" placeholder="e.g. Park Plaza Hotel" value="{{hotelName}}">
         </div>
       </div>
       <div class="control-group">
-        <label class="control-label" for="input01">City</label>
+        <label class="control-label" for="hotelCity">City</label>
         <div class="controls">
-          <input type="text" class="input-xlarge" id="input01" placeholder="e.g. Boston">
+          <input type="text" name="hotelCity" class="input-xlarge" id="hotelCity" placeholder="e.g. Boston" value="{{hotelCity}}">
         </div>
       </div>
       <div class="control-group">
-        <label class="control-label" for="input01">State</label>
+        <label class="control-label" for="hotelState">State</label>
         <div class="controls">
-          <input type="text" class="input-xlarge" id="input01" placeholder="e.g. Massachusetts">
+          <input type="text" name="hotelState" class="input-xlarge" id="hotelState" placeholder="e.g. Massachusetts" value="{{hotelState}}">
         </div>
       </div>
     </fieldset>

@@ -71,8 +71,8 @@ Template.loginNav.logged_in = function () {
   return App.isLoggedIn();
 }
 
-Template.loginNav.userID = function () {
-  return App.userID();
+Template.loginNav.email = function () {
+  return App.userEmail();
 }
 
 Template.loginNav.events = {

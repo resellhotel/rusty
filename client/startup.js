@@ -1,35 +1,47 @@
-// Default session data
+// Default Application View State
 Session.set('mode', "home");
-Session.set('accountMode', 'listings');
 Session.set('view', "showHome");
-Session.set("accountNav", "listings");
-Session.set("accountView", "showListings");
 
-// User data
+// Default Application Logic State
 Session.set('userID', null);
+Session.set('anonListingID', Meteor.call('createListing', {}));
 
-// Seller upload tool state
-Session.set('anonListingID', null);
+Meteor.startup(function () {
+  Backbone.history.start({pushState: true});
+  logVisitor();
+});
 
 // Common Application Logic
 App = {
   isLoggedIn: function () {
     return !Session.equals("userID", null);
   },
-  userID: function () {
-    return Session.get("userID");
+  userEmail: function () {
+    if (!App.isLoggedIn())
+      return null;
+
+    return Users.findOne({ _id: Session.get('userID')}).email;
   },
-  login: function(userID, userPassword) {
-    // TODO: Add in real auth.
-    if (Users.find({id: userID}).count() == 0) {
-      Users.insert({id: userID, password: userPassword});
+  login: function(email, password) {
+    var userID;
+
+    // HACK: If user doesn't exist, just create them
+    if (Users.find({email: email}).count() == 0) {
+      var user = {email: email, password: password};
+      Meteor.call('createUser', user, function (err, id) {
+        if (!err) {
+          Session.set("userID", id);
+          App.dismissLogin();
+        } else {
+          alert("A login error occurred. Please try again.");
+          console.log(err);
+        }
+      });
+    } else {
+      userID = Users.findOne({email: email})._id;
+      Session.set("userID", userID);
+      App.dismissLogin();
     }
-
-    // Update the session state
-    Session.set("userID", userID);
-    console.log("password: "+userPassword);
-
-    App.dismissLogin();
   },
   logout: function() {
     Session.set("userID", null);
@@ -41,25 +53,25 @@ App = {
   dismissLogin: function () {
     $("#loginModal").modal('hide');
   },
-  attachListingToUser: function(callback) {
-    if (App.isLoggedIn()) {
-      var listingID = Session.get('anonListingID');
-      var listing = AnonListings.findOne({id: listingID});
-
-      var userID = Session.get('userID');
-      Users.update({id: userID}, {listings: {$addToSet: listing}}, callback);
-      // TODO: Put up a spiny while the update finishes.
-    } else {
-      App.promptLogin("You'll need to login (or create an account) first before you can upload a reservation.");
+  uploadListing: function() {
+    // Prompt the user to login first if they're not
+    if (!App.isLoggedIn()) {
+      var msg = "Please login (or signup) first, thanks!";
+      App.promptLogin(msg);
+      return;
     }
+
+    // Add listing to the user
+    var userID = Session.get('userID');
+    var listingID = Session.get('anonListingID');
+    Meteor.call('addListing', userID, listingID, function (err, o){
+      if (err) {
+        alert("An error occurred while uploading the listing. Please try again.");
+        console.log(err);
+      }
+    });
   }
 };
-
-// Default client-side setup
-Meteor.startup(function () {
-  Backbone.history.start({pushState: true});
-  logVisitor();
-});
 
 function logVisitor() {
   var screenX = window.screen.width;
