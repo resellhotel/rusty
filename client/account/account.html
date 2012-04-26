@@ -17,8 +17,25 @@
 </template>
 
 <template name="accountListings">
-  My Listings
+  <ul>
+    {{#each listings}}
+      {{> listingItem}}
+    {{/each}}
+  </ul>
 </template>
+
+<template name="listingItem">
+  <li><p>
+    {{confirmationNumber}},
+    {{confirmationSource}},
+    {{dp1}},
+    {{dp2}},
+    {{hotelName}},
+    {{hotelCity}},
+    {{hotelState}}
+  </p></li>
+</template>
+
 <template name="accountProfile">
   <fieldset>
     <legend>Contact Info</legend>
