@@ -4,6 +4,7 @@ Session.set('view', "showHome");
 
 // Default Application Logic State
 Session.set('userID', null);
+// TODO: Is this still needed?
 Session.set('anonListingID', Meteor.call('createListing', {}));
 
 Meteor.startup(function () {
@@ -68,7 +69,10 @@ App = {
       if (err) {
         alert("An error occurred while uploading the listing. Please try again.");
         console.log(err);
+        return;
       }
+      Router.navigate("/account/listings", true);
+      Session.set("anonListingID", null);
     });
   }
 };

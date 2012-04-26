@@ -28,6 +28,10 @@ function attachListingToUserCallback (error, result) {
 }
 
 
+
+
+
+
 ////////// Helpers for in-place editing, from "todos" example //////////
 // TODO: Clean this up.
 if (typeof FormGuy === "undefined")
