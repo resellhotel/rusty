@@ -52,12 +52,6 @@ var RustyRouter = Backbone.Router.extend({
     // TODO: Check if this id actually maps to a real listing
     if (listingID) {
       Session.set("anonListingID", listingID);
-
-      // Initialize Datepickers, TODO: tie this to their template's generation
-      Meteor.setTimeout(function () {
-        $('#dp1').datepicker({ format: 'mm-dd-yyyy'});
-        $('#dp2').datepicker({ format: 'mm-dd-yyyy'});
-      }, 1000);
       return;
     }
 

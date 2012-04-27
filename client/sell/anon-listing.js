@@ -1,7 +1,20 @@
 Template.sell.drafts = function () {
-
-  // return {checkoutDate: "05-21-2012"};
   var listingID = Session.get("anonListingID");
+
+  // Init datepickers, assuming timeout happens after template is rendered.
+  Meteor.setTimeout(function () {
+    // TODO: Find a cleaner way to do this than a timeout
+    Meteor.flush();
+    $('#checkinDatePicker').datepicker({ format: 'mm-dd-yyyy'}).on('changeDate', function (evt){
+      var val = {checkinDate: $('#checkinDate').val()};
+      AnonListings.update({_id: listingID}, {$set: val});
+    });
+    $('#checkoutDatePicker').datepicker({ format: 'mm-dd-yyyy'}).on('changeDate', function (evt){
+      var val = {checkoutDate: $('#checkoutDate').val()};
+      AnonListings.update({_id: listingID}, {$set: val});
+    });
+  }, 1000);
+
   return AnonListings.find({_id: listingID});
 }
 
@@ -70,11 +83,19 @@ FormGuy.make_okcancel_handler = function (options) {
     }
   };
 };
+FormGuy.make_onchange_handler = function (options) {
+  var change = options.change || function () {};
+
+  return function (evt) {
+    alert("change happened");
+    change.call(this, evt.target, evt);
+  };
+};
 
 
 
 // TODO: Replace dp1/2 with '#checkinDate', '#checkoutDate'
-var listingDraftGuys = ['#confirmationNumber', '#confirmationSource', '#dp1', '#dp2', '#hotelName', '#hotelCity', '#hotelState'];
+var listingDraftGuys = ['#confirmationNumber', '#confirmationSource', '#hotelName', '#hotelCity', '#hotelState'];
 
 Template.listingDraft.events = {};
 Template.listingDraft.events[ FormGuy.okcancel_events(listingDraftGuys) ] =
@@ -86,3 +107,5 @@ Template.listingDraft.events[ FormGuy.okcancel_events(listingDraftGuys) ] =
       AnonListings.update({_id: listingID}, {$set: val});
     }
   });
+
+
