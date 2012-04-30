@@ -13,7 +13,7 @@ Meteor.methods({
     var id = Users.insert(user);
     return id;
   },
-  createListing: function(listing) {
+  createListing: function(listing) {    
     listing = listing ? listing : {};
 
     _.extend(listing, {

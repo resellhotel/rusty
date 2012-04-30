@@ -8,6 +8,5 @@ Template.accountListings.listings = function () {
 
   var userID = Session.get("userID");
   var listingIDs = Users.findOne({_id: userID}).listings;
-  console.log(listingIDs);
   return AnonListings.find({_id: { $in : listingIDs}});
 };

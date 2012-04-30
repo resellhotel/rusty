@@ -1,22 +1,56 @@
-Template.sell.drafts = function () {
-  var listingID = Session.get("anonListingID");
+Template.reservationInfoForm.init = function () {
+  Meteor.flush();
+  // TODO: Figure out why this timeout and fluhses are needed, remove those hacks.
 
-  // Init datepickers, assuming timeout happens after template is rendered.
   Meteor.setTimeout(function () {
-    // TODO: Find a cleaner way to do this than a timeout
     Meteor.flush();
-    $('#checkinDatePicker').datepicker({ format: 'mm-dd-yyyy'}).on('changeDate', function (evt){
-      var val = {checkinDate: $('#checkinDate').val()};
-      AnonListings.update({_id: listingID}, {$set: val});
-    });
-    $('#checkoutDatePicker').datepicker({ format: 'mm-dd-yyyy'}).on('changeDate', function (evt){
-      var val = {checkoutDate: $('#checkoutDate').val()};
-      AnonListings.update({_id: listingID}, {$set: val});
-    });
-  }, 1000);
+    var listingID = Session.get('listingID');
+    var listing = AnonListings.findOne({_id: listingID});
 
-  return AnonListings.find({_id: listingID});
+    // Init Inputs
+    var ids = ['checkinDate', 'checkoutDate', 'confirmationNumber', 'confirmationSource', 'hotelName', 'hotelCity', 'hotelState', 'price'];
+    _.each(ids, function (id) {
+      var sel = '#'+id;
+      var startVal = listing[id];
+      $(sel).val(startVal);
+
+      var dp = $(sel+'Picker');
+      if (dp) {
+        dp.data('date', startVal);
+
+        $(sel+'Picker').datepicker({ format: 'mm-dd-yyyy'}).on('changeDate', function (evt){
+          // TODO: Validate the change.
+
+          // Update the listing draft
+          var o = {};
+          o[id] = $(sel).val();
+          AnonListings.update({_id: listingID}, {$set: o});
+
+          // Dismiss the picker
+          $(sel+'Picker').datepicker('hide');
+        }); //onchange
+      }
+    });
+
+  }, 500);
 }
+
+// TODO: Add in alerts to the above using below example
+// $('#checkinDatePicker').datepicker().on('changeDate', function(ev){
+//   var listingID = Session.get("listingID");
+
+//   // Validate date change
+//   if (ev.date.valueOf() > endDate.valueOf()){
+//     // TODO: add this and below: $('#alert').show().find('strong').text('The start date can not be greater then the end date');
+//   } else {
+//     // $('#alert').hide();
+
+//     startDate = new Date(ev.date);
+//     $('#checkinDate').text($('#dp4').data('date'));
+//   }
+//   $('#checkinDatePicker').datepicker('hide');
+// });
+
 
 Template.uploadReservationButton.events = {
   'click': function (evt) {
@@ -25,24 +59,6 @@ Template.uploadReservationButton.events = {
     App.uploadListing();
   }
 };
-
-// TODO: Consider using this?
-function attachListingToUserCallback (error, result) {
-  // TODO: Dismiss any spinnies.
-
-  // On success, show the new listing in the account section, otherwise report an error.
-  if (!error) {
-    Router.navigate("/account/listings/"+result.listingID, true);
-  } else {
-    console.log(error);
-    console.log(result);
-    alert("Uh oh, there was an error uploading your reservation. Please try again and/or let us know.");
-  }
-}
-
-
-
-
 
 
 ////////// Helpers for in-place editing, from "todos" example //////////
@@ -92,16 +108,14 @@ FormGuy.make_onchange_handler = function (options) {
   };
 };
 
-
-
-// TODO: Replace dp1/2 with '#checkinDate', '#checkoutDate'
-var listingDraftGuys = ['#confirmationNumber', '#confirmationSource', '#hotelName', '#hotelCity', '#hotelState'];
-
+// Set up ok-cancel events on listing draft inputs
 Template.listingDraft.events = {};
+var listingDraftGuys = ['#confirmationNumber', '#confirmationSource', '#hotelName', '#hotelCity', '#hotelState', '#price'];
+
 Template.listingDraft.events[ FormGuy.okcancel_events(listingDraftGuys) ] =
   FormGuy.make_okcancel_handler({
     ok: function (input, evt) {
-      var listingID = Session.get("anonListingID");
+      var listingID = Session.get("listingID");
       var val = {};
       val[input.name] = input.value;
       AnonListings.update({_id: listingID}, {$set: val});

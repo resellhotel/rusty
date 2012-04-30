@@ -5,7 +5,7 @@ Session.set('view', "showHome");
 // Default Application Logic State
 Session.set('userID', null);
 // TODO: Is this still needed?
-Session.set('anonListingID', Meteor.call('createListing', {}));
+Session.set('listingID', Meteor.call('createListing', {}));
 
 Meteor.startup(function () {
   Backbone.history.start({pushState: true});
@@ -22,6 +22,10 @@ App = {
       return null;
 
     return Users.findOne({ _id: Session.get('userID')}).email;
+  },
+  listingDraft: function () {
+    var id = Session.get("listingID");
+    return AnonListings.findOne({_id: id});
   },
   login: function(email, password) {
     var userID;
@@ -64,7 +68,7 @@ App = {
 
     // Add listing to the user
     var userID = Session.get('userID');
-    var listingID = Session.get('anonListingID');
+    var listingID = Session.get('listingID');
     Meteor.call('addListing', userID, listingID, function (err, o){
       if (err) {
         alert("An error occurred while uploading the listing. Please try again.");
@@ -72,7 +76,7 @@ App = {
         return;
       }
       Router.navigate("/account/listings", true);
-      Session.set("anonListingID", null);
+      Session.set("listingID", null);
     });
   }
 };

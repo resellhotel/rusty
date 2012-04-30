@@ -1,8 +1,6 @@
 <template name="sell">
   {{#if view_is "listings"}}
-    {{#each drafts}}
-      {{> listingDraft}}
-    {{/each}}
+    {{> listingDraft}}
   {{else}}
     {{> sellInstructions}}
   {{/if}}

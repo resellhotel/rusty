@@ -1,155 +1,133 @@
 <template name="listingDraft">
-  <h2>Hotel Reservation Upload Tool</h2>
+  <h2>Upload Hotel Reservation to Sell</h2>
   <br>
-  <form id="anonListingForm" class="well form-horizontal">
+  
+  <div class="accordion" id="listingUploadSteps">
 
-    <fieldset>
-      <legend>Reservation Info</legend>
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#listingUploadSteps" href="#step1">
+          1. Enter Reservation Info
+        </a>
+      </div>
+      <div id="step1" class="accordion-body collapse in">
+        <div class="accordion-inner">
+          {{> reservationInfoForm}}
+        </div>
+      </div>
+    </div>
 
-      <div class="control-group">
-        <label class="control-label" for="confirmationNumber">Confirmation Number</label>
-        <div class="controls">
-          <input type="text" name="confirmationNumber" class="input-xlarge" id="confirmationNumber" placeholder="e.g. 123ABC456" value="{{confirmationNumber}}"></input>
-          <span class="help-inline">(Add help text here!)</span>
-          <p class="help-block">(Or add help text below in a full block!)</p>
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#listingUploadSteps" href="#step2">
+          2. Enter Hotel Info
+        </a>
+      </div>
+      <div id="step2" class="accordion-body collapse">
+        <div class="accordion-inner">
+          {{>hotelInfoForm}}
         </div>
       </div>
+    </div>
 
-      <div class="control-group">
-        <label class="control-label" for="confirmationSource">Confirmation Source</label>
-        <div class="controls">
-          <input type="text" name="confirmationSource" class="input-xlarge" id="confirmationSource" placeholder="e.g. Orbitz" value="{{confirmationSource}}">
-          <span class="help-inline">This is the business that the confirmation number came from.</span>
+    <div class="accordion-group">
+      <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#listingUploadSteps" href="#step3">
+          3. Choose Your Price
+        </a>
+      </div>
+      <div id="step3" class="accordion-body collapse">
+        <div class="accordion-inner">
+          {{>listingPriceForm}}
         </div>
       </div>
+    </div>
 
-      <!-- TODO: Disable editing the actual text input for these datepickers in favor of the widget -->
-      <div class="control-group" id="checkinDateWidget">
-        <label class="control-label" for="checkinDate">Check-in Date</label>
-        <div class="controls">
-          <div class="input-append date" id="checkinDatePicker" data-date="{{checkinDate}}" data-date-format="dd-mm-yyyy">
-            <input class="span2" name='checkinDate' id='checkinDate' size="16" type="text" value="{{checkinDate}}">
-            <span class="add-on"><i class="icon-th"></i></span>
-          </div>
-        </div>
-      </div>
+  </div>
 
-      <div class="control-group" id="checkoutDateWidget">
-        <label class="control-label" for="checkoutDate">Check-out Date</label>
-        <div class="controls">
-          <div class="input-append date" id="checkoutDatePicker" data-date="{{checkoutDate}}" data-date-format="dd-mm-yyyy">
-            <input class="span2" name='checkoutDate' id="checkoutDate" size="16" type="text" value="{{checkoutDate}}">
-            <span class="add-on"><i class="icon-th"></i></span>
-          </div>
-        </div>
-      </div>
+  {{> uploadReservationButton}}
+</template>
 
-    </fieldset>
+<template name="reservationInfoForm">
+  <form id="reservationInfoForm" class="form-horizontal">
+  <fieldset>
 
-    <fieldset>
-      <legend>Hotel Info</legend>
+    <div class="control-group">
+      <label class="control-label" for="confirmationNumber">Confirmation Number</label>
+      <div class="controls">
+        <input type="text" name="confirmationNumber" class="input-xlarge" id="confirmationNumber" placeholder="e.g. 123ABC456" value=""></input>
+        <span class="help-inline">(Add help text here!)</span>
+        <p class="help-block">(Or add help text below in a full block!)</p>
+      </div>
+    </div>
 
-      <div class="control-group">
-        <label class="control-label" for="hotelName">Hotel Name</label>
-        <div class="controls">
-          <input type="text" name="hotelName" class="input-xlarge" id="hotelName" placeholder="e.g. Park Plaza Hotel" value="{{hotelName}}">
-        </div>
+    <div class="control-group">
+      <label class="control-label" for="confirmationSource">Confirmation Source</label>
+      <div class="controls">
+        <input type="text" name="confirmationSource" class="input-xlarge" id="confirmationSource" placeholder="e.g. Orbitz" value="">
+        <span class="help-inline">This is the business that the confirmation number came from.</span>
       </div>
-      <div class="control-group">
-        <label class="control-label" for="hotelCity">City</label>
-        <div class="controls">
-          <input type="text" name="hotelCity" class="input-xlarge" id="hotelCity" placeholder="e.g. Boston" value="{{hotelCity}}">
-        </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="hotelState">State</label>
-        <div class="controls">
-          <input type="text" name="hotelState" class="input-xlarge" id="hotelState" placeholder="e.g. Massachusetts" value="{{hotelState}}">
-        </div>
-      </div>
-    </fieldset>
+    </div>
 
-    <!-- TODO: Use this form when signing a seller up. -->
-    <!-- <fieldset>
-      <legend>Seller Contact Info</legend>
+    <div class="control-group" id="checkinDateWidget">
+      <label class="control-label" for="checkinDate">Check-in Date</label>
+      <div class="controls">
+        <div class="input-append date" id="checkinDatePicker" data-date="" data-date-format="mm-dd-yyyy">
+          <input class="span2" name='checkinDate' id='checkinDate' size="16" type="text">
+          <span class="add-on"><i class="icon-th"></i></span>
+        </div>
+      </div>
+    </div>
 
-      <div class="control-group">
-        <label class="control-label" for="input01">First Name</label>
-        <div class="controls">
-          <input type="text" class="input-xlarge" id="input01">
-          <span class="help-inline">Must match the name on the reservation.</span>
+    <div class="control-group" id="checkoutDateWidget">
+      <label class="control-label" for="checkoutDate">Check-out Date</label>
+      <div class="controls">
+        <div class="input-append date" id="checkoutDatePicker" data-date="" data-date-format="mm-dd-yyyy">
+          <input class="span2" name='checkoutDate' id="checkoutDate" size="16" type="text">
+          <span class="add-on"><i class="icon-th"></i></span>
         </div>
       </div>
-      <div class="control-group">
-        <label class="control-label" for="input01">Last Name</label>
-        <div class="controls">
-          <input type="text" class="input-xlarge" id="input01">
-          <span class="help-inline">Must match the name on the reservation.</span>
-        </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="input01">Telephone</label>
-        <div class="controls">
-          <input type="tel" class="input-xlarge" id="input01">
-          <span class="help-inline">In case we need to contact you directly.</span>
-        </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="input01">Email</label>
-        <div class="controls">
-          <input type="email" class="input-xlarge" id="input01">
-        </div>
-      </div>
-    </fieldset> -->
-    
-    <!-- TODO: Use this form when signing a seller up. -->
-    <!-- <fieldset>
-      <legend>Payout Method</legend>
+    </div>
 
-      <div class="control-group">
-        <label class="control-label" for="input01">Method</label>
-        <div class="controls">
-          <div class="btn-group" id="input01">
-            <button class="btn active">Check via Mail</button>
-            <button class="btn">Bank Transfer</button>
-          </div>
-        </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="input01">Address Line 1</label>
-        <div class="controls">
-          <input type="text" class="input-xlarge" id="input01">
-        </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="input01">Address Line 2</label>
-        <div class="controls">
-          <input type="text" class="input-xlarge" id="input01">
-        </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="input01">City</label>
-        <div class="controls">
-          <input type="text" class="input-large" id="input01">
-        </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="input01">State</label>
-        <div class="controls">
-          <input type="text" class="input-small" id="input01">
-        </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="input01">Zipcode</label>
-        <div class="controls">
-          <input type="text" class="input-small" id="input01">
-        </div>
-      </div>
-    </fieldset> -->
-
-    {{> uploadReservationButton}}
-
+  </fieldset>
   </form>
+
+  {{init}}
+</template>
+
+<template name="hotelInfoForm">
+  <form id="hotelInfoForm" class="form-horizontal">
+  <fieldset>
+
+    <div class="control-group">
+      <label class="control-label" for="hotelName">Hotel Name</label>
+      <div class="controls">
+        <input type="text" name="hotelName" class="input-xlarge" id="hotelName" placeholder="e.g. Park Plaza Hotel" value="">
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="hotelCity">City</label>
+      <div class="controls">
+        <input type="text" name="hotelCity" class="input-xlarge" id="hotelCity" placeholder="e.g. Boston" value="">
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="hotelState">State</label>
+      <div class="controls">
+        <input type="text" name="hotelState" class="input-xlarge" id="hotelState" placeholder="e.g. Massachusetts" value="">
+      </div>
+    </div>
+  </fieldset>
+  </form>
+</template>
+
+<template name="listingPriceForm">
+  <div class="control-group">
+    <label class="control-label" for="price">Price per night</label>
+    <div class="controls">
+      <input type="text" name="price" class="input-large" id="price" value=""></input>
+    </div>
+  </div>
 </template>
 
 <template name="uploadReservationButton">

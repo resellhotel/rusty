@@ -5,7 +5,7 @@ var RustyRouter = Backbone.Router.extend({
     "buy" : "buy",
     "sell" : "sell",
     "sell/listings" : "anonListing",
-    "sell/listings/:anonListingID" : "anonListing",
+    "sell/listings/:listingID" : "anonListing",
     "account" : "account",
     "account/listings" : "accountListings",
     "account/profile" : "accountProfile",
@@ -51,11 +51,11 @@ var RustyRouter = Backbone.Router.extend({
 
     // TODO: Check if this id actually maps to a real listing
     if (listingID) {
-      Session.set("anonListingID", listingID);
+      Session.set("listingID", listingID);
       return;
     }
 
-    var id = Session.get("anonListingID");
+    var id = Session.get("listingID");
     if (id) {
       this.navigate("/sell/listings/"+id, true);
       return;
