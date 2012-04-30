@@ -5,11 +5,12 @@ var RustyRouter = Backbone.Router.extend({
     "buy" : "buy",
     "sell" : "sell",
     "sell/listings" : "listingDraft",
-    "sell/listings/:listingID" : "listingDraft",
+    "sell/listings/:id" : "listingDraft",
     "account" : "account",
-    "account/listings" : "accountListings",
-    "account/profile" : "accountProfile",
-    "account/history" : "accountHistory",
+    "account/listings/:id" : "showListing",
+    "account/listings" : "listings",
+    "account/profile" : "profile",
+    "account/history" : "history",
     "admin" : "admin"
   },
   home: function () {
@@ -33,29 +34,34 @@ var RustyRouter = Backbone.Router.extend({
     Session.set("mode", "account");
     Session.set("view", "listings");
   },
-  accountListings: function () {
+  listings: function () {
     Session.set("mode", "account");
     Session.set("view", "listings");
   },
-  accountHistory: function () {
+  showListing: function (id) {
+    Session.set("mode", "account");
+    Session.set("view", "listingDetail");
+    Session.set('listingID', id);
+  },
+  history: function () {
     Session.set("mode", "account");
     Session.set("view", "history");
   },
-  accountProfile: function () {
+  profile: function () {
     Session.set("mode", "account");
     Session.set("view", "profile");
   },
-  listingDraft: function (listingID) {
+  listingDraft: function (id) {
     Session.set("mode", "sell");
     Session.set("view", "listings");
 
     // TODO: Check if this id actually maps to a real listing
-    if (listingID) {
-      Session.set("listingID", listingID);
+    if (id) {
+      Session.set("listingDraftID", id);
       return;
     }
 
-    var id = Session.get("listingID");
+    id = Session.get("listingDraftID");
     if (id) {
       this.navigate("/sell/listings/"+id, true);
       return;

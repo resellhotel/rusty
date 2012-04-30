@@ -4,7 +4,7 @@ Template.reservationInfoForm.init = function () {
 
   Meteor.setTimeout(function () {
     Meteor.flush();
-    var listingID = Session.get('listingID');
+    var listingID = Session.get('listingDraftID');
     var listing = Listings.findOne({_id: listingID});
 
     // Init Inputs
@@ -37,7 +37,7 @@ Template.reservationInfoForm.init = function () {
 
 // TODO: Add in alerts to the above using below example
 // $('#checkinDatePicker').datepicker().on('changeDate', function(ev){
-//   var listingID = Session.get("listingID");
+//   var listingID = Session.get('listingDraftID');
 
 //   // Validate date change
 //   if (ev.date.valueOf() > endDate.valueOf()){
@@ -115,7 +115,7 @@ var listingDraftGuys = ['#confirmationNumber', '#confirmationSource', '#hotelNam
 Template.listingDraft.events[ FormGuy.okcancel_events(listingDraftGuys) ] =
   FormGuy.make_okcancel_handler({
     ok: function (input, evt) {
-      var listingID = Session.get("listingID");
+      var listingID = Session.get('listingDraftID');
       var val = {};
       val[input.name] = input.value;
       Listings.update({_id: listingID}, {$set: val});

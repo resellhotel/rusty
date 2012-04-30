@@ -10,3 +10,10 @@ body
 {
   padding-top: 40px;
 }
+
+.pill-bordered
+{
+  border-radius: 15px;
+  border: solid black 1px;
+  padding: 15px;
+}

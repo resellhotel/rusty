@@ -5,11 +5,16 @@ Session.set('view', "showHome");
 // Default Application Logic State
 Session.set('userID', null);
 // TODO: Is this still needed?
-Session.set('listingID', Meteor.call('createListing', {}));
+Session.set('listingDraftID', Meteor.call('createListing', {}));
 
 Meteor.startup(function () {
   Backbone.history.start({pushState: true});
   logVisitor();
+
+  // For Debugging...
+  Meteor.setTimeout(function () {
+    Admin.loginFoo();
+  }, 500);
 });
 
 // Common Application Logic
@@ -24,7 +29,7 @@ App = {
     return Users.findOne({ _id: Session.get('userID')}).email;
   },
   listingDraft: function () {
-    var id = Session.get("listingID");
+    var id = Session.get('listingDraftID');
     return Listings.findOne({_id: id});
   },
   login: function(email, password) {
@@ -68,7 +73,7 @@ App = {
 
     // Add listing to the user
     var userID = Session.get('userID');
-    var listingID = Session.get('listingID');
+    var listingID = Session.get('listingDraftID');
     Meteor.call('addListing', userID, listingID, function (err, o){
       if (err) {
         alert("An error occurred while uploading the listing. Please try again.");
@@ -76,8 +81,17 @@ App = {
         return;
       }
       Router.navigate("/account/listings", true);
-      Session.set("listingID", null);
+      Session.set('listingDraftID', null);
     });
+  }
+};
+
+Admin = {
+  clearListings: function () {
+    Listings.remove({});
+  },
+  loginFoo: function () {
+    App.login("foo@bar.com", "foo");
   }
 };
 

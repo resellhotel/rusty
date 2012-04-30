@@ -6,6 +6,9 @@
     {{#if view_is "listings"}}
       {{> accountListings}}
     {{/if}}
+    {{#if view_is "listingDetail"}}
+      {{> listingDetail}}
+    {{/if}}
     {{#if view_is "profile"}}
       {{> accountProfile}}
     {{/if}}
@@ -17,14 +20,37 @@
 </template>
 
 <template name="accountListings">
-  <ul>
-    {{#each listings}}
-      {{> listingItem}}
-    {{/each}}
-  </ul>
+  <h2> Currently Active Listings </h2>
+  <hr>
+  {{#each listings}}
+    <div class="container pill-bordered span12">
+      <h3>Listing: {{_id}}</h3>
+      <br>
+      <div class="span4">
+        <ul>
+          <li>Confirmation Number: {{confirmationNumber}}</li>
+          <li>Confirmation Source: {{confirmationSource}}</li>
+          <li>Checkin Date: {{checkinDate}}</li>
+          <li>Checkout Date: {{checkoutDate}}</li>
+        </ul>
+      </div>
+      <div class="span3">
+        <ul>
+          <li>Hotel Name: {{hotelName}}</li>
+          <li>Hotel City: {{hotelCity}}</li>
+          <li>Hotel State: {{hotelState}}</li>
+        <ul>
+      </div>
+      <div class="span2 pull-right">
+        <h1>${{price}}</h1>
+        <p>per room per night</p>
+      </div>
+    </div>
+  {{/each}}
 </template>
 
-<template name="listingItem">
+<template name="listingDetail">
+  {{pre}}
   <li><p>
     {{confirmationNumber}},
     {{confirmationSource}},
@@ -35,6 +61,7 @@
     {{hotelState}},
     {{price}}
   </p></li>
+  {{pre}}
 </template>
 
 <template name="accountProfile">

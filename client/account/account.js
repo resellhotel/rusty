@@ -12,6 +12,6 @@ Template.accountListings.listings = function () {
 };
 
 Template.listingDetail.pre = function () {
-  var listing = Listings.findOne({_id: Session.get('lid')});
+  var listing = Listings.findOne({_id: Session.get('listingID')});
   _.extend(Template.listingDetail, listing);
 }
