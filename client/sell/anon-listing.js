@@ -5,7 +5,7 @@ Template.reservationInfoForm.init = function () {
   Meteor.setTimeout(function () {
     Meteor.flush();
     var listingID = Session.get('listingID');
-    var listing = AnonListings.findOne({_id: listingID});
+    var listing = Listings.findOne({_id: listingID});
 
     // Init Inputs
     var ids = ['checkinDate', 'checkoutDate', 'confirmationNumber', 'confirmationSource', 'hotelName', 'hotelCity', 'hotelState', 'price'];
@@ -24,7 +24,7 @@ Template.reservationInfoForm.init = function () {
           // Update the listing draft
           var o = {};
           o[id] = $(sel).val();
-          AnonListings.update({_id: listingID}, {$set: o});
+          Listings.update({_id: listingID}, {$set: o});
 
           // Dismiss the picker
           $(sel+'Picker').datepicker('hide');
@@ -118,7 +118,7 @@ Template.listingDraft.events[ FormGuy.okcancel_events(listingDraftGuys) ] =
       var listingID = Session.get("listingID");
       var val = {};
       val[input.name] = input.value;
-      AnonListings.update({_id: listingID}, {$set: val});
+      Listings.update({_id: listingID}, {$set: val});
     }
   });
 

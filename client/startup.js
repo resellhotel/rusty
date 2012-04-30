@@ -25,7 +25,7 @@ App = {
   },
   listingDraft: function () {
     var id = Session.get("listingID");
-    return AnonListings.findOne({_id: id});
+    return Listings.findOne({_id: id});
   },
   login: function(email, password) {
     var userID;

@@ -8,5 +8,10 @@ Template.accountListings.listings = function () {
 
   var userID = Session.get("userID");
   var listingIDs = Users.findOne({_id: userID}).listings;
-  return AnonListings.find({_id: { $in : listingIDs}});
+  return Listings.find({_id: { $in : listingIDs}});
 };
+
+Template.listingDetail.pre = function () {
+  var listing = Listings.findOne({_id: Session.get('lid')});
+  _.extend(Template.listingDetail, listing);
+}

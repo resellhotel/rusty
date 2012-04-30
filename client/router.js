@@ -4,8 +4,8 @@ var RustyRouter = Backbone.Router.extend({
     "" : "home",
     "buy" : "buy",
     "sell" : "sell",
-    "sell/listings" : "anonListing",
-    "sell/listings/:listingID" : "anonListing",
+    "sell/listings" : "listingDraft",
+    "sell/listings/:listingID" : "listingDraft",
     "account" : "account",
     "account/listings" : "accountListings",
     "account/profile" : "accountProfile",
@@ -45,7 +45,7 @@ var RustyRouter = Backbone.Router.extend({
     Session.set("mode", "account");
     Session.set("view", "profile");
   },
-  anonListing: function (listingID) {
+  listingDraft: function (listingID) {
     Session.set("mode", "sell");
     Session.set("view", "listings");
 

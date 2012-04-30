@@ -21,7 +21,7 @@ Meteor.methods({
       checkoutDate: Clock.tomorrow()
     });
 
-    var id = AnonListings.insert(listing);
+    var id = Listings.insert(listing);
     return id;
   },
   addListing: function(userID, listingID) {
