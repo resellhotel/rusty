@@ -1,5 +1,10 @@
 <template name="listingDraft">
+  {{#if mode_is "sell"}}
   <h2>Upload Hotel Reservation to Sell</h2>
+  {{/if}}
+  {{#if mode_is "account"}}
+  <h2>Edit Listing</h2>
+  {{/if}}
   <br>
   
   <div class="accordion" id="listingUploadSteps">
@@ -45,7 +50,14 @@
 
   </div>
 
-  {{> uploadReservationButton}}
+  <button id="uploadReservationButton" class="btn btn-success">
+    {{#if mode_is "sell"}}
+    Upload Reservation
+    {{/if}}
+    {{#if mode_is "account"}}
+    Submit
+    {{/if}}    
+  </button>
 </template>
 
 <template name="reservationInfoForm">
@@ -137,8 +149,4 @@
 
   </fieldset>
   </form>
-</template>
-
-<template name="uploadReservationButton">
-  <button class="btn btn-success">Upload Reservation</button>
 </template>

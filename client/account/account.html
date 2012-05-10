@@ -23,45 +23,47 @@
   <h2> Currently Active Listings </h2>
   <hr>
   {{#each listings}}
-    <div class="container pill-bordered span12">
-      <h3>Listing: {{_id}}</h3>
-      <br>
-      <div class="span4">
-        <ul>
-          <li>Confirmation Number: {{confirmationNumber}}</li>
-          <li>Confirmation Source: {{confirmationSource}}</li>
-          <li>Checkin Date: {{checkinDate}}</li>
-          <li>Checkout Date: {{checkoutDate}}</li>
-        </ul>
-      </div>
-      <div class="span3">
-        <ul>
-          <li>Hotel Name: {{hotelName}}</li>
-          <li>Hotel City: {{hotelCity}}</li>
-          <li>Hotel State: {{hotelState}}</li>
-        <ul>
-      </div>
-      <div class="span2 pull-right">
-        <h1>${{price}}</h1>
-        <p>per room per night</p>
-      </div>
-    </div>
+    {{> listingItem}}
   {{/each}}
 </template>
 
+<template name="listingItem">
+  <div class="container pill-bordered span11">
+    <h3>{{hotelName}} in {{hotelCity}}, {{hotelState}}</h3>
+    <br>
+
+    <div class="span3">
+      <ul>
+        <li>Checkin Date: {{checkinDate}}</li>
+        <li>Checkout Date: {{checkoutDate}}</li>
+      <ul>
+    </div>
+
+    <div class="span4">
+      <ul>
+        <li>Confirmation Number: {{confirmationNumber}}</li>
+        <li>Confirmation Source: {{confirmationSource}}</li>
+      </ul>
+    </div>
+
+    <div class="span2">
+      <h1>${{price}}</h1>
+      <p>per room per night</p>
+    </div>
+
+    <div class="span1">
+      <button class="btn btn-success update-button action-button">
+        Update
+      </button>
+      <button class="btn btn-danger delete-button action-button">
+        Delete
+      </button>
+    </div>
+  </div>
+</template>
+
 <template name="listingDetail">
-  {{pre}}
-  <li><p>
-    {{confirmationNumber}},
-    {{confirmationSource}},
-    {{checkinDate}},
-    {{checkoutDate}},
-    {{hotelName}},
-    {{hotelCity}},
-    {{hotelState}},
-    {{price}}
-  </p></li>
-  {{pre}}
+  {{> listingDraft}}
 </template>
 
 <template name="accountProfile">
@@ -131,5 +133,5 @@
 </template>
 
 <template name="accountHistory">
-  My History
+  Currently No Account History
 </template>

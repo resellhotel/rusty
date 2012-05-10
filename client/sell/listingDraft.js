@@ -4,7 +4,7 @@ Template.reservationInfoForm.init = function () {
 
   Meteor.setTimeout(function () {
     Meteor.flush();
-    var listingID = Session.get('listingDraftID');
+    var listingID = Session.equals("mode", "sell") ? Session.get('listingDraftID') : Session.get('listingID');
     var listing = Listings.findOne({_id: listingID});
 
     // Init Inputs
@@ -37,7 +37,11 @@ Template.reservationInfoForm.init = function () {
     });
 
   }, 500);
-}
+};
+
+Template.listingDraft.mode_is = function (mode) {
+  return Session.equals("mode", mode);
+};
 
 // TODO: Add in alerts to the above using below example
 // $('#checkinDatePicker').datepicker().on('changeDate', function(ev){
@@ -54,15 +58,6 @@ Template.reservationInfoForm.init = function () {
 //   }
 //   $('#checkinDatePicker').datepicker('hide');
 // });
-
-
-Template.uploadReservationButton.events = {
-  'click': function (evt) {
-    evt.preventDefault();
-    Meteor.flush(); // Ensure that the listing draft is saved
-    App.uploadListing();
-  }
-};
 
 
 ////////// Helpers for in-place editing, from "todos" example //////////
@@ -125,5 +120,11 @@ Template.listingDraft.events[ FormGuy.okcancel_events(listingDraftGuys) ] =
       Listings.update({_id: listingID}, {$set: val});
     }
   });
+
+  Template.listingDraft.events['click #uploadReservationButton'] = function (evt) {
+    evt.preventDefault();
+    Meteor.flush(); // Ensure that the listing draft is saved
+    App.uploadListing();
+  }
 
 

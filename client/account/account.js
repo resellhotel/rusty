@@ -11,7 +11,11 @@ Template.accountListings.listings = function () {
   return Listings.find({_id: { $in : listingIDs}});
 };
 
-Template.listingDetail.pre = function () {
-  var listing = Listings.findOne({_id: Session.get('listingID')});
-  _.extend(Template.listingDetail, listing);
-}
+Template.listingItem.events = {
+  'click .update-button' : function (e) {
+    Router.navigate("/account/listings/"+this._id, true);
+  },
+  'click .delete-button' : function (e) {
+    Listings.remove({_id: this._id});
+  }
+};
