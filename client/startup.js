@@ -91,7 +91,7 @@ Admin = {
     Listings.remove({});
   },
   loginFoo: function () {
-    App.login("foo@bar.com", "foo");
+    App.login("John.Smith@gmail.com", "password");
   }
 };
 
