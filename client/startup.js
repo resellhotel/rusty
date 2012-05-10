@@ -10,11 +10,6 @@ Session.set('listingDraftID', Meteor.call('createListing', {}));
 Meteor.startup(function () {
   Backbone.history.start({pushState: true});
   logVisitor();
-
-  // For Debugging...
-  Meteor.setTimeout(function () {
-    Admin.loginFoo();
-  }, 500);
 });
 
 // Common Application Logic
@@ -89,9 +84,6 @@ App = {
 Admin = {
   clearListings: function () {
     Listings.remove({});
-  },
-  loginFoo: function () {
-    App.login("John.Smith@gmail.com", "password");
   }
 };
 
