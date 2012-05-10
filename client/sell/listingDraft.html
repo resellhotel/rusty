@@ -117,17 +117,26 @@
         <input type="text" name="hotelState" class="input-xlarge" id="hotelState" placeholder="e.g. Massachusetts" value="">
       </div>
     </div>
+
   </fieldset>
   </form>
 </template>
 
 <template name="listingPriceForm">
+  <form id="priceForm" class="form-horizontal">
+  <fieldset>
+
   <div class="control-group">
-    <label class="control-label" for="price">Price per night</label>
+    <label class="control-label" for="price">Price per room per night</label>
     <div class="controls">
-      <input type="text" name="price" class="input-large" id="price" value=""></input>
+      <div class="input-prepend input-append">
+        <span class="add-on">$</span><input class="span2" name="price" id="price" size="16" type="text"><span class="add-on">.00</span>
+      </div>
     </div>
   </div>
+
+  </fieldset>
+  </form>
 </template>
 
 <template name="uploadReservationButton">
