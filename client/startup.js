@@ -68,7 +68,7 @@ App = {
 
     // Add listing to the user
     var userID = Session.get('userID');
-    var listingID = Session.get('listingDraftID');
+    var listingID = Session.equals("mode", "sell") ? Session.get('listingDraftID') : Session.get('listingID');
     Meteor.call('addListing', userID, listingID, function (err, o){
       if (err) {
         alert("An error occurred while uploading the listing. Please try again.");

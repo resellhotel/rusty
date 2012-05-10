@@ -124,8 +124,7 @@ Template.listingDraft.events[ FormGuy.okcancel_events(listingDraftGuys) ] =
   Template.listingDraft.events['click #uploadReservationButton'] = function (evt) {
     evt.preventDefault();
     Meteor.flush(); // Ensure that the listing draft is saved
-    if (Session.equals("mode", "sell"))
-      App.uploadListing();
+    App.uploadListing();
   };
 
 
