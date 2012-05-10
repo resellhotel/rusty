@@ -35,14 +35,17 @@ Template.subnav.subnavs = function () {
   var subnavs = [];
   if (Session.equals("mode", "buy")) {
     // TODO: These are navs but instead form elements, change this.
-    subnavs =[{type: "input", id: "city", name: "City"},
-              {type: "input", id: "state", name: "State"},
-              {type: "date", id: "checkin", name: "Checkin Date"},
-              {type: "date", id: "checkout", name: "Checkout Date"}];
+    subnavs =[{type: "input", id: "where", name: "Where"},
+              {type: "date", id: "checkin", name: "Checkin"},
+              {type: "date", id: "checkout", name: "Checkout"},
+              {type: "select", id: "rooms", options: [{name:"1 room"}, {name:"2 rooms"}, {name:"3 rooms"}, {name:"4 rooms"}] },
+              {type: "select", id: "guests", options: [{name:"1 guest"}, {name:"2 guests"}, {name:"3 guests"}, {name:"4 guests"}] }
+    ];
   } else if (Session.equals("mode", "account")) {
     subnavs =[{type: "link", id: "account/listings", name: "Listings"},
               {type: "link", id: "account/history", name: "History"},
-              {type: "link", id: "account/profile", name: "Profile"}];
+              {type: "link", id: "account/profile", name: "Profile"}
+    ];
   }
   return subnavs;
 }

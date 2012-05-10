@@ -68,10 +68,19 @@
   {{/if}}
   {{#if type_is "input"}}
     <li><a>{{name}}</a></li>
-    <li><input type="text" class="input-small add-margin-top"></li>
+    <li><input type="text" class="input-large add-margin-top"></li>
   {{/if}}
   {{#if type_is "date"}}
-    <li><a>{{name}}</a></li>
-    <li><input type="text" class="input-small add-margin-top" value="05-19-2012" id="dp-buy-{{id}}"></li>
+    <li><input type="text" class="input-small add-margin-top add-margin-sides" value="05-19-2012" id="dp-buy-{{id}}">
+    </li>
+  {{/if}}
+  {{#if type_is "select"}}
+    <li>
+      <select class="span2 add-margin-top add-margin-sides" id="buy-{{id}}">
+        {{#each options}}
+        <option>{{name}}</option>
+        {{/each}}
+      </select>
+    </li>
   {{/if}}
 </template>
