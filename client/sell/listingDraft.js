@@ -13,6 +13,10 @@ Template.reservationInfoForm.init = function () {
       var sel = '#'+id;
       var startVal = listing[id];
       $(sel).val(startVal);
+      $(sel).click(function (e) {
+        e.preventDefault();
+        $(sel+'Picker').datepicker('show');
+      });
 
       var dp = $(sel+'Picker');
       if (dp) {
