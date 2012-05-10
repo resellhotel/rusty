@@ -114,7 +114,7 @@ var listingDraftGuys = ['#confirmationNumber', '#confirmationSource', '#hotelNam
 Template.listingDraft.events[ FormGuy.okcancel_events(listingDraftGuys) ] =
   FormGuy.make_okcancel_handler({
     ok: function (input, evt) {
-      var listingID = Session.get('listingDraftID');
+      var listingID = Session.equals("mode", "sell") ? Session.get('listingDraftID') : Session.get('listingID');
       var val = {};
       val[input.name] = input.value;
       Listings.update({_id: listingID}, {$set: val});
@@ -124,7 +124,8 @@ Template.listingDraft.events[ FormGuy.okcancel_events(listingDraftGuys) ] =
   Template.listingDraft.events['click #uploadReservationButton'] = function (evt) {
     evt.preventDefault();
     Meteor.flush(); // Ensure that the listing draft is saved
-    App.uploadListing();
-  }
+    if (Session.equals("mode", "sell"))
+      App.uploadListing();
+  };
 
 
