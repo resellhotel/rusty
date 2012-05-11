@@ -17,7 +17,7 @@ To Run Locally:
 To Deploy to Production:
 ============
 
-Coming soon (once we have a prod server, e.g. Rackspace)...
+	Coming soon (once we have a prod server, e.g. Rackspace)...
 
 To Deploy to Test:
 ============
