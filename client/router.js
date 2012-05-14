@@ -22,8 +22,8 @@ var RustyRouter = Backbone.Router.extend({
     Session.set("view", "search");
 
     Meteor.setTimeout(function () {
-      $('#dp-buy-checkin').datepicker({ format: 'mm-dd-yyyy'});
-      $('#dp-buy-checkout').datepicker({ format: 'mm-dd-yyyy'});
+      $('#checkin').datepicker({ format: 'mm-dd-yyyy'});
+      $('#checkout').datepicker({ format: 'mm-dd-yyyy'});
     }, 1000);
   },
   sell: function () {

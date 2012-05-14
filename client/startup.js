@@ -6,6 +6,10 @@ Session.set('view', "showHome");
 Session.set('userID', null);
 // TODO: Is this still needed?
 Session.set('listingDraftID', Meteor.call('createListing', {}));
+Session.set('BuyQuery', {
+  rooms: 1,
+  guests: 1
+});
 
 Meteor.startup(function () {
   Backbone.history.start({pushState: true});

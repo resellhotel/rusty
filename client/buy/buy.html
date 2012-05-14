@@ -19,21 +19,17 @@
 </template>
 
 <template name="BuyNavbarItem">
-  {{#if type_is "link"}}
-    <li class="{{active}}"><a>{{name}}</a></li>
-    <li class="divider-vertical"></li>
-  {{/if}}
   {{#if type_is "input"}}
     <li><a>{{name}}</a></li>
-    <li><input type="text" class="input-large add-margin-top"></li>
+    <li><input type="text" class="input-large add-margin-top" id="{{id}}"></li>
   {{/if}}
   {{#if type_is "date"}}
-    <li><input type="text" class="input-small add-margin-top add-margin-sides" value="05-19-2012" id="dp-buy-{{id}}">
+    <li><input type="text" class="input-small add-margin-top add-margin-sides" value="05-19-2012" id="{{id}}">
     </li>
   {{/if}}
   {{#if type_is "select"}}
     <li>
-      <select class="span2 add-margin-top add-margin-sides" id="buy-{{id}}">
+      <select class="span2 add-margin-top add-margin-sides" id="{{id}}">
         {{#each options}}
         <option>{{name}}</option>
         {{/each}}
