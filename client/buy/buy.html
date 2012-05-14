@@ -1,9 +1,43 @@
 <template name="buy">
-  {{> subnav}}
+  {{> BuyNavbar}}
 
   <div class="container container-after-subnav">
     <div class="hello">
       <h1>Hello Buyer!</h1>
     </div>
   </div> <!-- /container -->
+</template>
+
+<template name="BuyNavbar">
+  <div class="subnav subnav-fixed">
+    <ul class="nav nav-pills">
+      {{#each subnavs}}
+        {{> BuyNavbarItem}}
+      {{/each}}
+    </ul>
+  </div>
+</template>
+
+<template name="BuyNavbarItem">
+  {{#if type_is "link"}}
+    <li class="{{active}}"><a>{{name}}</a></li>
+    <li class="divider-vertical"></li>
+  {{/if}}
+  {{#if type_is "input"}}
+    <li><a>{{name}}</a></li>
+    <li><input type="text" class="input-large add-margin-top"></li>
+  {{/if}}
+  {{#if type_is "date"}}
+    <li><input type="text" class="input-small add-margin-top add-margin-sides" value="05-19-2012" id="dp-buy-{{id}}">
+    </li>
+  {{/if}}
+  {{#if type_is "select"}}
+    <li>
+      <select class="span2 add-margin-top add-margin-sides" id="buy-{{id}}">
+        {{#each options}}
+        <option>{{name}}</option>
+        {{/each}}
+      </select>
+    </li>
+  {{/if}}
 </template>
