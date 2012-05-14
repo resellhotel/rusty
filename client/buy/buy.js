@@ -32,16 +32,6 @@ FormGuy.make_okcancel_handler = function (options) {
     }
   };
 };
-FormGuy.make_onchange_handler = function (options) {
-  var change = options.change || function () {};
-
-  return function (evt) {
-    alert("change happened");
-    change.call(this, evt.target, evt);
-  };
-};
-
-
 
 
 
