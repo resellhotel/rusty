@@ -1,5 +1,5 @@
 LoginModal = {
-  alert: "You must log in first.",
+  alert: null,
   alertType: "error",
   fn: null,
   loginEmail: "",
