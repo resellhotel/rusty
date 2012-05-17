@@ -7,6 +7,13 @@
         <li><a data-target="#signupFormTab" data-toggle="pill">Sign Up</a></li>
       </ul>
     </div>
+    {{#if hasAlert}}
+    <div class="alert alert-block alert-{{alertType}}" id="LoginAlert">
+      <button class="close" data-dismiss="LoginAlert">×</button>
+      <strong>{{alert}}</strong>
+    </div>
+    {{/if}}
+
     <div class="tab-content">
       <div class="tab-pane active" id="loginFormTab">
         {{> loginForm}}

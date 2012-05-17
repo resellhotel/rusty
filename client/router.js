@@ -22,8 +22,8 @@ var RustyRouter = Backbone.Router.extend({
     Session.set("view", "search");
 
     Meteor.setTimeout(function () {
-      $('#dp-buy-checkin').datepicker({ format: 'mm-dd-yyyy'});
-      $('#dp-buy-checkout').datepicker({ format: 'mm-dd-yyyy'});
+      $('#checkin').datepicker({ format: 'mm-dd-yyyy'});
+      $('#checkout').datepicker({ format: 'mm-dd-yyyy'});
     }, 1000);
   },
   sell: function () {
@@ -31,25 +31,35 @@ var RustyRouter = Backbone.Router.extend({
     Session.set("view", "instructions");
   },
   account: function () {
-    Session.set("mode", "account");
-    Session.set("view", "listings");
+    App.ensureLogin(function () {
+      Session.set("mode", "account");
+      Session.set("view", "listings");
+    });
   },
   listings: function () {
-    Session.set("mode", "account");
-    Session.set("view", "listings");
+    App.ensureLogin(function () {
+      Session.set("mode", "account");
+      Session.set("view", "listings");
+    });
   },
   showListing: function (id) {
-    Session.set("mode", "account");
-    Session.set("view", "listingDetail");
-    Session.set('listingID', id);
+    App.ensureLogin(function () {
+      Session.set("mode", "account");
+      Session.set("view", "listingDetail");
+      Session.set('listingID', id);
+    });
   },
   history: function () {
-    Session.set("mode", "account");
-    Session.set("view", "history");
+    App.ensureLogin(function () {
+      Session.set("mode", "account");
+      Session.set("view", "history");
+    });
   },
   profile: function () {
-    Session.set("mode", "account");
-    Session.set("view", "profile");
+    App.ensureLogin(function () {
+      Session.set("mode", "account");
+      Session.set("view", "profile");
+    });
   },
   listingDraft: function (id) {
     Session.set("mode", "sell");
