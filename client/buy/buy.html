@@ -2,10 +2,19 @@
   {{> BuyNavbar}}
 
   <div class="container container-after-subnav">
-    <div class="hello">
-      <h1>Hello Buyer!</h1>
-    </div>
+    <ul class="thumbnails">
+      {{#each results}}
+      <li class="span4">
+        <div class="thumbnail">
+          <img src="{{thumbURL}}" alt="">
+          <h5>{{title}}</h5>
+          <p>Average Price: ${{price}}</p>
+        </div>
+      </li>
+      {{/each}}
+    </ul>
   </div> <!-- /container -->
+
 </template>
 
 <template name="BuyNavbar">

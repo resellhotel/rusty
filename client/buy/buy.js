@@ -67,8 +67,41 @@ Template.BuyNavbarItem.events[eventMap] = FormGuy.make_okcancel_handler({
     if (isBuyQueryValid(q)) {
       // Perform new buyer query, update search results
       console.log("buyer query IS valid");
+      Meteor.call("buySearch", q["where"], function (error, result) {
+        console.log("done!");
+        window.err = error;
+        window.res = result;
+        if (result && result.content) {
+          // TODO: Results should be filled into collections on the back end.
+          // TODO: The current search result page should show the results of the collection's query
+          // var XMLResultString = result.content;
+          // window.jres = XML2JSON(XMLResultString);
+        }
+      });
+      console.log("made call");
     } else {
       console.log("buyer query IS NOT valid");
     }
   }
 });
+
+Template.buy.results = function () {
+  var results = [
+    {
+      price: 322.12,
+      title: "Ames Hotel",
+      thumbURL: "http://image1.urlforimages.com/1215557/exterior.jpg"
+    },
+    {
+      price: 123.32,
+      title: "Comfort Inn North Shore Danvers",
+      thumbURL: "http://image1.urlforimages.com/1216656/001extfrnt.jpg"
+    },
+    {
+      price: 155.30,
+      title: "Rodeway Inn",
+      thumbURL: "http://image1.urlforimages.com/1221283/Exterior.jpg"
+    }
+  ];
+  return results;
+};
