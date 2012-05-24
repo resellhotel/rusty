@@ -4,11 +4,12 @@
   <div class="container container-after-subnav">
     <ul class="thumbnails">
       {{#each results}}
-      <li class="span4">
+      <li class="span3">
         <div class="thumbnail">
           <img src="{{thumbURL}}" alt="">
           <h5>{{title}}</h5>
           <p>Average Price: ${{price}}</p>
+          <p>Phone: {{phone}}</p>
         </div>
       </li>
       {{/each}}

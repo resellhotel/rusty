@@ -35,7 +35,7 @@ Meteor.methods({
       this.unblock();
 
       // GetARoom API Search
-      var url = "http://www.integration2.getaroom.com/searches/hotel_availability";
+      var url = "http://www.integration2.getaroom.com/searches/hotel_availability.json";
       url += "?destination="+where;
       url += "&transaction_id=123456";
       url += "&check_in=05/27/2012";
