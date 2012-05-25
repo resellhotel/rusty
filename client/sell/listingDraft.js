@@ -22,7 +22,7 @@ Template.reservationInfoForm.init = function () {
       if (dp) {
         dp.data('date', startVal);
 
-        $(sel+'Picker').datepicker({ format: 'mm-dd-yyyy'}).on('changeDate', function (evt){
+        $(sel+'Picker').datepicker({ format: 'mm/dd/yyyy'}).on('changeDate', function (evt){
           // TODO: Validate the change.
 
           // Update the listing draft

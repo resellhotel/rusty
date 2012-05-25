@@ -25,7 +25,7 @@ function pad2(num) {
   return num;
 }
 function date2str(d) {
-  return pad2(d.getMonth())+"-"+pad2(d.getDate())+"-"+d.getFullYear();
+  return pad2(d.getMonth())+"/"+pad2(d.getDate())+"/"+d.getFullYear();
 }
 Clock.now = function () {
   return (new Date()).getTime();

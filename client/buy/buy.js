@@ -33,58 +33,64 @@ FormGuy.make_okcancel_handler = function (options) {
   };
 };
 
+var initDatePicker = function (id, value) {
+  var dp = $('#'+id);
 
+  // If the datepicker isn't in the DOM yet, try later.
+  if (!dp || !dp.length) {
+    setTimeout(function () {
+      initDatePicker(id, value);
+    }, 40);
+    return;
+  }
 
-Template.BuyNavbar.subnavs = function () {
-  var subnavs = [];
-  subnavs =[{type: "input", id: "where", name: "Where"},
-            {type: "date", id: "checkin", name: "Checkin"},
-            {type: "date", id: "checkout", name: "Checkout"},
-            {type: "select", id: "rooms", options: [{name:"1 room"}, {name:"2 rooms"}, {name:"3 rooms"}, {name:"4 rooms"}] },
-            {type: "select", id: "guests", options: [{name:"1 guest"}, {name:"2 guests"}, {name:"3 guests"}, {name:"4 guests"}] }
-  ];
-  return subnavs;
-};
+  if (!dp[0].inited) {
+    console.log("initing");
 
-Template.BuyNavbarItem.type_is = function (type) {
-  return this.type == type;
+    if (value) dp.val(value);
+    dp.datepicker({ format: 'mm/dd/yyyy'}).on('changeDate', function (evt){
+      // TODO: Ideally, validate the change here.
+      dp.datepicker('hide');
+    });
+    dp[0].inited = true;
+  }
 };
 
 function isBuyQueryValid (query) {
   return query.where && query.checkin && query.checkout && query.rooms && query.guests;
 };
 
+Template.BuyNavbar.init = function () {
+  initDatePicker('checkin', Clock.today());
+  initDatePicker('checkout', Clock.tomorrow());
+};
+
 var eventSels = ['#where', '#checkin', '#checkout', '#rooms', '#guests'];
 var eventMap = FormGuy.okcancel_events(eventSels);
 
-Template.BuyNavbarItem.events = {};
-Template.BuyNavbarItem.events[eventMap] = FormGuy.make_okcancel_handler({
+Template.BuyNavbar.events = {};
+Template.BuyNavbar.events[eventMap] = FormGuy.make_okcancel_handler({
   ok: function (input, evt) {
     var q = Session.get("BuyQuery");
     q[input.id] = input.value;
     Session.set("BuyQuery", q);
 
-    if (isBuyQueryValid(q)) {
-      // Perform new buyer query, update search results
-      var results = Availabilities.find({where: q["where"]}).fetch();
-      Session.set("BuySearchResults", results);
-
-      // Force a server refresh of availabilities
-      // Meteor.call("buySearch", q["where"], function (error, result) {
-      //   console.log("done!");
-      //   window.err = error;
-      //   window.res = result;
-      //   if (result && result.content) {
-      //     // TODO: Results should be filled into collections on the back end.
-      //     // TODO: The current search result page should show the results of the collection's query
-      //     // var XMLResultString = result.content;
-      //     // window.jres = XML2JSON(XMLResultString);
-      //   }
-      // });
-    } else {
-      console.log("Buy Query: NOT valid");
+    if (!isBuyQueryValid(q)) {
       Session.set("BuySearchResults", []);
+      return;
     }
+
+    // Perform new buyer query, update search results
+    var results = Availabilities.find({where: q["where"]}).fetch();
+    Session.set("BuySearchResults", results);
+
+    // Notify server of query to kick off query refresh
+    Meteor.call("buyQuery", q["where"], function (error, result) {
+      console.log("Server: buyQuery call complete");
+      window.err = error;
+      window.res = result;
+      // TODO: Consider failure cases here
+    });
   }
 });
 
@@ -107,7 +113,7 @@ Template.buy.thumbURL = function () {
   if (property && property.thumbURLs && property.thumbURLs.length)
     return property.thumbURLs[0];
 
-  return "/img/no_thumb.png";
+  return "http://placehold.it/200x200";
 };
 
 Template.buy.results = function () {

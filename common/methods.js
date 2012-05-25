@@ -30,7 +30,9 @@ Meteor.methods({
     Users.update({_id: userID}, {$addToSet: val});
     return true;
   },
-  buySearch: function (where, checkin, checkout, rooms, guests, children) {
+  buyQuery: function (where, checkin, checkout, rooms, guests) {
+    // TODO: Validate query params
+
     if (Meteor.is_server) {
       this.unblock();
 
@@ -38,17 +40,16 @@ Meteor.methods({
       var url = "http://www.integration2.getaroom.com/searches/hotel_availability.json";
       url += "?destination="+where;
       url += "&transaction_id=123456";
-      url += "&check_in=05/27/2012";
-      url += "&check_out=05/28/2012";
-      url += "&rooms=1";
-      url += "&adults=2";
+      url += "&check_in="+checkin;
+      url += "&check_out="+checkout;
+      url += "&rooms="+rooms;
+      url += "&adults="+guests;
       url += "&api_key=0cd7495d-211c-43c6-8628-67e998f4207e";
       url += "&auth_token=1b439684-a9a5-4fd6-9ad9-6f0c3d54eb45";
 
       console.log(url);
-      var result = Meteor.http.get(url);
-      console.log(result.statusCode);
-      return result;
+      // var result = Meteor.http.get(url);
+      // console.log(result.statusCode);
     }
   }
 });

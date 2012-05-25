@@ -19,31 +19,33 @@
 </template>
 
 <template name="BuyNavbar">
-  <div class="subnav subnav-fixed">
-    <ul class="nav nav-pills">
-      {{#each subnavs}}
-        {{> BuyNavbarItem}}
-      {{/each}}
+  <div id="BuyNavbar" class="subnav subnav-fixed">
+    <ul id="BuyNavList" class="nav nav-pills">
+
+      <li><a>Where</a></li>
+      <li><input type="text" class="input-large add-margin-top" id="where"></li>
+
+      <li><input type="text" class="input-small add-margin-top add-margin-sides" id="checkin"></li>
+      <li><input type="text" class="input-small add-margin-top add-margin-sides" id="checkout"></li>
+
+      <li>
+        <select class="span2 add-margin-top add-margin-sides" id="rooms">
+          <option>1 room</option>
+          <option>2 rooms</option>
+          <option>3 rooms</option>
+          <option>4 rooms</option>
+        </select>
+      </li>
+
+      <li>
+        <select class="span2 add-margin-top add-margin-sides" id="guests">
+          <option>1 guest</option>
+          <option>2 guests</option>
+          <option>3 guests</option>
+          <option>4 guests</option>
+        </select>
+      </li>
     </ul>
   </div>
-</template>
-
-<template name="BuyNavbarItem">
-  {{#if type_is "input"}}
-    <li><a>{{name}}</a></li>
-    <li><input type="text" class="input-large add-margin-top" id="{{id}}"></li>
-  {{/if}}
-  {{#if type_is "date"}}
-    <li><input type="text" class="input-small add-margin-top add-margin-sides" value="05-19-2012" id="{{id}}">
-    </li>
-  {{/if}}
-  {{#if type_is "select"}}
-    <li>
-      <select class="span2 add-margin-top add-margin-sides" id="{{id}}">
-        {{#each options}}
-        <option>{{name}}</option>
-        {{/each}}
-      </select>
-    </li>
-  {{/if}}
+  {{init}}
 </template>
