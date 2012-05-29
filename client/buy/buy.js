@@ -33,29 +33,6 @@ FormGuy.make_okcancel_handler = function (options) {
   };
 };
 
-var initDatePicker = function (id, value) {
-  var dp = $('#'+id);
-
-  // If the datepicker isn't in the DOM yet, try later.
-  if (!dp || !dp.length) {
-    setTimeout(function () {
-      initDatePicker(id, value);
-    }, 40);
-    return;
-  }
-
-  if (!dp[0].inited) {
-    console.log("initing");
-
-    if (value) dp.val(value);
-    dp.datepicker({ format: 'mm/dd/yyyy'}).on('changeDate', function (evt){
-      // TODO: Ideally, validate the change here.
-      dp.datepicker('hide');
-    });
-    dp[0].inited = true;
-  }
-};
-
 function isBuyQueryValid (query) {
   return query.where && query.checkin && query.checkout && query.rooms && query.guests;
 };
