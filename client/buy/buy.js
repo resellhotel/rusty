@@ -84,7 +84,7 @@ BuySearchContext = function ()
 {
   this.context = new Context(new SizeSet("*", "*"));
   this.MainContent = new Context(new SizeSet("*", "*"));
-  this.context.add(this.MainContent, new Area(0, 0, [0, 1], [0, 1]));
+  this.context.add(this.MainContent, new Area(0, 77, [0, 1], [-77, 1]));
 
   this.MapContext = new Context(new SizeSet("*", "*"));
   this.MainContent.add(this.MapContext, new Area(0, 0, [0, .6], [0, 1]));
@@ -92,6 +92,27 @@ BuySearchContext = function ()
   this.ThumbListContext = new Context(new SizeSet("*", "*"));
   this.ThumbListContext.isScrollable = true;
   this.MainContent.add(this.ThumbListContext, new Area([0, .6], 0, [0, .4], [0, 1]));
+
+  var that = this;
+  document.body.appendChild(this.context.el[0]);
+  var onresize = function () {
+    console.log("Layout!");
+    var rect = {
+      x: 0,
+      y: 0,
+      w: $(window).width(),
+      h: $(window).height()
+    };
+    that.context.layout(rect);
+  };
+  $(window).resize(onresize);
+  onresize();
+
+  Meteor.autosubscribe(function () {
+    var display = Session.equals('mode', 'buy') ? "block" : "none";
+    that.context.el.css('display', display);
+  });
+
 };
 BuySearchContext.prototype.search = function (q)
 {
@@ -130,28 +151,6 @@ var ResultThumb = function (hotelID, price)
   this.hotelID = hotelID;
 
   // new Context(new SizeSet(200, 200))
-};
-
-function update() {
-  console.log("update!");
-  var rect = {
-    x: 0,
-    y: 0,
-    w: $(window).width(),
-    h: $(window).height() - 77
-  };
-  window.BuySearch.context.moveTo(rect);
-};
-
-Template.buy.init = function () {
-  console.log("Buy Search Init");
-  setTimeout(function () {
-    $('#BuySearchContext')[0].appendChild(window.BuySearch.context.el[0]);
-    $(window).resize(function () {
-      update();
-    });
-    update();
-  }, 1000);
 };
 
 

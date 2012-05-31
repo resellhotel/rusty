@@ -13,7 +13,9 @@ Session.set('BuyQuery', {
 
 Meteor.startup(function () {
   Backbone.history.start({pushState: true});
+
   window.BuySearch = new BuySearchContext();
+
   logVisitor();
 });
 
