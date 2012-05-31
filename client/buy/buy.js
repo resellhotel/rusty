@@ -72,17 +72,10 @@ Template.BuyNavbar.events["click #SearchButton"] = function ()
   window.BuySearch.search(q);
 };
 
-function cityList(str) {
-  Meteor.call('cityList', str, function (err, result) {
-    if (!err)
-      window.cities[str] = result;
-    else
-      console.log(err);
-  });
-};
-
 BuySearchContext = function () 
 {
+  this.resultThumbs = [];
+
   this.context = new Context(new SizeSet("*", "*"));
   this.MainContent = new Context(new SizeSet("*", "*"));
   this.context.add(this.MainContent, new Area(0, 77, [0, 1], [-77, 1]));
@@ -118,9 +111,20 @@ BuySearchContext = function ()
   });
 
 };
+
 BuySearchContext.prototype.search = function (q)
 {
-  // Get results (TODO: merge these both into a server call to get current results and updated results)
+  var that = this;
+
+  // Clean up OLD results
+  if (this.resultThumbs && this.resultThumbs.length) {
+    console.log("TODO: Clear out result thumbs correctly.");
+    // this.context.removeSubcontexts
+    this.resultThumbs = [];
+  }
+
+  // Get NEW results
+  // TODO: merge these both into a server call to get current results and updated results
   var results = Availabilities.find({where: q["where"]}).fetch();
   // Meteor.call("buyQuery", q["where"], function (error, result) {
   //   console.log("Server: buyQuery call complete");
@@ -129,7 +133,7 @@ BuySearchContext.prototype.search = function (q)
   //   // TODO: Consider failure cases here
   // });
 
-  // Set the map for the results
+  // Reposition Map
   // TODO: look up lat/lng for q["where"], set zoom to show city limits, set max area, set up pins?
   var options = {
     center: new google.maps.LatLng(-34.397, 150.644),
@@ -137,24 +141,77 @@ BuySearchContext.prototype.search = function (q)
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
   this.map = new google.maps.Map(this.MapContext.el[0], options);
+  this.geocoder = new google.maps.Geocoder();
+  this.geocoder.geocode({'address': q["where"]}, function (geocodes, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      that.map.setCenter(geocodes[0].geometry.location);
+    } else {
+      console.log("Geocoder callback failed");
+    }
+  });
 
-  // Generate SelectableThumbnail off of results
+  // Setup Map Places
+  // this.places = new google.maps.places.PlacesService(this.map);
+  // var req = {reference: "CkQxAAAAYCJqG3dlqlrXDePMraWuFijEufiYTHoaiAt7TyaWX5PNHatpr5zqS5p7epkoPfwaTPTa0ErCa-6VN_nr2s4N3hIQ53sEr6tIc-NzwUQTXmxAKBoU-yMuSPMeY5PKzWRdabbQXONcenE"};
+  // var placecallback = function (place, status) {
+  //   if (status == google.maps.places.PlacesServiceStatus.OK) {
+  //     var loc = place.geometry.location;
+  //     var options = {
+  //       center: new google.maps.LatLng(-34.397, 150.644),
+  //       zoom: 8,
+  //       mapTypeId: google.maps.MapTypeId.ROADMAP
+  //     };
+  //     this.map = new google.maps.Map(this.MapContext.el[0], options);
+  //   } else {
+  //     console.log("place callback failed");
+  //   }
+  // };
+  // this.place.getDetails(req, placecallback);
+
+  // Generate list of ResultThumbs
   for (var i = 0; i < results.length; i++) {
     var result = results[i];
-    var hotelID = results["uuid"];
-    var price = results["price"];
-    this.ThumbListContext.add(new Context(new SizeSet(200, 200)));
-    // TODO: use this instead this.ThumbListContext.add(new ResultThumb(hotelID, price));
+    this.resultThumbs[i] = new GAR_ResultThumb(result);
+    this.ThumbListContext.add(this.resultThumbs[i].context);
   }
 }
 
 // TODO: extend Context
-var ResultThumb = function (hotelID, price)
+var GAR_ResultThumb = function (result, resultID)
 {
-  this.price = price;
-  this.hotelID = hotelID;
+  this.resultID = resultID;
+  this.result = result;
+  this.hotel = Properties.findOne({uuid: result["property"]});
+  this.price = result["price"];
+  this.context = new Context(new SizeSet(200, 200));
+};
 
-  // new Context(new SizeSet(200, 200))
+function placeDetail (ref) {
+  var url = "https://maps.googleapis.com/maps/api/place/details/json"
+  url += "?reference=CkQxAAAAYCJqG3dlqlrXDePMraWuFijEufiYTHoaiAt7TyaWX5PNHatpr5zqS5p7epkoPfwaTPTa0ErCa-6VN_nr2s4N3hIQ53sEr6tIc-NzwUQTXmxAKBoU-yMuSPMeY5PKzWRdabbQXONcenE";
+  url += "&sensor=true";
+  url += "&key="+window.googAPI_key;
+
+  $.jsonp({
+    url: url,
+    callbackParameter: "callback",
+    success: function(json, textStatus) {
+      window.r = json;
+      console.log(textStatus);
+    },
+    error: function(xOptions, textStatus) {
+      console.log("error");
+      console.log(xOptions);
+      console.log(textStatus);
+    },
+    complete: function() {
+      console.log("complete");
+    }
+  });
+  // Meteor.http.get(url, function (err, result){
+  //   window.e = err;
+  //   window.r = result;
+  // });
 };
 
 

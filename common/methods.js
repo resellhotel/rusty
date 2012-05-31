@@ -56,7 +56,8 @@ Meteor.methods({
     if (Meteor.is_server) {
       var url = "https://maps.googleapis.com/maps/api/place/autocomplete/json";
       url += "?input="+input+"&sensor=false";
-      url += "&types=cities&key=AIzaSyBxgElG-UvPtnUB8dJGtPIXQFjV488r3mM";
+      url += "&types=cities";
+      url += "&key="+window.googAPI_key;
       console.log(url);
       var result = Meteor.http.get(url);
       console.log(result.statusCode);

@@ -1,3 +1,5 @@
+window.googAPI_key = "AIzaSyAFpxh8N-tWOZQIcL8DzKB8MoY8hmNA5bQ";
+
 // Default Application View State
 Session.set('mode', "home");
 Session.set('view', "showHome");
