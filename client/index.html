@@ -1,39 +1,61 @@
 <head>
   <title>ResellHotel.com</title>
+
+  <script type="text/javascript"
+    src="http://maps.googleapis.com/maps/api/js?sensor=true">
+  </script>
 </head>
 
 <body>
   {{> navbar}}
-
-  <div class="container">
-
-    {{> content}}
-
-    <hr>
-    <footer>
-      <p>&copy; ResellHotel.com, 2012</p>
-    </footer>
-
-  </div> <!-- /container -->
-
+  {{> content}}
   {{> loginModal}}
 
 </body>
 
 <template name="content">
   {{#if mode_is "home"}}
+  <div class="container">
     {{> home}}
+    <hr>
+    <footer>
+      <p>&copy; ResellHotel.com, 2012</p>
+    </footer>
+  </div>
   {{/if}}
+
   {{#if mode_is "sell"}}
+  <div>
     {{> sell}}
+    <hr>
+    <footer>
+      <p>&copy; ResellHotel.com, 2012</p>
+    </footer>
+  </div>
   {{/if}}
+
   {{#if mode_is "buy"}}
     {{> buy}}
   {{/if}}
+
   {{#if mode_is "account"}}
+  <div class="container">
     {{> account}}
+    <hr>
+    <footer>
+      <p>&copy; ResellHotel.com, 2012</p>
+    </footer>
+  </div>
   {{/if}}
+
   {{#if mode_is "admin"}}
+  <div class="container">
     {{> visitors}}
+    <hr>
+    <footer>
+      <p>&copy; ResellHotel.com, 2012</p>
+    </footer>
+  </div>
   {{/if}}
+
 </template>

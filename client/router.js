@@ -72,10 +72,11 @@ var RustyRouter = Backbone.Router.extend({
       return;
     }
 
-
     Meteor.call('createListing', {}, function (err, id) {
-      if (!err)
+      if (!err) {
+        Meteor.flush();
         Router.navigate("/sell/listings/"+id, true);
+      }
     });  
   },
   admin: function () {

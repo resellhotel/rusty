@@ -1,33 +1,21 @@
 <template name="buy">
   {{> BuyNavbar}}
 
-  <div class="container container-after-subnav">
-    <ul class="thumbnails">
-      {{#each results}}
-      <li class="span3">
-        <div class="thumbnail">
-          <img src="{{thumbURL}}" alt="">
-          <h5>{{title}}</h5>
-          <p>Average Price: ${{price}}</p>
-        </div>
-      </li>
-      {{/each}}
-    </ul>
-  </div> <!-- /container -->
+  <div id="BuySearchContext" class="after-subnav"></div>
 
+  {{init}}
 </template>
 
 <template name="BuyNavbar">
   <div id="BuyNavbar" class="subnav subnav-fixed">
     <ul id="BuyNavList" class="nav nav-pills">
 
-      <li><input type="text" class="input-large add-margin-top" placeholder="Where" id="where"></li>
-
-      <li><input type="text" class="input-small add-margin-top add-margin-sides" id="checkin"></li>
-      <li><input type="text" class="input-small add-margin-top add-margin-sides" id="checkout"></li>
+      <li><input id="where" type="text" data-provide="typeahead" class="input-medium add-margin-top" placeholder="Where"></li>
+      <li><input id="checkin" type="text" class="input-small add-margin-top add-margin-sides" placeholder="Checkin"></li>
+      <li><input id="checkout" type="text" class="input-small add-margin-top add-margin-sides" placeholder="Checkout"></li>
 
       <li>
-        <select class="span2 add-margin-top add-margin-sides" id="rooms">
+        <select class="input-small add-margin-top" id="rooms">
           <option>1 room</option>
           <option>2 rooms</option>
           <option>3 rooms</option>
@@ -36,13 +24,17 @@
       </li>
 
       <li>
-        <select class="span2 add-margin-top add-margin-sides" id="guests">
+        <select class="input-small add-margin-top add-margin-sides" id="guests">
           <option>1 guest</option>
           <option>2 guests</option>
           <option>3 guests</option>
           <option>4 guests</option>
         </select>
       </li>
+      <li>
+        <button id="SearchButton" class="btn btn-primary add-margin-top">Search</button>
+      </li>
+      
     </ul>
   </div>
   {{init}}

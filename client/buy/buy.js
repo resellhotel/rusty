@@ -56,46 +56,104 @@ Template.BuyNavbar.events[eventMap] = FormGuy.make_okcancel_handler({
       Session.set("BuySearchResults", []);
       return;
     }
-
-    // Perform new buyer query, update search results
-    var results = Availabilities.find({where: q["where"]}).fetch();
-    Session.set("BuySearchResults", results);
-
-    // Notify server of query to kick off query refresh
-    Meteor.call("buyQuery", q["where"], function (error, result) {
-      console.log("Server: buyQuery call complete");
-      window.err = error;
-      window.res = result;
-      // TODO: Consider failure cases here
-    });
   }
 });
-
-Template.buy.title = function () {
-  var property = Properties.findOne({uuid: this.property});
-  if (property)
-    return property.title;
-
-  return "";
+// Template.BuyNavbar.events['change #where'] = function ()
+// {
+//   // var input = this.value;
+//   // var url = "https://maps.googleapis.com/maps/api/place/autocomplete/json";
+//   // Meteor.http.get(url+"?input="+input+"&sensor=false", function (err, result) {
+//   //   if (err) console.log("error!");
+//   //   window.acomp = result;
+//   // });
+//   var data = {
+//     source: ["Boston", "New York", "Austin", "Boxford", "Acton"],
+//     items: 7
+//   };
+//   console.log("happening");
+//   // $('#where').typeahead(data);
+// };
+Template.BuyNavbar.events["click #SearchButton"] = function ()
+{
+  console.log("search!");
+  var q = Session.get("BuyQuery");
+  window.BuySearch.search(q);
 };
-Template.buy.phone = function () {
-  var property = Properties.findOne({uuid: this.property});
-  if (property)
-    return property.phone;
 
-  return "";
-};
-Template.buy.thumbURL = function () {
-  var property = Properties.findOne({uuid: this.property});
-  if (property && property.thumbURLs && property.thumbURLs.length)
-    return property.thumbURLs[0];
+BuySearchContext = function () 
+{
+  this.context = new Context(new SizeSet("*", "*"));
+  this.MainContent = new Context(new SizeSet("*", "*"));
+  this.context.add(this.MainContent, new Area(0, 0, [0, 1], [0, 1]));
 
-  return "http://placehold.it/200x200";
+  this.MapContext = new Context(new SizeSet("*", "*"));
+  this.MainContent.add(this.MapContext, new Area(0, 0, [0, .6], [0, 1]));
+
+  this.ThumbListContext = new Context(new SizeSet("*", "*"));
+  this.ThumbListContext.isScrollable = true;
+  this.MainContent.add(this.ThumbListContext, new Area([0, .6], 0, [0, .4], [0, 1]));
+};
+BuySearchContext.prototype.search = function (q)
+{
+  // Get results (TODO: merge these both into a server call to get current results and updated results)
+  var results = Availabilities.find({where: q["where"]}).fetch();
+  // Meteor.call("buyQuery", q["where"], function (error, result) {
+  //   console.log("Server: buyQuery call complete");
+  //   window.err = error;
+  //   window.res = result;
+  //   // TODO: Consider failure cases here
+  // });
+
+  // Set the map for the results
+  // TODO: look up lat/lng for q["where"], set zoom to show city limits, set max area, set up pins?
+  var options = {
+    center: new google.maps.LatLng(-34.397, 150.644),
+    zoom: 8,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
+  this.map = new google.maps.Map(this.MapContext.el[0], options);
+
+  // Generate SelectableThumbnail off of results
+  for (var i = 0; i < results.length; i++) {
+    var result = results[i];
+    var hotelID = results["uuid"];
+    var price = results["price"];
+    this.ThumbListContext.add(new Context(new SizeSet(200, 200)));
+    // TODO: use this instead this.ThumbListContext.add(new ResultThumb(hotelID, price));
+  }
+}
+
+// TODO: extend Context
+var ResultThumb = function (hotelID, price)
+{
+  this.price = price;
+  this.hotelID = hotelID;
+
+  // new Context(new SizeSet(200, 200))
 };
 
-Template.buy.results = function () {
-  return Session.get("BuySearchResults");
+function update() {
+  console.log("update!");
+  var rect = {
+    x: 0,
+    y: 0,
+    w: $(window).width(),
+    h: $(window).height() - 77
+  };
+  window.BuySearch.context.moveTo(rect);
 };
+
+Template.buy.init = function () {
+  console.log("Buy Search Init");
+  setTimeout(function () {
+    $('#BuySearchContext')[0].appendChild(window.BuySearch.context.el[0]);
+    $(window).resize(function () {
+      update();
+    });
+    update();
+  }, 1000);
+};
+
 
 // var dummyBuyResults = [
 //   {
