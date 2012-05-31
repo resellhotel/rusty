@@ -51,5 +51,16 @@ Meteor.methods({
       // var result = Meteor.http.get(url);
       // console.log(result.statusCode);
     }
+  },
+  cityList: function (input) {
+    if (Meteor.is_server) {
+      var url = "https://maps.googleapis.com/maps/api/place/autocomplete/json";
+      url += "?input="+input+"&sensor=false";
+      url += "&types=cities&key=AIzaSyBxgElG-UvPtnUB8dJGtPIXQFjV488r3mM";
+      console.log(url);
+      var result = Meteor.http.get(url);
+      console.log(result.statusCode);
+      return result;
+    }
   }
 });

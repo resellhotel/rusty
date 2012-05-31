@@ -58,26 +58,27 @@ Template.BuyNavbar.events[eventMap] = FormGuy.make_okcancel_handler({
     }
   }
 });
-// Template.BuyNavbar.events['change #where'] = function ()
-// {
-//   // var input = this.value;
-//   // var url = "https://maps.googleapis.com/maps/api/place/autocomplete/json";
-//   // Meteor.http.get(url+"?input="+input+"&sensor=false", function (err, result) {
-//   //   if (err) console.log("error!");
-//   //   window.acomp = result;
-//   // });
-//   var data = {
-//     source: ["Boston", "New York", "Austin", "Boxford", "Acton"],
-//     items: 7
-//   };
-//   console.log("happening");
-//   // $('#where').typeahead(data);
-// };
+Template.BuyNavbar.events['keydown #where'] = function (e)
+{
+  console.log("keydown #where");
+  var value = $('#where').val();
+  // if (value matches a city)
+  //   map.showcity(value);
+};
 Template.BuyNavbar.events["click #SearchButton"] = function ()
 {
   console.log("search!");
   var q = Session.get("BuyQuery");
   window.BuySearch.search(q);
+};
+
+function cityList(str) {
+  Meteor.call('cityList', str, function (err, result) {
+    if (!err)
+      window.cities[str] = result;
+    else
+      console.log(err);
+  });
 };
 
 BuySearchContext = function () 
@@ -109,7 +110,10 @@ BuySearchContext = function ()
   onresize();
 
   Meteor.autosubscribe(function () {
-    var display = Session.equals('mode', 'buy') ? "block" : "none";
+    var visible = Session.equals('mode', 'buy');
+    var display = visible ? "block" : "none";
+    if (visible)
+      $('#where').typeahead({ source: window.cityNameList, items: 7 });
     that.context.el.css('display', display);
   });
 
