@@ -30,7 +30,7 @@
       </div>
       <div id="step2" class="accordion-body collapse">
         <div class="accordion-inner">
-          {{>hotelInfoForm}}
+          {{> hotelInfoForm}}
         </div>
       </div>
     </div>
@@ -43,7 +43,7 @@
       </div>
       <div id="step3" class="accordion-body collapse">
         <div class="accordion-inner">
-          {{>listingPriceForm}}
+          {{> listingPriceForm}}
         </div>
       </div>
     </div>
@@ -84,20 +84,14 @@
     <div class="control-group" id="checkinDateWidget">
       <label class="control-label" for="checkinDate">Check-in Date</label>
       <div class="controls">
-        <div class="input-append date" id="checkinDatePicker" data-date="" data-date-format="mm/dd/yyyy">
-          <input class="span2" name='checkinDate' id='checkinDate' size="16" type="text">
-          <span class="add-on"><i class="icon-th"></i></span>
-        </div>
+        <input type="text" class="input-small add-margin-top add-margin-sides" id="checkinDate">
       </div>
     </div>
 
     <div class="control-group" id="checkoutDateWidget">
       <label class="control-label" for="checkoutDate">Check-out Date</label>
       <div class="controls">
-        <div class="input-append date" id="checkoutDatePicker" data-date="" data-date-format="mm/dd/yyyy">
-          <input class="span2" name='checkoutDate' id="checkoutDate" size="16" type="text">
-          <span class="add-on"><i class="icon-th"></i></span>
-        </div>
+        <input type="text" class="input-small add-margin-top add-margin-sides" id="checkoutDate">
       </div>
     </div>
 
