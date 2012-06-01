@@ -179,6 +179,8 @@ BuySearchContext.prototype.search = function (q)
 // TODO: extend Context
 var GAR_ResultThumb = function (result, resultID)
 {
+  var that = this;
+
   this.resultID = resultID;
   this.result = result;
   this.hotel = Properties.findOne({uuid: result["property"]});
@@ -188,6 +190,7 @@ var GAR_ResultThumb = function (result, resultID)
   this.context = new Context(new SizeSet(200, 200));
   this.context.toggleClass("ResultThumb");
   this.context.el.css('background-image', 'url('+this.hotel.thumbURLs[0]+')');
+  this.context.el.click(function (e) {that.context.el.toggleClass("selected")});
 
   // Overlay Context
   this.overlayContext = new Context(new SizeSet("*", "*"));
@@ -196,7 +199,7 @@ var GAR_ResultThumb = function (result, resultID)
 
   this.infoContext = new Context(new SizeSet("*", "*"));
   this.infoContext.toggleClass("ThumbInfo");
-  this.overlayContext.add(this.infoContext, new Area(5, 5, [-10, 1], [-10, 1]));
+  this.overlayContext.add(this.infoContext, new Area(10, 10, [-20, 1], [-20, 1]));
 
   // Hotel Name
   this.infoContext.el.append($("<h3>"+this.hotel.title+"</h3>"));
@@ -213,7 +216,6 @@ var GAR_ResultThumb = function (result, resultID)
   this.moreInfoContext = new Context("*", "*");
   this.moreInfoContext.toggleClass('MoreInfoButton');
   this.moreInfoContext.toggleClass('btn');
-  this.moreInfoContext.toggleClass('btn-inverse');
   this.infoContext.add(this.moreInfoContext, new Area("c", [-33, 1], [90, 0], [28, 0]));
 
   var buttonText = new Context("*", "*");
