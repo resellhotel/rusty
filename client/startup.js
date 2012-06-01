@@ -17,6 +17,10 @@ Meteor.startup(function () {
   Backbone.history.start({pushState: true});
 
   window.BuySearch = new BuySearchContext();
+  // DEBUG: go right to boston results
+  // setTimeout(function() {
+  //   window.BuySearch.search({where: "Boston"});
+  // }, 500);
 
   logVisitor();
 });

@@ -1,0 +1,38 @@
+.ResultThumb
+{
+  -webkit-user-select: none;
+  cursor: default;
+  -webkit-transform: translateZ(0);
+}
+.ResultThumb:hover .ColorOverlay, .ResultThumb.selected .ColorOverlay
+{
+  opacity: 1;
+}
+
+
+.ColorOverlay
+{
+  background-color: rgba(255, 255, 255, 0.65);
+  opacity: 0;
+}
+
+.ThumbInfo
+{
+
+}
+
+.Price
+{
+  font-size: 4em;
+  text-align: center;
+}
+
+.StarRating
+{
+
+}
+
+.MoreInfoButton
+{
+
+}

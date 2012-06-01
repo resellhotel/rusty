@@ -58,13 +58,13 @@ Template.BuyNavbar.events[eventMap] = FormGuy.make_okcancel_handler({
     }
   }
 });
-Template.BuyNavbar.events['keydown #where'] = function (e)
-{
-  console.log("keydown #where");
-  var value = $('#where').val();
-  // if (value matches a city)
-  //   map.showcity(value);
-};
+// Template.BuyNavbar.events['keydown #where'] = function (e)
+// {
+//   console.log("keydown #where");
+//   var value = $('#where').val();
+//   // if (value matches a city)
+//   //   map.showcity(value);
+// };
 Template.BuyNavbar.events["click #SearchButton"] = function ()
 {
   console.log("search!");
@@ -183,7 +183,42 @@ var GAR_ResultThumb = function (result, resultID)
   this.result = result;
   this.hotel = Properties.findOne({uuid: result["property"]});
   this.price = result["price"];
+
+  // Overall Context
   this.context = new Context(new SizeSet(200, 200));
+  this.context.toggleClass("ResultThumb");
+  this.context.el.css('background-image', 'url('+this.hotel.thumbURLs[0]+')');
+
+  // Overlay Context
+  this.overlayContext = new Context(new SizeSet("*", "*"));
+  this.overlayContext.toggleClass('ColorOverlay');
+  this.context.add(this.overlayContext, new Area(0, 0, [0, 1], [0, 1]));
+
+  this.infoContext = new Context(new SizeSet("*", "*"));
+  this.infoContext.toggleClass("ThumbInfo");
+  this.overlayContext.add(this.infoContext, new Area(5, 5, [-10, 1], [-10, 1]));
+
+  // Hotel Name
+  this.infoContext.el.append($("<h3>"+this.hotel.title+"</h3>"));
+  // Hotel Price
+  this.priceContext = new Context(180, 48);
+  this.priceContext.toggleClass('Price');
+  this.priceContext.el[0].innerHTML = "$"+Math.ceil(this.price);
+  this.infoContext.add(this.priceContext, new Area("c", "c", [180, 0], [48, 0]));
+  // Hotel Rating
+  this.ratingContext = new Context(90, 14);
+  this.ratingContext.toggleClass('StarRating');
+  this.infoContext.add(this.ratingContext, new Area("c", 124, [90, 0], [14, 0]));
+  // More Info Button
+  this.moreInfoContext = new Context("*", "*");
+  this.moreInfoContext.toggleClass('MoreInfoButton');
+  this.moreInfoContext.toggleClass('btn');
+  this.moreInfoContext.toggleClass('btn-inverse');
+  this.infoContext.add(this.moreInfoContext, new Area("c", [-33, 1], [90, 0], [28, 0]));
+
+  var buttonText = new Context("*", "*");
+  buttonText.el[0].innerHTML = "More Info";
+  this.moreInfoContext.add(buttonText, new Area("c", "c", [0,1], [18,0]));
 };
 
 function placeDetail (ref) {
