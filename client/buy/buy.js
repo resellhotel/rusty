@@ -112,9 +112,23 @@ BuySearchContext = function ()
 
 };
 
+function parseTag(name, string) {
+  var tag = "<"+name+">";
+  var endtag = "</"+name+">";
+  var a = string.indexOf(tag);
+  var b = string.indexOf(endtag);
+  return string.substring(a+tag.length, b);
+}
+
 BuySearchContext.prototype.search = function (q)
 {
   var that = this;
+  console.log(q);
+
+  if (!isBuyQueryValid(q)) {
+    console.log("Invalid Search Query");
+    return;
+  }
 
   // Clean up OLD results
   if (this.resultThumbs && this.resultThumbs.length) {
@@ -125,13 +139,35 @@ BuySearchContext.prototype.search = function (q)
 
   // Get NEW results
   // TODO: merge these both into a server call to get current results and updated results
-  var results = Availabilities.find({where: q["where"]}).fetch();
-  // Meteor.call("buyQuery", q["where"], function (error, result) {
-  //   console.log("Server: buyQuery call complete");
-  //   window.err = error;
-  //   window.res = result;
-  //   // TODO: Consider failure cases here
-  // });
+  // var results = Availabilities.find({where: q["where"]}).fetch();
+  Meteor.call("buyQuery", q, function (error, result) {
+    console.log("Server: buyQuery call complete");
+    window.err = error;
+    window.res = result;
+
+    // Parse out xml result into json
+    var stays = [];
+    if (!window.err) {
+      var strs = result.split("<hotel_stay>");
+      for (var i = 1; i < strs.length; i++) {
+        var stay = {};
+        var str = strs[i];
+        stay["uuid"] = parseTag("uuid", str);
+        stay["title"] = parseTag("title", str);
+        stay["thumbURL"] = parseTag("thumbnail_filename", str);
+        stay["price"] = parseTag("lowest-average", str);
+        stays[i-1] = stay;
+      }
+    }
+
+    // Generate list of ResultThumbs
+    for (var i = 0; i < stays.length; i++) {
+      var result = stays[i];
+      that.resultThumbs[i] = new GAR_ResultThumb(result);
+      that.ThumbListContext.add(that.resultThumbs[i].context);
+    }
+
+  });
 
   // Reposition Map
   // TODO: look up lat/lng for q["where"], set zoom to show city limits, set max area, set up pins?
@@ -167,13 +203,6 @@ BuySearchContext.prototype.search = function (q)
   //   }
   // };
   // this.place.getDetails(req, placecallback);
-
-  // Generate list of ResultThumbs
-  for (var i = 0; i < results.length; i++) {
-    var result = results[i];
-    this.resultThumbs[i] = new GAR_ResultThumb(result);
-    this.ThumbListContext.add(this.resultThumbs[i].context);
-  }
 }
 
 // TODO: extend Context
@@ -183,13 +212,13 @@ var GAR_ResultThumb = function (result, resultID)
 
   this.resultID = resultID;
   this.result = result;
-  this.hotel = Properties.findOne({uuid: result["property"]});
+  this.hotel = Properties.findOne({uuid: result["uuid"]});
   this.price = result["price"];
 
   // Overall Context
   this.context = new Context(new SizeSet(200, 200));
   this.context.toggleClass("ResultThumb");
-  this.context.el.css('background-image', 'url('+this.hotel.thumbURLs[0]+')');
+  this.context.el.css('background-image', 'url('+this.result.thumbURL+')');
   this.context.el.click(function (e) {that.context.el.toggleClass("selected")});
 
   // Overlay Context
@@ -202,7 +231,7 @@ var GAR_ResultThumb = function (result, resultID)
   this.overlayContext.add(this.infoContext, new Area(10, 10, [-20, 1], [-20, 1]));
 
   // Hotel Name
-  this.infoContext.el.append($("<h3>"+this.hotel.title+"</h3>"));
+  this.infoContext.el.append($("<h3>"+this.result.title+"</h3>"));
   // Hotel Price
   this.priceContext = new Context(180, 48);
   this.priceContext.toggleClass('Price');
