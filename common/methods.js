@@ -37,7 +37,8 @@ Meteor.methods({
       this.unblock();
 
       // GetARoom API Search
-      var url = "http://www.integration2.getaroom.com/searches/hotel_availability.json";
+      var url = "http://www.integration2.getaroom.com";
+      url += "/searches/hotel_availability.json";
       url += "?destination="+q["where"];
       url += "&transaction_id=123456";
       url += "&check_in="+q["checkin"];
@@ -45,6 +46,26 @@ Meteor.methods({
       url += "&rooms="+q["rooms"];
       url += "&adults="+q["guests"];
       url += "&api_key=0cd7495d-211c-43c6-8628-67e998f4207e";
+      url += "&auth_token=1b439684-a9a5-4fd6-9ad9-6f0c3d54eb45";
+
+      console.log(url);
+      var result = Meteor.http.get(url);
+      console.log(result.statusCode);
+      console.log(result.content);
+      return result.content;
+    }
+  },
+  fetchProperty_GAR: function (uuid) {
+    // TODO: Validate query params
+
+    if (Meteor.is_server) {
+      this.unblock();
+
+      // GetARoom API Search
+      // ex: http://www.integration2.getaroom.com/api/properties/152d7634-00ff-55cd-ac46-3e73f24a2574.xml?api_key=0cd7495d-211c-43c6-8628-67e998f4207e&auth_token=1b439684-a9a5-4fd6-9ad9-6f0c3d54eb45
+      var url = "http://www.integration2.getaroom.com"
+      url += "/api/properties/"+uuid+".xml";
+      url += "?api_key=0cd7495d-211c-43c6-8628-67e998f4207e";
       url += "&auth_token=1b439684-a9a5-4fd6-9ad9-6f0c3d54eb45";
 
       console.log(url);
@@ -63,7 +84,7 @@ Meteor.methods({
       console.log(url);
       var result = Meteor.http.get(url);
       console.log(result.statusCode);
-      return result;
+      return result.content;
     }
   }
 });

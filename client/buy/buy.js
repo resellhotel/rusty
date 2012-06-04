@@ -112,6 +112,54 @@ BuySearchContext = function ()
 
 };
 
+function xml2json(xml) {
+  // At a leaf node, return data
+  if (xml.indexOf("<") == -1)
+    return xml;
+
+  var headerL = xml.indexOf("<?xml");
+  if (headerL != -1) {
+    var headerR = xml.indexOf(">", headerL);
+    var xmlbody = xml.substring(headerR+1);
+    return xml2json(xmlbody);
+  }
+
+  var data = {};
+  var startL = 0, startR = 0, endL = 0, endR = -1;
+
+  while (1) {
+    // No more tags to process
+    if (xml.indexOf("<", endR+1) == -1)
+      return data;
+
+    // Assume there exists a well-formed tag to parse
+    startL = xml.indexOf("<", endR+1);
+    startR = xml.indexOf(">", endR+1);
+    if (xml.charAt(startR-1) == "/")
+      return xml.substring(startL+1, startR-1);
+
+    var tagname = xml.substring(startL+1, startR).split(" ")[0];
+    var endtag = "</"+tagname+">";
+    endL = xml.indexOf(endtag, startR);
+    endR = endL + endtag.length;
+
+    var innerXML = xml.substring(startR+1, endL);
+    if (data[tagname]) {
+      if (!data[tagname].length) {
+        var o = data[tagname];
+        data[tagname] = [];
+        data[tagname].push(o);
+      }
+      data[tagname].push(xml2json(innerXML));
+    } else {
+      data[tagname] = xml2json(innerXML);
+    }
+  }
+
+  // Should never reach this point...
+  return data;
+};
+
 function parseTag(name, string) {
   var tag = "<"+name+">";
   var endtag = "</"+name+">";
@@ -140,7 +188,7 @@ BuySearchContext.prototype.search = function (q)
   // Get NEW results
   // TODO: merge these both into a server call to get current results and updated results
   // var results = Availabilities.find({where: q["where"]}).fetch();
-  Meteor.call("buyQuery", q, function (error, result) {
+  Meteor.call("buyQuery", q, function (error, xml_result) {
     console.log("Server: buyQuery call complete");
     window.err = error;
     window.res = result;
@@ -148,16 +196,43 @@ BuySearchContext.prototype.search = function (q)
     // Parse out xml result into json
     var stays = [];
     if (!window.err) {
-      var strs = result.split("<hotel_stay>");
-      for (var i = 1; i < strs.length; i++) {
-        var stay = {};
-        var str = strs[i];
-        stay["uuid"] = parseTag("uuid", str);
-        stay["title"] = parseTag("title", str);
-        stay["thumbURL"] = parseTag("thumbnail_filename", str);
-        stay["price"] = parseTag("lowest-average", str);
-        stays[i-1] = stay;
+      var result = xml2json(xml_result);
+
+      // Break out first level object
+      var o1 = result["hotel-stays"];
+      if (!o1) {
+        console.log("No results found.");
+        return;
       }
+
+      // Break out second level object
+      stays = o1["hotel_stay"];
+      if (!stays) {
+        console.log("No results found.");
+        return;
+      }
+
+      // Less than 2 stays won't form an array, convert to array
+      // TODO: What if there are 0 stays?
+      if (!stays.length)
+        stays = [stays];
+
+      // --- Old method of parsing manually ---
+      // var strs = xml_result.split("<hotel_stay>");
+      // for (var i = 1; i < strs.length; i++) {
+      //   var stay = {};
+      //   var str = strs[i];
+      //   stay["uuid"] = parseTag("uuid", str);
+      //   stay["title"] = parseTag("title", str);
+      //   stay["thumbURL"] = parseTag("thumbnail_filename", str);
+      //   stay["price"] = parseTag("lowest-average", str);
+      //   stays[i-1] = stay;
+      // }
+
+    } else {
+      console.log("Buy Search Query failed.");
+      console.log(error);
+      return;
     }
 
     // Generate list of ResultThumbs
@@ -212,13 +287,27 @@ var GAR_ResultThumb = function (result, resultID)
 
   this.resultID = resultID;
   this.result = result;
-  this.hotel = Properties.findOne({uuid: result["uuid"]});
-  this.price = result["price"];
+
+  this.price = result["lowest-average"];
+  this.propertyID = result["uuid"];
+  this.thumbURL = result["thumbnail_filename"];
+  this.hotelTitle = result["title"];
+  // this.property = Properties.findOne({uuid: this.propertyID});
+  Meteor.call('fetchProperty_GAR', this.propertyID, function (error, xml_result) {
+    if (!error) {
+      var result = xml2json(xml_result);
+      if (result.property)
+        that.property = result.property;
+    } else {
+      console.log("Could not fetch GAR property with id: "+that.propertyID);
+      return;
+    }
+  });
 
   // Overall Context
   this.context = new Context(new SizeSet(200, 200));
   this.context.toggleClass("ResultThumb");
-  this.context.el.css('background-image', 'url('+this.result.thumbURL+')');
+  this.context.el.css('background-image', 'url('+this.thumbURL+')');
   this.context.el.click(function (e) {that.context.el.toggleClass("selected")});
 
   // Overlay Context
@@ -231,7 +320,7 @@ var GAR_ResultThumb = function (result, resultID)
   this.overlayContext.add(this.infoContext, new Area(10, 10, [-20, 1], [-20, 1]));
 
   // Hotel Name
-  this.infoContext.el.append($("<h3>"+this.result.title+"</h3>"));
+  this.infoContext.el.append($("<h3>"+this.hotelTitle+"</h3>"));
   // Hotel Price
   this.priceContext = new Context(180, 48);
   this.priceContext.toggleClass('Price');
