@@ -75,6 +75,7 @@ Template.BuyNavbar.events["click #SearchButton"] = function ()
 BuySearchContext = function () 
 {
   this.resultThumbs = [];
+  this.mapPins = [];
 
   this.context = new Context(new SizeSet("*", "*"));
   this.MainContent = new Context(new SizeSet("*", "*"));
@@ -278,7 +279,28 @@ BuySearchContext.prototype.search = function (q)
   //   }
   // };
   // this.place.getDetails(req, placecallback);
-}
+};
+BuySearchContext.prototype.dropPin = function (latlng)
+{
+  var markerOpts = {
+    position: latlng,
+    map: this.map
+  };
+  var pin = new google.maps.Marker(markerOpts);
+  this.mapPins.push(pin);
+};
+
+var GAR_Property = function (xml) {
+  var json = xml2json(xml);
+  this.data = json["property"];
+  if (!this.data)
+    return {};
+
+  this.lat = parseFloat(this.data.lat);
+  this.lng = parseFloat(this.data.lng);
+  this.latlngGoog = new google.maps.LatLng(this.lat, this.lng, true);
+};
+
 
 // TODO: extend Context
 var GAR_ResultThumb = function (result, resultID)
@@ -294,14 +316,12 @@ var GAR_ResultThumb = function (result, resultID)
   this.hotelTitle = result["title"];
   // this.property = Properties.findOne({uuid: this.propertyID});
   Meteor.call('fetchProperty_GAR', this.propertyID, function (error, xml_result) {
-    if (!error) {
-      var result = xml2json(xml_result);
-      if (result.property)
-        that.property = result.property;
-    } else {
+    if (error){
       console.log("Could not fetch GAR property with id: "+that.propertyID);
       return;
     }
+    that.property = new GAR_Property(xml_result);
+    window.BuySearch.dropPin(that.property.latlngGoog);
   });
 
   // Overall Context
