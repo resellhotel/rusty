@@ -167,13 +167,13 @@ BuySearchContext.prototype.search = function (q)
       that.ThumbListContext.add(that.resultThumbs[i].context);
     }
 
-  });
+  }); // END buyQuery call
 
   // Reposition Map
   // TODO: look up lat/lng for q["where"], set zoom to show city limits, set max area, set up pins?
   var options = {
     center: new google.maps.LatLng(-34.397, 150.644),
-    zoom: 8,
+    zoom: 12,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
   this.map = new google.maps.Map(this.MapContext.el[0], options);
