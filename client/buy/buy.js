@@ -113,54 +113,6 @@ BuySearchContext = function ()
 
 };
 
-function xml2json(xml) {
-  // At a leaf node, return data
-  if (xml.indexOf("<") == -1)
-    return xml;
-
-  var headerL = xml.indexOf("<?xml");
-  if (headerL != -1) {
-    var headerR = xml.indexOf(">", headerL);
-    var xmlbody = xml.substring(headerR+1);
-    return xml2json(xmlbody);
-  }
-
-  var data = {};
-  var startL = 0, startR = 0, endL = 0, endR = -1;
-
-  while (1) {
-    // No more tags to process
-    if (xml.indexOf("<", endR+1) == -1)
-      return data;
-
-    // Assume there exists a well-formed tag to parse
-    startL = xml.indexOf("<", endR+1);
-    startR = xml.indexOf(">", endR+1);
-    if (xml.charAt(startR-1) == "/")
-      return xml.substring(startL+1, startR-1);
-
-    var tagname = xml.substring(startL+1, startR).split(" ")[0];
-    var endtag = "</"+tagname+">";
-    endL = xml.indexOf(endtag, startR);
-    endR = endL + endtag.length;
-
-    var innerXML = xml.substring(startR+1, endL);
-    if (data[tagname]) {
-      if (!data[tagname].length) {
-        var o = data[tagname];
-        data[tagname] = [];
-        data[tagname].push(o);
-      }
-      data[tagname].push(xml2json(innerXML));
-    } else {
-      data[tagname] = xml2json(innerXML);
-    }
-  }
-
-  // Should never reach this point...
-  return data;
-};
-
 function parseTag(name, string) {
   var tag = "<"+name+">";
   var endtag = "</"+name+">";
@@ -290,11 +242,13 @@ BuySearchContext.prototype.dropPin = function (latlng)
   this.mapPins.push(pin);
 };
 
-var GAR_Property = function (xml) {
-  var json = xml2json(xml);
-  this.data = json["property"];
-  if (!this.data)
-    return {};
+var GAR_Property = function (data) {
+  this.data = data;
+
+  if (!this.data) {
+    console.log("GAR_Property ctor sees no input data.");
+    return;
+  }
 
   this.lat = parseFloat(this.data.lat);
   this.lng = parseFloat(this.data.lng);
@@ -305,22 +259,22 @@ var GAR_Property = function (xml) {
 // TODO: extend Context
 var GAR_ResultThumb = function (result, resultID)
 {
-  var that = this;
-
   this.resultID = resultID;
   this.result = result;
 
+  // Listing Data
   this.price = result["lowest-average"];
-  this.propertyID = result["uuid"];
   this.thumbURL = result["thumbnail_filename"];
   this.hotelTitle = result["title"];
-  // this.property = Properties.findOne({uuid: this.propertyID});
-  Meteor.call('fetchProperty_GAR', this.propertyID, function (error, xml_result) {
-    if (error){
+  this.propertyID = result["uuid"];
+  
+  var that = this;
+  Meteor.call('fetchProperty_GAR', this.propertyID, function (error, propertyData) {
+    if (error) {
       console.log("Could not fetch GAR property with id: "+that.propertyID);
       return;
     }
-    that.property = new GAR_Property(xml_result);
+    that.property = new GAR_Property(propertyData);
     window.BuySearch.dropPin(that.property.latlngGoog);
   });
 

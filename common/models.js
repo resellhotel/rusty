@@ -4,6 +4,7 @@ Visitors = new Meteor.Collection("visitors");
 
 Availabilities = new Meteor.Collection("availabilities");
 Properties = new Meteor.Collection("properties");
+QueryCache = new Meteor.Collection("querycache");
 
 // Set up server-side document publishes
 if (Meteor.is_server) {
@@ -31,6 +32,7 @@ if (Meteor.is_client) {
 
   Meteor.subscribe('properties');
   Meteor.subscribe('availabilities');
+  Meteor.subscribe('querycache');
 
   // Admin Data
   Meteor.subscribe('visitors'); 
