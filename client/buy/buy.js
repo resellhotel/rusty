@@ -123,6 +123,8 @@ function parseTag(name, string) {
 
 BuySearchContext.prototype.search = function (q)
 {
+  Session.set("BuyHasSearchResults", true);
+
   var that = this;
   console.log(q);
 
@@ -278,17 +280,18 @@ var GAR_ResultThumb = function (result, resultID)
     window.BuySearch.dropPin(that.property.latlngGoog);
   });
 
-  // Overall Context
+  // Self Context
   this.context = new Context(new SizeSet(200, 200));
   this.context.toggleClass("ResultThumb");
   this.context.el.css('background-image', 'url('+this.thumbURL+')');
   this.context.el.click(function (e) {that.context.el.toggleClass("selected")});
 
-  // Overlay Context
+  // Overlay Layer
   this.overlayContext = new Context(new SizeSet("*", "*"));
   this.overlayContext.toggleClass('ColorOverlay');
   this.context.add(this.overlayContext, new Area(0, 0, [0, 1], [0, 1]));
 
+  // Info Layer
   this.infoContext = new Context(new SizeSet("*", "*"));
   this.infoContext.toggleClass("ThumbInfo");
   this.overlayContext.add(this.infoContext, new Area(10, 10, [-20, 1], [-20, 1]));
@@ -309,7 +312,7 @@ var GAR_ResultThumb = function (result, resultID)
   this.moreInfoContext.toggleClass('MoreInfoButton');
   this.moreInfoContext.toggleClass('btn');
   this.infoContext.add(this.moreInfoContext, new Area("c", [-33, 1], [90, 0], [28, 0]));
-
+  // More Info Button Text
   var buttonText = new Context("*", "*");
   buttonText.el[0].innerHTML = "More Info";
   this.moreInfoContext.add(buttonText, new Area("c", "c", [0,1], [18,0]));

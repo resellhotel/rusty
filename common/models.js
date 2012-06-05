@@ -1,10 +1,13 @@
 Listings = new Meteor.Collection("listings");
 Users = new Meteor.Collection("users");
-Visitors = new Meteor.Collection("visitors");
 
 Availabilities = new Meteor.Collection("availabilities");
 Properties = new Meteor.Collection("properties");
 QueryCache = new Meteor.Collection("querycache");
+
+// Admin Data
+Visitors = new Meteor.Collection("visitors");
+AdminSettings = new Meteor.Collection("AdminSettings");
 
 // Set up server-side document publishes
 if (Meteor.is_server) {
@@ -36,6 +39,7 @@ if (Meteor.is_client) {
 
   // Admin Data
   Meteor.subscribe('visitors'); 
+  Meteor.subscribe('AdminSettings');
 }
 
 // EXAMPLE GAR PROPERTY

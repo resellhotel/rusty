@@ -20,6 +20,18 @@ var RustyRouter = Backbone.Router.extend({
   buy: function () {
     Session.set("mode", "buy");
     Session.set("view", "search");
+
+    // If in debug mode, kick off default search
+    if (Session.equals("BuyHasSearchResults", false) && Session.equals("DebugEnabled", true)) {
+      var query = {
+        where: "Austin",
+        checkin: "07/01/2012",
+        checkout: "07/02/2012",
+        guests: 1,
+        rooms: 1
+      };
+      window.BuySearch.search(query);
+    }
   },
   sell: function () {
     Session.set("mode", "sell");

@@ -12,17 +12,21 @@ Session.set('BuyQuery', {
   rooms: 1,
   guests: 1
 });
+Session.set("BuyHasSearchResults", false);
 
 Meteor.startup(function () {
   Backbone.history.start({pushState: true});
-
   window.BuySearch = new BuySearchContext();
-  // DEBUG: go right to boston results
-  // setTimeout(function() {
-  //   window.BuySearch.search({where: "Boston"});
-  // }, 500);
-
   logVisitor();
+
+  // Pull in Admin Settings
+  Session.set("DebugEnabled", true);
+  Meteor.setTimeout(function () {
+    var debugSettings = AdminSettings.findOne({name: "debug"});
+    if (debugSettings)
+      Session.set("DebugEnabled", debugSettings["enabled"]);
+    console.log(debugSettings);
+  }, 500);
 });
 
 // Common Application Logic
