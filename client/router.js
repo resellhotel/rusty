@@ -20,11 +20,6 @@ var RustyRouter = Backbone.Router.extend({
   buy: function () {
     Session.set("mode", "buy");
     Session.set("view", "search");
-
-    Meteor.setTimeout(function () {
-      $('#checkin').datepicker({ format: 'mm-dd-yyyy'});
-      $('#checkout').datepicker({ format: 'mm-dd-yyyy'});
-    }, 1000);
   },
   sell: function () {
     Session.set("mode", "sell");
@@ -77,10 +72,11 @@ var RustyRouter = Backbone.Router.extend({
       return;
     }
 
-
     Meteor.call('createListing', {}, function (err, id) {
-      if (!err)
+      if (!err) {
+        Meteor.flush();
         Router.navigate("/sell/listings/"+id, true);
+      }
     });  
   },
   admin: function () {

@@ -6,14 +6,16 @@ body
   padding-bottom: 40px;
 }
 
-.container-after-subnav
-{
-  padding-top: 40px;
-}
-
 .pill-bordered
 {
   border-radius: 15px;
   border: solid black 1px;
   padding: 15px;
+}
+
+.after-subnav
+{
+  position: absolute;
+  top: 77px;
+  left: 0px;
 }

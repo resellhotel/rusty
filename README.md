@@ -14,14 +14,36 @@ To Run Locally:
 1. If you didn't specify a port, open up Google Chrome to localhost:3000
 2. Profit!
 
-To Deploy to Production:
+Current Servers:
+============
+(Note: might not be updated frequently enough!)
+- GitHub repo location: https://github.com/resellhotel/rusty.git
+- Test Rackspace Webserver: 198.101.202.238
+- Test MongoDB: mongodb://test:rus1ty@flame.mongohq.com:27073/rusty-mongo
+
+Production Deploy:
 ============
 
-	Coming soon (once we have a prod server, e.g. Rackspace)...
+Coming soon (once we setup a prod server). For now, just use the same steps as for a test server.
 
-To Deploy to Test:
+Test Server Deploy:
 ============
 
-	Coming soon (once we have a test server, e.g. Rackspace)...
+1. Set up a test server to use, if necessary.
+2. cd ~/src/rusty; git pull <desired-commit/tag>
+3. git submodule update
+4. meteor bundle /tmp/bundle.tgz
+5. cd ~/hosted; tar -zxf /tmp/bundle.tgz
+6. export MONGO_URL='mongodb://user:password@host:port/databasename'
+7. node bundle/main.js
 
-	OR, you could use 'meteor deploy rustythetestdog.meteor.com' to temporary testing. Beware: that will deploy your instance to the public web, so anyone can see all your sekrets!
+Test Server Setup:
+============
+1. Spin up new RackSpace server
+2. apt-get install curl
+3. curl install.meteor.com | /bin/sh
+4. Install node+npm with these instructions: https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager
+5. npm install fibers  # might need to install globally with -g
+6. Clone github repo into ~/src
+7. cd ~/src/rusty; git submodule init; git submodule update;
+8. mkdir ~/hosted

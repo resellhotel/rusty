@@ -1,3 +1,5 @@
+window.googAPI_key = "AIzaSyAFpxh8N-tWOZQIcL8DzKB8MoY8hmNA5bQ";
+
 // Default Application View State
 Session.set('mode', "home");
 Session.set('view', "showHome");
@@ -13,6 +15,13 @@ Session.set('BuyQuery', {
 
 Meteor.startup(function () {
   Backbone.history.start({pushState: true});
+
+  window.BuySearch = new BuySearchContext();
+  // DEBUG: go right to boston results
+  // setTimeout(function() {
+  //   window.BuySearch.search({where: "Boston"});
+  // }, 500);
+
   logVisitor();
 });
 
