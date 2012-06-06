@@ -278,42 +278,6 @@ BuySearchContext.prototype.search = function (q)
   }
 };
 
-var GAR_Property = function (data) {
-  this.data = data;
-  this.pin;
-  this.isSelected = false;
-
-  if (!this.data) {
-    console.log("GAR_Property ctor sees no input data.");
-    return;
-  }
-
-  this.lat = parseFloat(this.data.lat);
-  this.lng = parseFloat(this.data.lng);
-  this.latlngGoog = new google.maps.LatLng(this.lat, this.lng, true);
-};
-GAR_Property.prototype.dropPin = function (map)
-{
-  var markerOpts = {
-    position: this.latlngGoog,
-    map: map,
-    icon: map.iconUnselected,
-    shadow: map.iconShadow
-  };
-  this.pin = new google.maps.Marker(markerOpts);
-  map.pins.push(this.pin);
-
-  var that = this;
-  google.maps.event.addListener(this.pin, 'click', function () {
-    that.isSelected = !that.isSelected;
-    if (that.isSelected)
-      that.pin.setIcon(map.iconSelected);
-    else
-      that.pin.setIcon(map.iconUnselected);
-    console.log("Marker Toggled");
-  });
-};
-
 // TODO: extend Context
 var GAR_ResultThumb = function (result, resultID)
 {
@@ -332,15 +296,21 @@ var GAR_ResultThumb = function (result, resultID)
       console.log("Could not fetch GAR property with id: "+that.propertyID);
       return;
     }
-    that.property = new GAR_Property(propertyData);
-    that.property.dropPin(window.BuySearch.map);
+    that.selected = false;
+    that.property = propertyData;
+
+    that.lat = parseFloat(that.property.lat);
+    that.lng = parseFloat(that.property.lng);
+    that.latlngGoog = new google.maps.LatLng(that.lat, that.lng, true);
+    that.map = window.BuySearch.map;
+    that.dropPin();
   });
 
   // Self Context
   this.context = new Context(new SizeSet(200, 200));
   this.context.toggleClass("ResultThumb");
   this.context.el.css('background-image', 'url('+this.thumbURL+')');
-  this.context.el.click(function (e) {that.context.el.toggleClass("selected")});
+  this.context.el.click(function (e) {that.toggleSelected();});
 
   // Overlay Layer
   this.overlayContext = new Context(new SizeSet("*", "*"));
@@ -372,6 +342,34 @@ var GAR_ResultThumb = function (result, resultID)
   var buttonText = new Context("*", "*");
   buttonText.el[0].innerHTML = "More Info";
   this.moreInfoContext.add(buttonText, new Area("c", "c", [0,1], [18,0]));
+};
+GAR_ResultThumb.prototype.dropPin = function ()
+{
+  if (this.pin)
+    return;
+
+  var markerOpts = {
+    position: this.latlngGoog,
+    map: this.map,
+    icon: this.map.iconUnselected,
+    shadow: this.map.iconShadow
+  };
+  this.pin = new google.maps.Marker(markerOpts);
+  this.map.pins.push(this.pin);
+
+  var that = this;
+  google.maps.event.addListener(this.pin, 'click', function () {
+    that.toggleSelected();
+  });
+};
+GAR_ResultThumb.prototype.toggleSelected = function ()
+{
+  this.selected = !this.selected;
+  if (this.selected)
+    this.pin.setIcon(this.map.iconSelected);
+  else
+    this.pin.setIcon(this.map.iconUnselected);
+  this.context.el.toggleClass("selected");
 };
 
 function placeDetail (ref) {
