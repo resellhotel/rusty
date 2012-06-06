@@ -72,10 +72,42 @@ Template.BuyNavbar.events["click #SearchButton"] = function ()
   window.BuySearch.search(q);
 };
 
+BootstrapStripedProgressBarContext = function ()
+{
+  var context = new Context(new SizeSet("*", "*"));
+  context.percent = 0;
+
+  var bar = $("<div>");
+  bar.toggleClass("bar");
+  context.el.append(bar);
+  context.bar = bar;
+
+  context.toggleClass("progress");
+  context.toggleClass("progress-striped");
+  context.toggleClass("active");
+
+  context.setProgress = function (fraction)
+  {
+    if (fraction > 1)
+      this.percent = 1;
+    else
+      this.percent = fraction;
+
+    this.bar.width((100*this.percent)+"%");
+  };
+  context.getProgress = function ()
+  {
+    return this.percent;
+  };
+
+  return context;
+};
+
 BuySearchContext = function () 
 {
   this.resultThumbs = [];
   this.mapPins = [];
+  this.geocoder = new google.maps.Geocoder();
 
   this.context = new Context(new SizeSet("*", "*"));
   this.MainContent = new Context(new SizeSet("*", "*"));
@@ -113,20 +145,38 @@ BuySearchContext = function ()
 
 };
 
-function parseTag(name, string) {
-  var tag = "<"+name+">";
-  var endtag = "</"+name+">";
-  var a = string.indexOf(tag);
-  var b = string.indexOf(endtag);
-  return string.substring(a+tag.length, b);
-}
-
-BuySearchContext.prototype.search = function (q)
+BuySearchContext.prototype.showProgress = function ()
 {
-  Session.set("BuyHasSearchResults", true);
+  if (!this.progressBar) {
+    this.progressBar = new BootstrapStripedProgressBarContext();
+    this.MainContent.add(this.progressBar, new Area(0, 0, [0, 1], 20));
+  }
+  this.progressBar.setProgress(0);
 
   var that = this;
-  console.log(q);
+  var interval = 33.3; // ms
+  var maxTime = 20000; // ms
+  var increment = interval/maxTime;
+  this.progressBar.intervalID = Meteor.setInterval(function () {
+    var fraction = that.progressBar.getProgress();
+    that.progressBar.setProgress(fraction + increment);
+  }, interval);
+
+  that.progressBar.el.show();
+};
+BuySearchContext.prototype.hideProgress = function ()
+{
+  if (!this.progressBar)
+    return;
+  if (this.progressBar.intervalID) {
+    Meteor.clearInterval(this.progressBar.intervalID);
+    this.progressBar.intervalID = null;
+  }
+  this.progressBar.el.hide();
+};
+BuySearchContext.prototype.search = function (q)
+{
+  var that = this;
 
   if (!isBuyQueryValid(q)) {
     console.log("Invalid Search Query");
@@ -143,115 +193,89 @@ BuySearchContext.prototype.search = function (q)
   // Get NEW results
   // TODO: merge these both into a server call to get current results and updated results
   // var results = Availabilities.find({where: q["where"]}).fetch();
+  this.showProgress();
+  Session.set("BuyHasSearchResults", true);
   Meteor.call("buyQuery", q, function (error, xml_result) {
     console.log("Server: buyQuery call complete");
     window.err = error;
     window.res = result;
 
-    // Parse out xml result into json
-    var stays = [];
-    if (!window.err) {
-      var result = xml2json(xml_result);
-
-      // Break out first level object
-      var o1 = result["hotel-stays"];
-      if (!o1) {
-        console.log("No results found.");
-        return;
-      }
-
-      // Break out second level object
-      stays = o1["hotel_stay"];
-      if (!stays) {
-        console.log("No results found.");
-        return;
-      }
-
-      // Less than 2 stays won't form an array, convert to array
-      // TODO: What if there are 0 stays?
-      if (!stays.length)
-        stays = [stays];
-
-      // --- Old method of parsing manually ---
-      // var strs = xml_result.split("<hotel_stay>");
-      // for (var i = 1; i < strs.length; i++) {
-      //   var stay = {};
-      //   var str = strs[i];
-      //   stay["uuid"] = parseTag("uuid", str);
-      //   stay["title"] = parseTag("title", str);
-      //   stay["thumbURL"] = parseTag("thumbnail_filename", str);
-      //   stay["price"] = parseTag("lowest-average", str);
-      //   stays[i-1] = stay;
-      // }
-
-    } else {
-      console.log("Buy Search Query failed.");
+    if (window.err) {
+      that.hideProgress();
+      alert("Oops, this search caused an error! Please try again later.");
       console.log(error);
       return;
     }
 
+    // Parse out xml result into json
+    var result = xml2json(xml_result);
+    var stays = result["hotel-stays"];
+    if (!stays || !stays["hotel_stay"]) {
+      that.hideProgress();
+      alert("Sorry, no results matched your search.");
+      return;
+    }
+
+    // Less than 2 stays won't form an array, convert to array
+    // TODO: What if there are 0 stays?
+    var stayList = stays["hotel_stay"];
+    if (!stayList.length)
+      stayList = [stayList];
+
     // Generate list of ResultThumbs
-    for (var i = 0; i < stays.length; i++) {
-      var result = stays[i];
+    for (var i = 0; i < stayList.length; i++) {
+      var result = stayList[i];
       that.resultThumbs[i] = new GAR_ResultThumb(result);
       that.ThumbListContext.add(that.resultThumbs[i].context);
     }
 
+    that.progressBar.setProgress(1);
+    Meteor.setTimeout(function () {
+      that.hideProgress();
+    }, 500);
+
   }); // END buyQuery call
 
-  // Reposition Map
-  // TODO: look up lat/lng for q["where"], set zoom to show city limits, set max area, set up pins?
-  var options = {
-    center: new google.maps.LatLng(-34.397, 150.644),
-    zoom: 12,
-    mapTypeId: google.maps.MapTypeId.ROADMAP
-  };
-  this.map = new google.maps.Map(this.MapContext.el[0], options);
+  // Set up Map
+  if (!this.map) {
+    // TODO: look up lat/lng for q["where"], set zoom to show city limits, set max area, set up pins?
+    var options = {
+      center: new google.maps.LatLng(-34.397, 150.644),
+      zoom: 12,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    this.map = new google.maps.Map(this.MapContext.el[0], options);
+  }
+  // TODO: cleanly delete old pins
   this.map.pins = [];
 
-  // Set up Marker Icons
-  this.map.iconSelected = new google.maps.MarkerImage(
-    iconImageURL("2980CA"),
-    new google.maps.Size(21, 34),
-    new google.maps.Point(0,0),
-    new google.maps.Point(10, 34));
-  this.map.iconUnselected = new google.maps.MarkerImage(
-    iconImageURL("FE7569"),
-    new google.maps.Size(21, 34),
-    new google.maps.Point(0,0),
-    new google.maps.Point(10, 34));
-  this.map.iconShadow = new google.maps.MarkerImage(
-    "http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
-    new google.maps.Size(40, 37),
-    new google.maps.Point(0, 0),
-    new google.maps.Point(12, 35));
-
-  this.geocoder = new google.maps.Geocoder();
+  // Center the map
   this.geocoder.geocode({'address': q["where"]}, function (geocodes, status) {
     if (status == google.maps.GeocoderStatus.OK) {
       that.map.setCenter(geocodes[0].geometry.location);
     } else {
-      console.log("Geocoder callback failed");
+      alert("Sorry, we weren't able to find that US city on the map. Did you type the name correctly?");
     }
   });
 
-  // Setup Map Places
-  // this.places = new google.maps.places.PlacesService(this.map);
-  // var req = {reference: "CkQxAAAAYCJqG3dlqlrXDePMraWuFijEufiYTHoaiAt7TyaWX5PNHatpr5zqS5p7epkoPfwaTPTa0ErCa-6VN_nr2s4N3hIQ53sEr6tIc-NzwUQTXmxAKBoU-yMuSPMeY5PKzWRdabbQXONcenE"};
-  // var placecallback = function (place, status) {
-  //   if (status == google.maps.places.PlacesServiceStatus.OK) {
-  //     var loc = place.geometry.location;
-  //     var options = {
-  //       center: new google.maps.LatLng(-34.397, 150.644),
-  //       zoom: 8,
-  //       mapTypeId: google.maps.MapTypeId.ROADMAP
-  //     };
-  //     this.map = new google.maps.Map(this.MapContext.el[0], options);
-  //   } else {
-  //     console.log("place callback failed");
-  //   }
-  // };
-  // this.place.getDetails(req, placecallback);
+  // Set up Marker Icons
+  if (!this.map.iconSelected) {
+    this.map.iconSelected = new google.maps.MarkerImage(
+      iconImageURL("2980CA"),
+      new google.maps.Size(21, 34),
+      new google.maps.Point(0,0),
+      new google.maps.Point(10, 34));
+    this.map.iconUnselected = new google.maps.MarkerImage(
+      iconImageURL("FE7569"),
+      new google.maps.Size(21, 34),
+      new google.maps.Point(0,0),
+      new google.maps.Point(10, 34));
+    this.map.iconShadow = new google.maps.MarkerImage(
+      "http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+      new google.maps.Size(40, 37),
+      new google.maps.Point(0, 0),
+      new google.maps.Point(12, 35));
+  }
 };
 
 var GAR_Property = function (data) {
