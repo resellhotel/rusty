@@ -1,3 +1,0 @@
-[submodule "client/libs/htmlcontextjs"]
-	path = client/libs/htmlcontextjs
-	url = git@github.com:d33z/htmlcontextjs.git
