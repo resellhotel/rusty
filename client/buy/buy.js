@@ -116,8 +116,7 @@ BuySearchContext = function ()
   this.MapContext = new Context(new SizeSet("*", "*"));
   this.MainContent.add(this.MapContext, new Area(0, 0, [0, .6], [0, 1]));
 
-  this.ThumbListContext = new Context(new SizeSet("*", "*"));
-  this.ThumbListContext.isScrollable = true;
+  this.ThumbListContext = new Context(new SizeSet("*", "*"), true);
   this.MainContent.add(this.ThumbListContext, new Area([0, .6], 0, [0, .4], [0, 1]));
 
   var that = this;
@@ -327,7 +326,7 @@ var GAR_ResultThumb = function (result, resultID)
   // Hotel Price
   this.priceContext = new Context(180, 48);
   this.priceContext.toggleClass('Price');
-  this.priceContext.el[0].innerHTML = "$"+Math.ceil(this.price);
+  this.priceContext.el[0].innerHTML = "<br>$"+Math.ceil(this.price);
   this.infoContext.add(this.priceContext, new Area("c", "c", [180, 0], [48, 0]));
   // Hotel Rating
   this.ratingContext = new Context(90, 14);
