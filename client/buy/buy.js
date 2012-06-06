@@ -154,7 +154,7 @@ BuySearchContext.prototype.showProgress = function ()
 
   var that = this;
   var interval = 33.3; // ms
-  var maxTime = 20000; // ms
+  var maxTime = 30000; // ms
   var increment = interval/maxTime;
   this.progressBar.intervalID = Meteor.setInterval(function () {
     var fraction = that.progressBar.getProgress();
