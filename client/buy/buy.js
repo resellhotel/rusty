@@ -269,6 +269,11 @@ BuySearchContext.prototype.search = function (q)
       new google.maps.Size(21, 34),
       new google.maps.Point(0,0),
       new google.maps.Point(10, 34));
+    this.map.iconHover = new google.maps.MarkerImage(
+      iconImageURL("CFB52B"),
+      new google.maps.Size(21, 34),
+      new google.maps.Point(0,0),
+      new google.maps.Point(10, 34));
     this.map.iconShadow = new google.maps.MarkerImage(
       "http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
       new google.maps.Size(40, 37),
@@ -310,6 +315,14 @@ var GAR_ResultThumb = function (result, resultID)
   this.context.toggleClass("ResultThumb");
   this.context.el.css('background-image', 'url('+this.thumbURL+')');
   this.context.el.click(function (e) {that.toggleSelected();});
+  this.context.el.hover(
+    function (e) {
+      that.startHover();
+    },
+    function (e) {
+      that.endHover();
+    }
+  );
 
   // Overlay Layer
   this.overlayContext = new Context(new SizeSet("*", "*"));
@@ -369,6 +382,17 @@ GAR_ResultThumb.prototype.toggleSelected = function ()
   else
     this.pin.setIcon(this.map.iconUnselected);
   this.context.el.toggleClass("selected");
+};
+GAR_ResultThumb.prototype.startHover = function ()
+{
+  this.pin.setIcon(this.map.iconHover);
+};
+GAR_ResultThumb.prototype.endHover = function ()
+{
+  if (this.selected)
+    this.pin.setIcon(this.map.iconSelected);
+  else
+    this.pin.setIcon(this.map.iconUnselected);
 };
 
 function placeDetail (ref) {
