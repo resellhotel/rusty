@@ -114,10 +114,10 @@ BuySearchContext = function ()
   this.context.add(this.MainContent, new Area(0, 77, [0, 1], [-77, 1]));
 
   this.MapContext = new Context(new SizeSet("*", "*"));
-  this.MainContent.add(this.MapContext, new Area(0, 0, [0, .6], [0, 1]));
+  this.MainContent.add(this.MapContext, new Area(0, 0, [-400, 1], [0, 1]));
 
   this.ThumbListContext = new Context(new SizeSet("*", "*"), true);
-  this.MainContent.add(this.ThumbListContext, new Area([0, .6], 0, [0, .4], [0, 1]));
+  this.MainContent.add(this.ThumbListContext, new Area([-400, 1], 0, [400, 0], [0, 1]));
 
   var that = this;
   document.body.appendChild(this.context.el[0]);
