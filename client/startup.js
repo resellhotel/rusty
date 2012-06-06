@@ -23,9 +23,10 @@ Meteor.startup(function () {
   Session.set("DebugEnabled", true);
   Meteor.setTimeout(function () {
     var debugSettings = AdminSettings.findOne({name: "debug"});
-    if (debugSettings)
+    if (debugSettings) {
       Session.set("DebugEnabled", debugSettings["enabled"]);
-    console.log(debugSettings);
+      console.log("Loaded Debug Settings");
+    }
   }, 500);
 });
 

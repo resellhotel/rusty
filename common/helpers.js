@@ -1,3 +1,9 @@
+// Google Maps v3 helper functions
+function iconImageURL(hexColor) {
+  return "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + hexColor;
+};
+
+// Simple XML to JSON parser
 function xml2json(xml) {
   // At a leaf node, return data
   if (xml.indexOf("<") == -1)

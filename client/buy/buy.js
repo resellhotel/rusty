@@ -207,6 +207,25 @@ BuySearchContext.prototype.search = function (q)
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
   this.map = new google.maps.Map(this.MapContext.el[0], options);
+  this.map.pins = [];
+
+  // Set up Marker Icons
+  this.map.iconSelected = new google.maps.MarkerImage(
+    iconImageURL("2980CA"),
+    new google.maps.Size(21, 34),
+    new google.maps.Point(0,0),
+    new google.maps.Point(10, 34));
+  this.map.iconUnselected = new google.maps.MarkerImage(
+    iconImageURL("FE7569"),
+    new google.maps.Size(21, 34),
+    new google.maps.Point(0,0),
+    new google.maps.Point(10, 34));
+  this.map.iconShadow = new google.maps.MarkerImage(
+    "http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+    new google.maps.Size(40, 37),
+    new google.maps.Point(0, 0),
+    new google.maps.Point(12, 35));
+
   this.geocoder = new google.maps.Geocoder();
   this.geocoder.geocode({'address': q["where"]}, function (geocodes, status) {
     if (status == google.maps.GeocoderStatus.OK) {
@@ -234,18 +253,11 @@ BuySearchContext.prototype.search = function (q)
   // };
   // this.place.getDetails(req, placecallback);
 };
-BuySearchContext.prototype.dropPin = function (latlng)
-{
-  var markerOpts = {
-    position: latlng,
-    map: this.map
-  };
-  var pin = new google.maps.Marker(markerOpts);
-  this.mapPins.push(pin);
-};
 
 var GAR_Property = function (data) {
   this.data = data;
+  this.pin;
+  this.isSelected = false;
 
   if (!this.data) {
     console.log("GAR_Property ctor sees no input data.");
@@ -256,7 +268,27 @@ var GAR_Property = function (data) {
   this.lng = parseFloat(this.data.lng);
   this.latlngGoog = new google.maps.LatLng(this.lat, this.lng, true);
 };
+GAR_Property.prototype.dropPin = function (map)
+{
+  var markerOpts = {
+    position: this.latlngGoog,
+    map: map,
+    icon: map.iconUnselected,
+    shadow: map.iconShadow
+  };
+  this.pin = new google.maps.Marker(markerOpts);
+  map.pins.push(this.pin);
 
+  var that = this;
+  google.maps.event.addListener(this.pin, 'click', function () {
+    that.isSelected = !that.isSelected;
+    if (that.isSelected)
+      that.pin.setIcon(map.iconSelected);
+    else
+      that.pin.setIcon(map.iconUnselected);
+    console.log("Marker Toggled");
+  });
+};
 
 // TODO: extend Context
 var GAR_ResultThumb = function (result, resultID)
@@ -277,7 +309,7 @@ var GAR_ResultThumb = function (result, resultID)
       return;
     }
     that.property = new GAR_Property(propertyData);
-    window.BuySearch.dropPin(that.property.latlngGoog);
+    that.property.dropPin(window.BuySearch.map);
   });
 
   // Self Context
