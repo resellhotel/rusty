@@ -186,14 +186,13 @@ BuySearchContext.prototype.search = function (q)
 
   // Clean up OLD results
   if (this.resultThumbs && this.resultThumbs.length) {
-    console.log("TODO: Clear out result thumbs correctly.");
-    // this.context.removeSubcontexts
     this.resultThumbs = [];
+    this.ThumbListContext.subcontexts = [];
+    this.ThumbListContext.subareas = [];
+    this.ThumbListContext.el.empty();
   }
 
   // Get NEW results
-  // TODO: merge these both into a server call to get current results and updated results
-  // var results = Availabilities.find({where: q["where"]}).fetch();
   this.showProgress();
   Session.set("BuyHasSearchResults", true);
   Meteor.call("buyQuery", q, function (error, xml_result) {
@@ -209,8 +208,8 @@ BuySearchContext.prototype.search = function (q)
     }
 
     // Parse out xml result into json
-    var result = xml2json(xml_result);
-    var stays = result["hotel-stays"];
+    var json = xml2json(xml_result);
+    var stays = json["hotel-stays"];
     if (!stays || !stays["hotel_stay"]) {
       that.hideProgress();
       alert("Sorry, no results matched your search.");

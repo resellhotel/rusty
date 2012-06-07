@@ -33,6 +33,9 @@ Meteor.methods({
   buyQuery: function (q) {
     // TODO: Validate query params
 
+    // TODO: Set a timeout on the clientside to look for
+    // cached results if the server takes too long.
+
     if (Meteor.is_server) {
       this.unblock();
 
