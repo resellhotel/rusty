@@ -117,6 +117,7 @@ var initDatePicker = function (id, value, onSelect)
 {
   initWhenReady(id, function () {
     var dp = $('#'+id);
+    dp.keydown(function (e) {e.preventDefault();});
     if (value) dp.val(value);
     dp.datepicker({ format: 'mm/dd/yyyy'}).on('changeDate', function (evt) {
       // TODO: Ideally, validate the change here.

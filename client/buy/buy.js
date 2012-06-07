@@ -39,7 +39,7 @@ function isBuyQueryValid (query) {
 
 Template.BuyNavbar.init = function () {
   initDatePicker('checkin', Clock.today(), function () {
-    $('#checkout').datepicker('show');
+    // $('#checkout').focus();
   });
   initDatePicker('checkout', Clock.tomorrow());
 };
@@ -86,6 +86,7 @@ BootstrapStripedProgressBarContext = function ()
   context.toggleClass("progress");
   context.toggleClass("progress-striped");
   context.toggleClass("active");
+  context.el.css("z-index", "11");
 
   context.setProgress = function (fraction)
   {
@@ -177,7 +178,7 @@ BuySearchContext.prototype.showProgress = function ()
     that.progressBar.setProgress(fraction + increment);
   }, interval);
 
-  that.progressBar.el.show();
+  that.progressBar.el.slideDown("fast");
 };
 BuySearchContext.prototype.hideProgress = function ()
 {
@@ -187,7 +188,7 @@ BuySearchContext.prototype.hideProgress = function ()
     Meteor.clearInterval(this.progressBar.intervalID);
     this.progressBar.intervalID = null;
   }
-  this.progressBar.el.hide();
+  this.progressBar.el.slideUp("slow");
 };
 BuySearchContext.prototype.search = function (q)
 {
