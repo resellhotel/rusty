@@ -51,9 +51,14 @@ Template.BuyNavbar.events = {};
 Template.BuyNavbar.events[eventMap] = FormGuy.make_okcancel_handler({
   ok: function (input, evt) {
     var q = Session.get("BuyQuery");
-    q[input.id] = input.value;
-    Session.set("BuyQuery", q);
+    var value = input.value;
 
+    // We want just the number from guests/rooms
+    if (input.id == "rooms" || input.id == "guests")
+      value = value.split(" ")[0];
+    q[input.id] = value;
+
+    Session.set("BuyQuery", q);
     if (!isBuyQueryValid(q)) {
       Session.set("BuySearchResults", []);
       return;
