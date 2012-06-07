@@ -139,9 +139,18 @@ BuySearchContext = function ()
   Meteor.autosubscribe(function () {
     var visible = Session.equals('mode', 'buy');
     var display = visible ? "block" : "none";
-    if (visible)
-      $('#where').typeahead({ source: window.cityNameList, items: 7 });
     that.context.el.css('display', display);
+
+    if (visible) {
+      var input = $('#where')[0];
+      var options = {
+        types: ['(cities)'],
+        componentRestrictions: {country: 'us'}
+      };
+      window.whereAutocomplete = new google.maps.places.Autocomplete(input, options);
+    }
+    // Using Bootstrap
+    // $('#where').typeahead({ source: window.cityNameList, items: 7 });
   });
 
 };
