@@ -38,7 +38,9 @@ function isBuyQueryValid (query) {
 };
 
 Template.BuyNavbar.init = function () {
-  initDatePicker('checkin', Clock.today());
+  initDatePicker('checkin', Clock.today(), function () {
+    $('#checkout').datepicker('show');
+  });
   initDatePicker('checkout', Clock.tomorrow());
 };
 
@@ -397,6 +399,7 @@ GAR_ResultThumb.prototype.endHover = function ()
     this.pin.setIcon(this.map.iconUnselected);
 };
 
+// TODO: Clean me up!
 function placeDetail (ref) {
   var url = "https://maps.googleapis.com/maps/api/place/details/json"
   url += "?reference=CkQxAAAAYCJqG3dlqlrXDePMraWuFijEufiYTHoaiAt7TyaWX5PNHatpr5zqS5p7epkoPfwaTPTa0ErCa-6VN_nr2s4N3hIQ53sEr6tIc-NzwUQTXmxAKBoU-yMuSPMeY5PKzWRdabbQXONcenE";
@@ -419,42 +422,5 @@ function placeDetail (ref) {
       console.log("complete");
     }
   });
-  // Meteor.http.get(url, function (err, result){
-  //   window.e = err;
-  //   window.r = result;
-  // });
 };
 
-
-// var dummyBuyResults = [
-//   {
-//     where: "Boston",
-//     checkin: "07/07/2012",
-//     checkout: "07/08/2012",
-//     rooms: "1",
-//     guests: "2",
-
-//     property: "ccf7ef8c-0ca6-5ad1-9bbe-ae44a81a242a",
-//     price: 123.12
-//   },
-//   {
-//     where: "Boston",
-//     checkin: "07/07/2012",
-//     checkout: "07/08/2012",
-//     rooms: "1",
-//     guests: "2",
-
-//     property: "9bde5855-7422-533e-b470-b072c611221c",
-//     price: 321.32
-//   },
-//   {
-//     where: "Boston",
-//     checkin: "07/07/2012",
-//     checkout: "07/08/2012",
-//     rooms: "1",
-//     guests: "2",
-
-//     property: "acc1ed34-ee88-5746-a2c6-0ce0aed5bb99",
-//     price: 777.77
-//   }
-// ];

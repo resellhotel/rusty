@@ -113,7 +113,7 @@ var initWhenReady = function (id, init)
   }
 };
 
-var initDatePicker = function (id, value)
+var initDatePicker = function (id, value, onSelect)
 {
   initWhenReady(id, function () {
     var dp = $('#'+id);
@@ -121,6 +121,7 @@ var initDatePicker = function (id, value)
     dp.datepicker({ format: 'mm/dd/yyyy'}).on('changeDate', function (evt) {
       // TODO: Ideally, validate the change here.
       dp.datepicker('hide');
+      if (onSelect) onSelect();
     });
   });
 };
