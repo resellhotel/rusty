@@ -65,13 +65,7 @@ Template.BuyNavbar.events[eventMap] = FormGuy.make_okcancel_handler({
     }
   }
 });
-// Template.BuyNavbar.events['keydown #where'] = function (e)
-// {
-//   console.log("keydown #where");
-//   var value = $('#where').val();
-//   // if (value matches a city)
-//   //   map.showcity(value);
-// };
+
 Template.BuyNavbar.events["click #SearchButton"] = function ()
 {
   console.log("search!");
@@ -110,6 +104,7 @@ BootstrapStripedProgressBarContext = function ()
   return context;
 };
 
+var LIST_WIDTH = 600;
 BuySearchContext = function () 
 {
   this.resultThumbs = [];
@@ -121,10 +116,14 @@ BuySearchContext = function ()
   this.context.add(this.MainContent, new Area(0, 77, [0, 1], [-77, 1]));
 
   this.MapContext = new Context(new SizeSet("*", "*"));
-  this.MainContent.add(this.MapContext, new Area(0, 0, [-400, 1], [0, 1]));
+  this.MapArea = new Area(0, 0, [0, 1], [0, 1]);
+  this.MainContent.add(this.MapContext, this.MapArea);
 
   this.ThumbListContext = new Context(new SizeSet("*", "*"), true);
-  this.MainContent.add(this.ThumbListContext, new Area([-400, 1], 0, [400, 0], [0, 1]));
+  this.MainContent.add(this.ThumbListContext, new Area([-1*LIST_WIDTH, 1], 0, [LIST_WIDTH, 0], [0, 1]));
+  this.ThumbListContext.toggleClass("ThumbList");
+  this.ThumbListContext.el.css("z-index", 10);
+  this.ThumbListContext.el.hide();
 
   var that = this;
   document.body.appendChild(this.context.el[0]);
@@ -138,6 +137,7 @@ BuySearchContext = function ()
     };
     that.context.layout(rect);
   };
+  this.forceLayout = onresize;
   $(window).resize(onresize);
   onresize();
 
@@ -204,6 +204,11 @@ BuySearchContext.prototype.search = function (q)
     this.ThumbListContext.subcontexts = [];
     this.ThumbListContext.subareas = [];
     this.ThumbListContext.el.empty();
+    Meteor.setTimeout(function () {
+      that.ThumbListContext.el.hide();
+    }, 1000);
+    this.MapArea.w[0] = 0;
+    window.BuySearch.forceLayout();
   }
 
   // Get NEW results
@@ -242,6 +247,13 @@ BuySearchContext.prototype.search = function (q)
       that.resultThumbs[i] = new GAR_ResultThumb(result);
       that.ThumbListContext.add(that.resultThumbs[i].context);
     }
+    Meteor.setTimeout(function () {
+      that.ThumbListContext.el.show();
+      Meteor.setTimeout(function () {
+        that.MapArea.w[0] = -1*LIST_WIDTH;
+        window.BuySearch.forceLayout();
+      }, 600);
+    }, 500);
 
     that.progressBar.setProgress(1);
     Meteor.setTimeout(function () {

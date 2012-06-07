@@ -8,26 +8,30 @@ Session.set('view', "showHome");
 Session.set('userID', null);
 // TODO: Is this still needed?
 Session.set('listingDraftID', Meteor.call('createListing', {}));
-Session.set('BuyQuery', {
-  rooms: 1,
-  guests: 1
-});
 Session.set("BuyHasSearchResults", false);
 
 Meteor.startup(function () {
   Backbone.history.start({pushState: true});
+
+  Session.set('BuyQuery', {
+    checkin: Clock.today(),
+    checkout: Clock.tomorrow(),
+    rooms: 1,
+    guests: 1
+  });
+
   window.BuySearch = new BuySearchContext();
   logVisitor();
 
-  // Pull in Admin Settings
-  Session.set("DebugEnabled", true);
-  Meteor.setTimeout(function () {
-    var debugSettings = AdminSettings.findOne({name: "debug"});
-    if (debugSettings) {
-      Session.set("DebugEnabled", debugSettings["enabled"]);
-      console.log("Loaded Debug Settings");
-    }
-  }, 500);
+  // Pull in Admin Debug Settings
+  // Session.set("DebugEnabled", false);
+  // Meteor.setTimeout(function () {
+  //   var debugSettings = AdminSettings.findOne({name: "debug"});
+  //   if (debugSettings) {
+  //     Session.set("DebugEnabled", debugSettings["enabled"]);
+  //     console.log("Loaded Debug Settings");
+  //   }
+  // }, 500);
 });
 
 // Common Application Logic
