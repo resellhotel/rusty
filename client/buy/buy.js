@@ -314,6 +314,8 @@ var GAR_ResultThumb = function (result, resultID)
   this.context = new Context(new SizeSet(200, 200));
   this.context.toggleClass("ResultThumb");
   this.context.el.css('background-image', 'url('+this.thumbURL+')');
+  this.context.el.css('background-repeat', 'no-repeat');
+  this.context.el.css('background-size', 'cover');
   this.context.el.click(function (e) {that.toggleSelected();});
   this.context.el.hover(
     function (e) {
