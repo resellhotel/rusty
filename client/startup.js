@@ -21,7 +21,6 @@ Meteor.startup(function () {
     guests: 1
   });
 
-  initBuy();
   initFacebookAPI();
 
   logVisitor();
@@ -36,11 +35,6 @@ Meteor.startup(function () {
   //   }
   // }, 500);
 });
-
-function initBuy()
-{
-  window.BuySearch = new BuySearchContext();
-};
 
 // Common Application Logic
 App = {

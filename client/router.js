@@ -18,6 +18,9 @@ var RustyRouter = Backbone.Router.extend({
     Session.set("view", "home");
   },
   buy: function () {
+    if (!window.BuySearch)
+      window.BuySearch = new BuySearchContext();
+
     Session.set("mode", "buy");
     Session.set("view", "search");
 
