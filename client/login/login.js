@@ -69,11 +69,15 @@ Template.loginNav.events = {
   },
   'click #FB_logoutButton': function (evt) {
     evt.preventDefault();
+    Session.set("loginMode", "loading");
     FB.logout();
   },
   'click #FB_loginButton': function (evt) {
     evt.preventDefault();
     FB.login();
+  },
+  'click #FB_loadingButton': function (evt) {
+    evt.preventDefault();
   }
 };
 
