@@ -20,3 +20,22 @@ body
   top: 77px;
   left: 0px;
 }
+
+.add-margin-top
+{
+  margin-top: 5px;
+}
+.add-margin-top2
+{
+  margin-top: 8px;
+}
+.add-margin-bottom
+{
+  margin-bottom: 5px;
+}
+
+.add-margin-sides
+{
+  margin-left: 10px;
+  margin-right: 10px;
+}

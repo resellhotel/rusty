@@ -1,3 +1,24 @@
+<template name="loginNav">
+  <div class="pull-right">
+
+  {{#if modeIs "loading"}}
+    <img src="https://s-static.ak.fbcdn.net/rsrc.php/v2/y9/r/jKEcVPZFk-2.gif">
+  {{/if}}
+
+  {{#if modeIs "login"}}
+    <a id="FB_loginButton" class="btn add-margin-bottom">Login</a>
+    <!-- <div class="fb-login-button add-margin-top2">Login</div> -->
+  {{/if}}
+
+  {{#if modeIs "logout"}}
+    <strong>{{FB_name}}</strong>
+    <img src="{{FB_pic_square}}" class="FB_PhotoLittle add-margin-sides">
+    <a id="FB_logoutButton" class="btn add-margin-bottom">Logout</a>
+  {{/if}}
+
+  </div>
+</template>
+
 <template name="loginModal">
   <div class="modal fade" id="loginModal">
     <div class="modal-header">

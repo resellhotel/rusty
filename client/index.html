@@ -9,10 +9,15 @@
 </head>
 
 <body>
+  {{> facebookshit}}
   {{> navbar}}
   {{> content}}
   {{> loginModal}}
 </body>
+
+<template name="facebookshit">
+  <div id="fb-root"></div>
+</template>
 
 <template name="content">
   {{#if mode_is "home"}}

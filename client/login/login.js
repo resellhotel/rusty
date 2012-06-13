@@ -36,7 +36,7 @@ Template.loginForm.events = {
     evt.preventDefault();
     LoginModal.submit();
   }
-}
+};
 
 Template.loginModal.hasAlert = function () {
   if (Session.get("LoginModal").alert)
@@ -48,4 +48,44 @@ Template.loginModal.alert = function () {
 };
 Template.loginModal.alertType = function () {
   return Session.get("LoginModal").alertType;
+};
+
+// --- Login/Logout Button ---
+
+Template.loginNav.modeIs = function (mode) {
+  return Session.equals("loginMode", mode);
+};
+Template.loginNav.logged_in = function () {
+  return App.isLoggedIn() ? true : false;
+};
+Template.loginNav.email = function () {
+  return App.userEmail();
+};
+
+Template.loginNav.events = {
+  'click #logoutButton': function (evt) {
+    evt.preventDefault();
+    App.logout();
+  },
+  'click #FB_logoutButton': function (evt) {
+    evt.preventDefault();
+    FB.logout();
+  },
+  'click #FB_loginButton': function (evt) {
+    evt.preventDefault();
+    FB.login();
+  }
+};
+
+Template.loginNav.FB_pic_square = function ()
+{
+  var user = Session.get("FB_user");
+  if (user && user.pic_square) return user.pic_square;
+  else return "http://placehold.it/40x40";
+};
+Template.loginNav.FB_name = function ()
+{
+  var user = Session.get("FB_user");
+  if (user && user.name) return user.name;
+  else return "";
 };

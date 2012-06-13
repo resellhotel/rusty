@@ -68,24 +68,6 @@ Template.subnavbar_item.events = {
 };
 
 
-// --- Login/Logout Button ---
-
-Template.loginNav.logged_in = function () {
-  return App.isLoggedIn();
-}
-
-Template.loginNav.email = function () {
-  return App.userEmail();
-}
-
-Template.loginNav.events = {
-  'click #logoutButton': function (evt) {
-    evt.preventDefault();
-    App.logout();
-  }
-}
-
-
 // --- Brand Logo ---
 Template.brand_logo.events = {
   'mousedown': function (evt) { // select list

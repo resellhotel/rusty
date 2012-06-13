@@ -6,6 +6,7 @@ Session.set('view', "showHome");
 
 // Default Application Logic State
 Session.set('userID', null);
+Session.set('loginMode', "loading");
 // TODO: Is this still needed?
 Session.set('listingDraftID', Meteor.call('createListing', {}));
 Session.set("BuyHasSearchResults", false);
@@ -20,7 +21,9 @@ Meteor.startup(function () {
     guests: 1
   });
 
-  window.BuySearch = new BuySearchContext();
+  initBuy();
+  initFacebookAPI();
+
   logVisitor();
 
   // Pull in Admin Debug Settings
@@ -34,10 +37,15 @@ Meteor.startup(function () {
   // }, 500);
 });
 
+function initBuy()
+{
+  window.BuySearch = new BuySearchContext();
+};
+
 // Common Application Logic
 App = {
   isLoggedIn: function () {
-    return !Session.equals("userID", null);
+    return Session.equals("loggedIn", true);
   },
   userEmail: function () {
     if (!App.isLoggedIn())
@@ -68,7 +76,7 @@ App = {
     }
   },
   logout: function() {
-    Session.set("userID", null);
+    Session.set("loggedIn", false);
   },
   uploadListing: function() {
     var fn = function () {
