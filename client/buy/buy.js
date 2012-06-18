@@ -380,10 +380,12 @@ var GAR_ResultThumb = function (result, resultID)
   this.moreInfoContext.toggleClass('MoreInfoButton');
   this.moreInfoContext.toggleClass('btn');
   this.infoContext.add(this.moreInfoContext, new Area("c", [-33, 1], [90, 0], [28, 0]));
+  this.moreInfoContext.el.click(function (e) {that.toggleInfo(e);});
+
   // More Info Button Text
-  var buttonText = new Context("*", "*");
-  buttonText.el[0].innerHTML = "More Info";
-  this.moreInfoContext.add(buttonText, new Area("c", "c", [0,1], [18,0]));
+  this.moreInfoContext.textContext = new Context("*", "*");
+  this.moreInfoContext.textContext.el[0].innerHTML = "More Info";
+  this.moreInfoContext.add(this.moreInfoContext.textContext, new Area("c", "c", [0,1], [18,0]));
 };
 GAR_ResultThumb.prototype.dropPin = function ()
 {
@@ -413,6 +415,27 @@ GAR_ResultThumb.prototype.toggleSelected = function ()
     this.pin.setIcon(this.map.iconUnselected);
   this.context.el.toggleClass("selected");
 };
+GAR_ResultThumb.prototype.toggleInfo = function (event)
+{
+  this.moreInfoContext.showingInfo = !this.moreInfoContext.showingInfo;
+  this.moreInfoContext.textContext.el[0].innerHTML = 
+    this.moreInfoContext.showingInfo ? "Less Info" : "More Info";
+
+  if (this.moreInfoContext.showingInfo) {
+    if (!this.hotelInfoContext) {
+      this.hotelInfoContext = new Context("*", "*");
+      this.hotelInfoContext.toggleClass("singleHotelInfo");
+    }
+    document.body.appendChild(this.hotelInfoContext.el[0]);
+  } else {
+    document.body.removeChild(this.hotelInfoContext.el[0]);
+  }
+
+  // select it if it's not selected but don't deselected it if it is selected.
+  if (this.selected)
+    event.preventPropagation();
+}
+
 GAR_ResultThumb.prototype.startHover = function ()
 {
   this.pin.setIcon(this.map.iconHover);
