@@ -129,5 +129,80 @@ Meteor.methods({
       console.log(result.statusCode);
       return result.content;
     }
+  },
+  // Algo API tests
+  algoReferenceTest: function () {
+    // Reference data types we need to query:
+    // AreaTypes
+    // BoardTypes
+    // BookingStatusTypes
+    // Currencies
+    // HotelDescriptionTypes
+    // HotelFacilityTypes
+    // Languages
+    // PaymentCardTypes
+    // PaymentTerms
+    // PhotoTypes
+    // PromotionTypes
+    // RoomFacilityTypes
+    // RoomTypes
+    // SpecialRequestTypes
+    // StaticDataObjectTypes
+    // Titles
+    // ViewTypes
+
+    // Example of querying AreaTypes:
+    var result = Meteor.http.get("https://test-static-shop-api.algo.travel/v1/AreaTypes.xml",
+              {auth: "nmahalec@maytia.com:autarisi11"});
+    return result.content;
+  },
+  algoStaticTest: function () {
+    // This is used for first-time fetching. Get all continents, then country for each continent,
+    // then states, county, city, etc.
+    var result = Meteor.http.get("https://test-static-shop-api.algo.travel/v1/Hotels/16658.xml",
+              {auth: "nmahalec@maytia.com:autarisi11"});
+    return result.content;
+
+    // that last number in the url is the last-known change ID. This is used for
+    // updating existing static data.
+    // var result = Meteor.http.get("https://test-static-shop-api.algo.travel/v1/254545",
+    //           {auth: "nmahalec@maytia.com:autarisi11"});
+    // return result.content;
+  },
+  algoAvailabilityTest: function () {
+    var result = Meteor.http.get("https://test-availability-shop-api.algo.travel/v1/search-hotel-by-area?currency-code=GBP&area-id=123&checkin-date=20120301&checkout-date=20120302&number-of-rooms=1&room-1-adult-count=2&room-1-child-count=0",
+              {auth: "nmahalec@maytia.com:autarisi11"});
+    return result.content;
+
+    // There's also a bundle availability query, which I think searches for a specific bundle we can use for booking.
+  },
+  algoBookingTest: function () {
+    // This code is just here to get a bundle ID that's available, we won't need it in the real world.
+    var result = Meteor.http.get("https://test-availability-shop-api.algo.travel/v1/search-bundle-availability?currency-code=GBP&hotel-id=12345&checkin-date=20121001&checkout-date=20121002&number-of-rooms=1&room-1-adult-count=1&room-1-child-count=0",
+              {auth: "nmahalec@maytia.com:autarisi11"});
+    var bundleID = result.content.match(/bundle-id=\"[^\"]+/)[0];
+    bundleID = bundleID.replace(/bundle-id=/,'').replace(/\"/,'');
+
+    // Everything here is required, there's a whole bunch of optional ones too.
+    var params = {
+      "bundle-id": bundleID,
+      "shop-reference-id": null,
+      "reserver-title-code": "mr",
+      "reserver-first-name": "Kenny",
+      "reserver-last-name": "Everett",
+      "reserver-email-address": "reserver@domain.com",
+      "reserver-phone-number": "+44 207 100 1234",
+      "reserver-language-id": "1",
+      // We can reserve up to 3 rooms at a time
+      "room-1-title-code": "mr",
+      "room-1-first-name": "Kenny",
+      "room-1-last-name": "Everett"
+    };
+
+    var result = Meteor.http.post("https://test-booking-shop-api.algo.travel/v1/make-booking",
+              {auth: "nmahalec@maytia.com:autarisi11", params: params});
+    return result.content;
+
+    // We can also fetch details and cancel the bookings that were made through this API.
   }
 });

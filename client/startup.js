@@ -34,6 +34,15 @@ Meteor.startup(function () {
   //     console.log("Loaded Debug Settings");
   //   }
   // }, 500);
+
+  // Algo API Tests
+  // var algoTests = ["algoReferenceTest", "algoStaticTest", "algoAvailabilityTest", "algoBookingTest"];
+  // var testToCall = 1;
+  // Meteor.call(algoTests[testToCall], function (status, result) {
+  //   console.log("Result of calling " + algoTests[testToCall]);
+  //   console.log(result);
+  //   console.log("end to results of " + algoTests[testToCall]);
+  // });
 });
 
 // Common Application Logic
