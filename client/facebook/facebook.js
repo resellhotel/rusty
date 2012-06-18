@@ -36,7 +36,7 @@ function initFacebookAPI()
 {
   window.fbAsyncInit = function() {
     FB.init({
-      appId      : '429503890403122', // App ID
+      appId      : '465850363443424', // App ID
       // channelUrl : '//WWW.YOUR_DOMAIN.COM/channel.html', // Channel File
       status     : true, // check login status
       cookie     : true, // enable cookies to allow the server to access the session
