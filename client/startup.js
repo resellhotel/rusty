@@ -34,16 +34,22 @@ Meteor.startup(function () {
   //     console.log("Loaded Debug Settings");
   //   }
   // }, 500);
-
-  // Algo API Tests
-  // var algoTests = ["algoReferenceTest", "algoStaticTest", "algoAvailabilityTest", "algoBookingTest"];
-  // var testToCall = 1;
-  // Meteor.call(algoTests[testToCall], function (status, result) {
-  //   console.log("Result of calling " + algoTests[testToCall]);
-  //   console.log(result);
-  //   console.log("end to results of " + algoTests[testToCall]);
-  // });
 });
+
+var testXml2JsnParser = function () {
+  // Algo API Tests
+  var algoTests = ["algoTestHotelInfo", "algoFetchRefStates", "algoFetchRefCitiesByState"];
+  var testToCall = 1;
+  console.log("Calling " + algoTests[testToCall]);
+  Meteor.call(algoTests[testToCall], function (status, result) {
+
+    window.result = result;
+    window.parsedResult = xml2json(result);
+
+    console.log("Finished calling " + algoTests[testToCall] + ", test result values: window.result/parsedResult");
+  });
+};
+
 
 // Common Application Logic
 App = {

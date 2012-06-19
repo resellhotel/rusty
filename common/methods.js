@@ -1,4 +1,13 @@
 Meteor.methods({
+  algoTestHotelInfo: function () {
+    if (!Meteor.is_server)
+      return;
+
+    var options = {auth: "nmahalec@maytia.com:autarisi11"};
+    var url = "https://test-static-shop-api.algo.travel/v1/Hotels/16658.xml";
+    var result = Meteor.http.get(url, options);
+    return result.content;
+  },
   algoFetchRefStates: function () {
     if (!Meteor.is_server)
       return;

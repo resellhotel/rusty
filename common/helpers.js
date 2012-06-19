@@ -4,73 +4,101 @@ function iconImageURL(hexColor) {
 };
 
 // Simple XML to JSON parser
+// Returns {tag1: [{attributes: {}, childNodes: {}}, {attributes: {}, childNodes: {}, etc], 
+//          tag2: [{attributes: {}, childNodes: {}}], 
+//          etc.}
+// attributes or childNodes may be null.
 function xml2json(xml) {
-  // At a leaf node, return data
-  if (xml.indexOf("<") == -1)
-    return xml;
 
-  var headerL = xml.indexOf("<?xml");
-  if (headerL != -1) {
-    var headerR = xml.indexOf(">", headerL);
-    var xmlbody = xml.substring(headerR+1);
-    return xml2json(xmlbody);
+  function getAttributes(openingTag) {
+    var attrArr = openingTag.match(/(?:\s+([\w-]+)\s*="([\w-]+)")+/);
+
+    // Didn't find any pairs of attributes
+    if (!attrArr || attrArr.length < 3)
+      return;
+
+    var attrs = {}
+    for (var i = 1; i < attrArr.length - 1; i += 2) {
+      var attrName = attrArr[i];
+      var attrVal = attrArr[i + 1];
+      attrs[attrName] = attrVal;
+    }
+    return attrs;
   }
 
-  var data = {};
-  var startL = 0, startR = 0, endL = 0, endR = -1;
+  function getOpeningTag(xml) {
+    var openingTag = xml.match(/\s*<[^\/][^>]+>\s*/);
+    if (!openingTag || !openingTag.length)
+        return null;
+    return openingTag[0];
+  }
+
+  function lastIndexOfClosingTag(xml, openingTag) {
+    var tagName = openingTag.match(/<([\w-]+)/)[1];
+    if (!tagName)
+      return -1;
+    return xml.lastIndexOf("</" + tagName + ">");
+  }
+
+  function isSelfClosingTag(openingTag) {
+    return openingTag.search("/>") != -1;
+  }
+
+  function getDataIfDataTag(openingTag) {
+    var data = openingTag.match(/^\s*<\!\[CDATA\[(.*)\]\]>\s*$/);
+    if (data && data.length > 1)
+      return data[1];
+  }
+
+  var data = null;
 
   while (1) {
-    // No more tags to process
-    if (xml.indexOf("<", endR+1) == -1)
+    // Assume there exists a well-formed tag to parse
+    var openingTag = getOpeningTag(xml);
+    
+    if (!openingTag) {
+      // Reached end of this scope, return all parsed data
+      if (data)
+        return data;
+      else // At a leaf node, return raw data
+        return xml;
+    }
+
+    // If this is raw data, just return it.
+    var data = getDataIfDataTag(openingTag);
+    if (data)
       return data;
 
-    // Assume there exists a well-formed tag to parse
-    startL = xml.indexOf("<", endR+1);
-    startR = xml.indexOf(">", endR+1);
-    if (xml.charAt(startR-1) == "/") {
-      var meat = xml.substring(startL+1, startR-1);
-      var name = meat.split(" ")[0];
-      if (!data[name])
-        data[name] = [];
+    if (openingTag.search("<?xml") != -1)
+      return xml2json(xml.substring(openingTag.length));
 
-      var attr_str = meat.substring(name.length).trim()
-      if (attr_str.charAt(attr_str.length-1) == "\"")
-        attr_str = attr_str.substring(0, attr_str.length-1);
-      var chunks = attr_str.split(/\"\s+/);
-      var value = {};
-      for (var a = 0; a < chunks.length; a++) {
-        var chunk = chunks[a];
-        var foos = chunk.split(/\s*=\s*\"/);
-        if (foos.length != 2)
-          console.log("Oh my foo!");
-        value[foos[0]] = foos[1];
-      }
+    if (!data)
+      data = {};
 
-      data[name].push(value);
-      endR = startR;
-      continue;      
+    var name = openingTag.match(/<([\w-]+)/)[1];
+
+    if (!data[name])
+      data[name] = [];
+
+    var nodeObj = {attributes: getAttributes(openingTag)};
+
+    var selfClosing = isSelfClosingTag(openingTag);
+    var closingTagPosition = selfClosing ? openingTag.length : lastIndexOfClosingTag(xml, openingTag);
+    if (!selfClosing) {
+      if (!closingTagPosition) {
+        console.error("Malformed: opening tag " + openingTag + "has no closing tag");
+        constinue;
+      } 
+      nodeObj.childNodes = xml2json(xml.substring(openingTag.length, closingTagPosition));
     }
 
-    var tagname = xml.substring(startL+1, startR).split(" ")[0];
-    var endtag = "</"+tagname+">";
-    endL = xml.indexOf(endtag, startR);
-    endR = endL + endtag.length;
-
-    var innerXML = xml.substring(startR+1, endL);
-    if (data[tagname]) {
-      if (!data[tagname].length) {
-        var o = data[tagname];
-        data[tagname] = [];
-        data[tagname].push(o);
-      }
-      data[tagname].push(xml2json(innerXML));
-    } else {
-      data[tagname] = xml2json(innerXML);
-    }
+    data[name].push(nodeObj);
+    xml = xml.substring(closingTagPosition);
   }
 
   // Should never reach this point...
-  return data;
+  console.error("xml2json: should never be reached");
+
 }; // END xml2json
 
 // Simple XML to JSON parser
