@@ -5,6 +5,8 @@ Availabilities = new Meteor.Collection("availabilities");
 Properties = new Meteor.Collection("properties");
 QueryCache = new Meteor.Collection("querycache");
 
+// Google 
+
 // Admin Data
 Visitors = new Meteor.Collection("visitors");
 AdminSettings = new Meteor.Collection("AdminSettings");

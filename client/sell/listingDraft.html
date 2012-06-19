@@ -30,7 +30,7 @@
       </div>
       <div id="step2" class="accordion-body collapse">
         <div class="accordion-inner">
-          {{>hotelInfoForm}}
+          {{>hotelPicker}}
         </div>
       </div>
     </div>
@@ -58,6 +58,32 @@
     Submit
     {{/if}}    
   </button>
+</template>
+
+<template name="hotelPicker">
+  <div id="hotelPicker" class="row-fluid">
+
+    <div class="span12">
+      <div class="row-fluid">
+
+        <div class="span6">
+          <input type="text" name="hotelCity" class="input-xlarge" id="hotelCity" placeholder="e.g. Boston, MA" value="">
+          <div id="hotelPickerMap"></div>
+        </div>
+
+        <div class="span6">
+          <input type="text" data-provide="typeahead" name="hotelName" class="input-xlarge" id="hotelName" placeholder="e.g. Park Plaza Hotel" value="">
+          <div id="hotelPickerChoice">
+            <h3>{{hotelName}}</h3>
+            {{hotelAddress}}
+            <img src="{{hotelImgURL}}">
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
 </template>
 
 <template name="reservationInfoForm">
@@ -112,21 +138,15 @@
   <fieldset>
 
     <div class="control-group">
+      <label class="control-label" for="hotelCity">City, State</label>
+      <div class="controls">
+        <input type="text" name="hotelCity" class="input-xlarge" id="hotelCity" placeholder="e.g. Boston, MA" value="">
+      </div>
+    </div>
+    <div class="control-group">
       <label class="control-label" for="hotelName">Hotel Name</label>
       <div class="controls">
         <input type="text" name="hotelName" class="input-xlarge" id="hotelName" placeholder="e.g. Park Plaza Hotel" value="">
-      </div>
-    </div>
-    <div class="control-group">
-      <label class="control-label" for="hotelCity">City</label>
-      <div class="controls">
-        <input type="text" name="hotelCity" class="input-xlarge" id="hotelCity" placeholder="e.g. Boston" value="">
-      </div>
-    </div>
-    <div class="control-group">
-      <label class="control-label" for="hotelState">State</label>
-      <div class="controls">
-        <input type="text" name="hotelState" class="input-xlarge" id="hotelState" placeholder="e.g. Massachusetts" value="">
       </div>
     </div>
 
