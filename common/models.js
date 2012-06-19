@@ -5,7 +5,15 @@ Availabilities = new Meteor.Collection("availabilities");
 Properties = new Meteor.Collection("properties");
 QueryCache = new Meteor.Collection("querycache");
 
-// Google 
+// Google Data
+// TODO
+
+// Algo.Travel Reference Data
+Cities = new Meteor.Collection("Cities");
+// City:
+  // algoID
+  // googRef
+  // fAddr
 
 // Admin Data
 Visitors = new Meteor.Collection("visitors");
@@ -28,6 +36,11 @@ if (Meteor.is_server) {
   Meteor.publish('properties', function () {
     return Properties.find();
   });
+
+  // Algo.Travel Reference Data
+  Meteor.publish('Cities', function () {
+    return Cities.find();
+  });
 }
 
 // Set up client-size document subscriptions
@@ -38,6 +51,9 @@ if (Meteor.is_client) {
   Meteor.subscribe('properties');
   Meteor.subscribe('availabilities');
   Meteor.subscribe('querycache');
+
+  // Algo.Travel Reference Data
+  Meteor.subscribe("Cities");
 
   // Admin Data
   Meteor.subscribe('visitors'); 

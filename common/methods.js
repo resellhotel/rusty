@@ -1,4 +1,39 @@
 Meteor.methods({
+  algoFetchRefStates: function () {
+    if (!Meteor.is_server)
+      return;
+
+    var options = {auth: "nmahalec@maytia.com:autarisi11"};
+    var url = "https://test-static-shop-api.algo.travel/v1/Areas/17409/state.xml";
+    var result = Meteor.http.get(url, options);
+    return result.content;
+  },
+  algoFetchRefCitiesByState: function (stateID) {
+    if (!Meteor.is_server)
+      return;
+
+    var options = {auth: "nmahalec@maytia.com:autarisi11"};
+    var url = "https://test-static-shop-api.algo.travel/v1/Areas/"+stateID+"/city.xml";
+    var result = Meteor.http.get(url, options);
+    return result.content;
+  },
+  algoFetchRefAreaDetail: function (areaID) {
+    if (!Meteor.is_server)
+      return;
+
+    var options = {auth: "nmahalec@maytia.com:autarisi11"};
+    var url = "https://test-static-shop-api.algo.travel/v1/Areas/"+areaID+".xml";
+    var result = Meteor.http.get(url, options);
+    return result.content;
+  },
+  algoCityInfo: function (id) {
+    if (!Meteor.is_server)
+      return;
+
+    var url = "https://test-static-shop-api.algo.travel/v1/Areas/"+id+".xml";
+    var result = Meteor.http.get(url, {auth: "nmahalec@maytia.com:autarisi11"});
+    return result.content;
+  },
   createUser: function(user) {
     if (!user)
       throw new Meteor.Error(1, "Must pass in user object.");
