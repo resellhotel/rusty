@@ -35,6 +35,76 @@ function convertToYYYYMMDD (date)
   return chunks[2]+chunks[0]+chunks[1];
 };
 
+// Simple XML to JSON parser for Algo.Travel API
+function xml2json_Algo(xml) {
+  // At a leaf node, return data
+  if (xml.indexOf("<") == -1)
+    return xml;
+
+  var headerL = xml.indexOf("<?xml");
+  if (headerL != -1) {
+    var headerR = xml.indexOf(">", headerL);
+    var xmlbody = xml.substring(headerR+1);
+    return xml2json_Algo(xmlbody);
+  }
+
+  var data = {};
+  var startL = 0, startR = 0, endL = 0, endR = -1;
+
+  while (1) {
+    // No more tags to process
+    if (xml.indexOf("<", endR+1) == -1)
+      return data;
+
+    // Assume there exists a well-formed tag to parse
+    startL = xml.indexOf("<", endR+1);
+    startR = xml.indexOf(">", endR+1);
+    if (xml.charAt(startR-1) == "/") {
+      var meat = xml.substring(startL+1, startR-1);
+      var name = meat.split(" ")[0];
+      if (!data[name])
+        data[name] = [];
+
+      var attr_str = meat.substring(name.length).trim()
+      if (attr_str.charAt(attr_str.length-1) == "\"")
+        attr_str = attr_str.substring(0, attr_str.length-1);
+      var chunks = attr_str.split(/\"\s+/);
+      var value = {};
+      for (var a = 0; a < chunks.length; a++) {
+        var chunk = chunks[a];
+        var foos = chunk.split(/\s*=\s*\"/);
+        if (foos.length != 2)
+          console.log("Oh my foo!");
+        value[foos[0]] = foos[1];
+      }
+
+      data[name].push(value);
+      endR = startR;
+      continue;      
+    }
+
+    var tagname = xml.substring(startL+1, startR).split(" ")[0];
+    var endtag = "</"+tagname+">";
+    endL = xml.indexOf(endtag, startR);
+    endR = endL + endtag.length;
+
+    var innerXML = xml.substring(startR+1, endL);
+    if (data[tagname]) {
+      if (!data[tagname].length) {
+        var o = data[tagname];
+        data[tagname] = [];
+        data[tagname].push(o);
+      }
+      data[tagname].push(xml2json_Algo(innerXML));
+    } else {
+      data[tagname] = xml2json_Algo(innerXML);
+    }
+  }
+
+  // Should never reach this point...
+  return data;
+}; // END xml2json_Algo
+
 // Simple XML to JSON parser
 // Returns {tag1: [{attributes: {}, childNodes: {}}, {attributes: {}, childNodes: {}, etc], 
 //          tag2: [{attributes: {}, childNodes: {}}], 
