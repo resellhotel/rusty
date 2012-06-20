@@ -67,59 +67,75 @@ if (Meteor.is_client) {
   Meteor.subscribe('AdminSettings');
 }
 
-function rebuildAlgoRefData ()
+function rebuildAlgoRefData_States ()
 {
   Meteor.call("algoFetchRefStates", function (status, result) {
-    var states = xml2json(result);
+    var json = xml2json(result);
+    var states = json.areas.area;
 
     // For all states
-    for (var i = 0; i < states.areas.area.length; i++) {
-      var stateID = states.areas.area[i]["area-id"];
+    for (var i = 0; i < states.length; i++) {
+      var stateID = states[i]["area-id"];
 
       // Create State Object, if needed
-      if (AlgoAreas.findOne({areaID: stateID})) {
-        // TODO: Get state info, recurse build up cities
-      } else {
-        Meteor.call("algoFetchRefAreaDetail", stateID, function (status, result) {
-          var state = xml2json(result);
-          var stateName = state.area.descriptions[1].text;
+      if (AlgoAreas.findOne({areaID: stateID}))
+        continue;
 
+      // Fetch State details and insert it!
+      Meteor.call("algoFetchRefAreaDetail", stateID, function (status, result) {
+          var json = xml2json(result);
+          var stateName = json.area.descriptions[1].text;
 
-          // Look up state's cities
-          Meteor.call("algoFetchRefCitiesByState", stateID, function (status, result) {
-            var cities = xml2json(result);
-            
-            // For all cities
-            for (var j = 0; j < cities.areas.area.length; j++) {
-              var cityID = cities.areas.area[j]["area-id"];
+          var state = {
+            type: "state",
+            areaID: stateID,
+            name: stateName
+          };
+          AlgoAreas.insert(state);
+      }); // Meteor.call 
 
-              // Get city's name
-              Meteor.call("algoFetchRefAreaDetail", cityID, function (status, result) {
-                var city = xml2json(result);
-                var cityName = state.area.descriptions[1].text;
+    } // for i
 
-                // Build Object if it doesn't already exist
-                // if (AlgoAreas)
-                // TODO
+  }); // Meteor.call
+};
 
+function rebuildAlgoRefData_Cities ()
+{
+  var states = AlgoAreas.find({type: "state"}).fetch();
 
-              });
-            }
+  // For each state, look up its cities
+  for (var i = 0; i < states.length; i++) {
+    var state = states[i];
 
-          });
+    // Fetch city list
+    Meteor.call("algoFetchRefCitiesByState", state.areaID, function (status, result) {
+      var cities = xml2json(result).areas.area;
 
+      // For all cities, fetch their data if they're not already present
+      for (var j = 0; j < cities.length; j++) {
+        var cityID = cities[j]["area-id"];
+
+        if (AlgoAreas.findOne({areaID: cityID}))
+          continue;
+
+        // Fetch city's details, insert new object
+        Meteor.call("algoFetchRefAreaDetail", cityID, function (status, result) {
+          var json = xml2json(result);
+          var cityName = json.area.descriptions[1].text;
+
+          var city = {
+            type: "city",
+            areaID: cityID,
+            name: cityName,
+            stateName: state.name
+          };
+          AlgoAreas.insert(city);
         });
-      }
+      } // Meteor.call (algoFetchRefAreaDetail)
 
-    } // for all states
+    }); // Meteor.call (algoFetchRefCitiesByState)
 
-
-    Meteor.call("algoFetchRefAreaDetail", areaid, function (status, result) {
-      window.b = result;
-      window.c = xml2json(window.b);
-    });
-  });
-
+  } // for i
 };
 
 // EXAMPLE GAR PROPERTY
