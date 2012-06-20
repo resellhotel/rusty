@@ -82,13 +82,30 @@ Meteor.methods({
       return;
 
     function parseHotelInfo(xml) {
-      return {
-        name: xml.match(/name="([^"]+)"/)[1],
-        lng: xml.match(/longitude="([^"]+)"/)[1],
-        lat: xml.match(/latitude="([^"]+)"/)[1],
-        photos: [xml.match(/full-size="([^"]+)"/)[1]],
-        description: xml.match(/<descriptions language="en-GB">\s*<description hotel-description-code="hotel-description">\s*<!\[CDATA\[([^\]]+)\]\]>/)[1]
-      };
+      retVal = {};
+      var temp = xml.match(/name="([^"]+)"/);
+      if (temp)
+        retVal.name = temp[1];
+
+      temp = xml.match(/longitude="([^"]+)"/);
+      if (temp)
+        retVal.lng = temp[1];
+
+      temp = xml.match(/latitude="([^"]+)"/);
+      if (temp)
+        retVal.lat = temp[1];
+
+      temp = xml.match(/full-size="([^"]+)"/);
+      if (temp)
+        retVal.photos = [temp[1]];
+
+      xml.substring(xml.search('<descriptions language="en-GB">'));
+      xml.substring(xml.search(0, '</descriptions>'));
+      temp = xml.match(/<description hotel-description-code="hotel-description">\s*<!\[CDATA\[([^\]]+)\]\]>/);
+      if (temp)
+        retVal.description = temp[1];
+
+      return retVal;
     };
 
     var options = {auth: "nmahalec@maytia.com:autarisi11"};
@@ -103,19 +120,19 @@ Meteor.methods({
     this.unblock();
 
     function parseHotelResults(xml) {
-      var hotels = xml.match(/(<hotel\s[^\/]+\/>)+/);
-
-      for (var i = 0; i < hotels.length; i++) {
+      var hotels = xml.split(/<hotel\s/);
+      var retVal = [];
+      for (var i = 1; i < hotels.length; i++) {
         var hotelTag = hotels[i];
         var hotel = {
           "hotel-id": hotelTag.match(/hotel-id="(\d+)"/)[1],
           "net-price": hotelTag.match(/net-price="([^"]+)"/)[1]
         };
 
-        hotels[i] = hotel;
+        retVal.push(hotel);
       }
 
-      return hotels;
+      return retVal;
     }
 
     // Algo.Travel Search Query

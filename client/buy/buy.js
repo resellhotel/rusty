@@ -397,7 +397,15 @@ var GAR_ResultThumb = function (result, source)
       that.thumbURL = property.photos[0];
       // TODO: Reconcile differences between APIs of usable thumbnail photos
     }
+
+    renderPropertyData();
   };
+
+  function renderPropertyData() {
+    that.context.el.css('background-image', 'url('+that.thumbURL+')');
+    that.infoContext.el.append($("<h3>"+that.hotelTitle+"</h3>"));
+    that.priceContext.el[0].innerHTML = "<br>$"+Math.ceil(that.price);
+  }
   
   // Fetch the hotel property's data
   if (this.source == "GAR")
@@ -408,7 +416,6 @@ var GAR_ResultThumb = function (result, source)
   // Self Context
   this.context = new Context(new SizeSet(200, 200));
   this.context.toggleClass("ResultThumb");
-  this.context.el.css('background-image', 'url('+this.thumbURL+')');
   this.context.el.css('background-repeat', 'no-repeat');
   this.context.el.css('background-size', 'cover');
   this.context.el.click(function (e) {that.toggleSelected();});
@@ -431,12 +438,9 @@ var GAR_ResultThumb = function (result, source)
   this.infoContext.toggleClass("ThumbInfo");
   this.overlayContext.add(this.infoContext, new Area(10, 10, [-20, 1], [-20, 1]));
 
-  // Hotel Name
-  this.infoContext.el.append($("<h3>"+this.hotelTitle+"</h3>"));
   // Hotel Price
   this.priceContext = new Context(180, 48);
   this.priceContext.toggleClass('Price');
-  this.priceContext.el[0].innerHTML = "<br>$"+Math.ceil(this.price);
   this.infoContext.add(this.priceContext, new Area("c", "c", [180, 0], [48, 0]));
   // Hotel Rating
   this.ratingContext = new Context(90, 14);
