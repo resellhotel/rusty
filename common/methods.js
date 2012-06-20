@@ -159,7 +159,6 @@ Meteor.methods({
     url += "&room-1-child-count=0";
 
     var result;
-    url = "https://test-availability-shop-api.algo.travel/v1/search-hotel-by-area?currency-code=GBP&area-id=123&checkin-date=20120301&checkout-date=20120302&number-of-rooms=1&room-1-adult-count=2&room-1-child-count=0";
     console.log(url);
 
     if (QueryCache && QueryCache.findOne({url: url})) {

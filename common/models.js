@@ -126,7 +126,7 @@ function rebuildAlgoRefDataCitiesByState (state)
     var cities = xml2json_Algo(result).areas.area;
 
     // For all cities, fetch their data if they're not already present
-    for (var j = 0; j < 1; j++) {
+    for (var j = 0; j < cities.length; j++) {
       var cityID = cities[j]["area-id"];
 
       if (AlgoAreas.findOne({areaID: cityID})) {
