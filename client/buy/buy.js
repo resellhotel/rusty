@@ -217,7 +217,7 @@ BuySearchContext.prototype.search = function (q)
   Session.set("BuyHasSearchResults", true);
 
   // Search Algo.Travel for Availabilities
-  Meteor.call("algoBuyQuery", q, function (error, xml_result) {
+  Meteor.call("algoBuyQuery", q, function (error, results) {
     console.log("Server: buyQuery call complete");
 
     // Abort on Error
@@ -228,18 +228,9 @@ BuySearchContext.prototype.search = function (q)
       return;
     }
 
-    // Parse out xml result into json
-    var json = xml2json(xml_result);
-    var stays = json["hotels"];
-    if (!stays || !stays[0] || !stays[0].childNodes) {
-      that.hideProgress();
-      alert("Sorry, no results matched your search.");
-      return;
-    }
-
     // Generate list of ResultThumbs
-    for (var i = 0; i < stays.length; i++) {
-      var result = stays[i];
+    for (var i = 0; i < results.length; i++) {
+      var result = results[i];
       that.resultThumbs[i] = new GAR_ResultThumb(result, "Algo");
       that.ThumbListContext.add(that.resultThumbs[i].context);
     }
