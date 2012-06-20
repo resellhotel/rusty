@@ -463,7 +463,8 @@ var GAR_ResultThumb = function (result, source)
   this.moreInfoContext.toggleClass('MoreInfoButton');
   this.moreInfoContext.toggleClass('btn');
   this.infoContext.add(this.moreInfoContext, new Area("c", [-33, 1], [90, 0], [28, 0]));
-  this.moreInfoContext.el.click(function (e) {that.toggleInfo(e);});
+  // TODO: Add this back in forealz
+  // this.moreInfoContext.el.click(function (e) {that.toggleInfo(e);});
 
   // More Info Button Text
   this.moreInfoContext.textContext = new Context("*", "*");
