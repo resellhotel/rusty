@@ -3,8 +3,10 @@ Users = new Meteor.Collection("users");
 
 Availabilities = new Meteor.Collection("availabilities");
 Properties = new Meteor.Collection("properties");
-QueryCache = new Meteor.Collection("querycache");
 
+// Caches
+QueryCache = new Meteor.Collection("querycache");
+DataSources = new Meteor.Collection("datasources");
 
 // Reference Data
 AlgoAreas = new Meteor.Collection("AlgoAreas");
@@ -40,6 +42,14 @@ if (Meteor.is_server) {
     return Properties.find();
   });
 
+  // Caches
+  Meteor.publish('querycache', function () {
+    return QueryCache.find();
+  });
+  Meteor.publish('datasources', function () {
+    return DataSources.find();
+  });
+
   // Reference Data
   Meteor.publish('Cities', function () {
     return Cities.find();
@@ -56,7 +66,10 @@ if (Meteor.is_client) {
 
   Meteor.subscribe('properties');
   Meteor.subscribe('availabilities');
+
+  // Caches
   Meteor.subscribe('querycache');
+  Meteor.subscribe('datasources');
 
   // Reference Data
   Meteor.subscribe("Cities");
@@ -67,7 +80,63 @@ if (Meteor.is_client) {
   Meteor.subscribe('AdminSettings');
 }
 
-function rebuildAlgoRefData_States ()
+// --------- REBUILD City Data -------- //
+function rebuildCities()
+{
+  console.log("Rebuilding cities!");
+
+  // Create all necessary cities
+  AlgoAreas.find({type: "city"}).forEach(createCity);
+
+  // Create Data Source for city list
+  console.log("Rebuilding City Source List!");
+  window.CitySourceList = Cities.find().map(function (city) {
+    return city.algoName;
+  });
+};
+
+function createCity(city)
+{
+  var areaID = city.areaID;
+
+  if (Cities.findOne({algoAreaID: areaID})) {
+    console.log("Already had a City with areaID: "+areaID);
+    return;
+  }
+
+  var algoName = city.name + ", " + city.stateName;
+  Cities.insert({
+    algoAreaID: areaID,
+    algoName: algoName
+  });
+};
+
+function geocodeCity(city)
+{
+  if (Meteor.is_client && window && !window.geocoder)
+    window.geocoder = new google.maps.Geocoder();
+  if (Meteor.is_server && !geocoder)
+    geocoder = new google.maps.Geocoder();
+
+  var where = city.algoName;
+  if (!where) {
+    console.log("City is missing field algoName");
+    return;
+  }
+
+  geocoder.geocode({'address': where}, function (geocodes, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      var fAddr = geocodes[0].formatted_address;
+      Cities.update({ algoAreaID: city.algoAreaID }, {$set : {fAddr: fAddr}});
+    } else {
+      console.log("Geocoder failed on createCity for Algo city with ID: "+city.algoAreaID);
+    } 
+  });
+};
+
+
+// ------ REBUILD Algo Reference Data ------- //
+function algoRebuildStates ()
 {
   Meteor.call("algoFetchRefStates", function (status, result) {
     var json = xml2json_Algo(result);
@@ -81,18 +150,23 @@ function rebuildAlgoRefData_States ()
       if (AlgoAreas.findOne({areaID: stateID}))
         continue;
 
-      rebuildAlgoRefData_State(states[i]["area-id"]);
+      algoRebuildState(states[i]["area-id"]);
     } // for i
 
   }); // Meteor.call
 };
 
-function rebuildAlgoRefData_State(stateID)
+function algoRebuildState(stateID)
 {
   // Fetch State details and insert it!
   Meteor.call("algoFetchRefAreaDetail", stateID, function (status, result) {
       var json = xml2json_Algo(result);
       var stateName = json.area.descriptions.description[1].text;
+
+      if (stateName.length != 2) {
+        console.log("Algo State Name wasn't abbr, but instead was: "+stateName+". Ignoring it.");
+        return;
+      }
 
       if (AlgoAreas.findOne({areaID: stateID})) {
         console.log("Already had state with areaID: "+stateID);
@@ -108,18 +182,18 @@ function rebuildAlgoRefData_State(stateID)
   }); // Meteor.call
 };
 
-function rebuildAlgoRefData_Cities ()
+function algoRebuildCities ()
 {
   var states = AlgoAreas.find({type: "state"}).fetch();
 
   // For each state, look up its cities
-  for (var i = 0; i < 1; i++) {
+  for (var i = 0; i < states.length; i++) {
     console.log("Rebuilding city list for state: "+states[i].name);
-    rebuildAlgoRefDataCitiesByState(states[i]);
+    algoRebuildCitiesByState(states[i]);
   } // for i
 };
 
-function rebuildAlgoRefDataCitiesByState (state)
+function algoRebuildCitiesByState (state)
 {
   // Fetch city list
   Meteor.call("algoFetchRefCitiesByState", state.areaID, function (status, result) {
@@ -134,13 +208,13 @@ function rebuildAlgoRefDataCitiesByState (state)
         continue;
       }
 
-      rebuildAlgoRefData_City(cities[j]["area-id"], state);
+      algoRebuildCity(cities[j]["area-id"], state);
     } // Meteor.call (algoFetchRefAreaDetail)
 
   }); // Meteor.call (algoFetchRefCitiesByState)
 };
 
-function rebuildAlgoRefData_City (cityID, state)
+function algoRebuildCity (cityID, state)
 {
   console.log("Fetching details for city with areaID: "+cityID);
 
@@ -161,37 +235,6 @@ function rebuildAlgoRefData_City (cityID, state)
     };
     console.log("Inserting record for "+cityName+", "+state.name);
     AlgoAreas.insert(city);
-  });
-};
-
-function rebuildCities()
-{
-  var algoCities = AlgoAreas.find({type: "city"}).fetch();
-  for (var i = 0; i < algoCities.length; i++)
-    createCity(algoCities[i]);
-};
-
-function createCity(city)
-{
-  var where = city.name + ", " + city.stateName;
-  var geocoder = new google.maps.Geocoder();
-  geocoder.geocode({'address': where}, function (geocodes, status) {
-    if (status == google.maps.GeocoderStatus.OK) {
-      var fAddr = geocodes[0].formatted_address;
-      var areaID = city.areaID;
-
-      if (Cities.findOne({fAddr: fAddr})) {
-        console.log("Already had a City with fAddr: "+fAddr);
-        return;
-      }
-
-      Cities.insert({
-        fAddr: fAddr,
-        algoAreaID: areaID
-      });
-    } else {
-      console.log("Geocoder failed on createCity for Algo city with ID: "+city.areaID);
-    }
   });
 };
 
