@@ -215,7 +215,12 @@ BuySearchContext.prototype.search = function (q)
   // Get NEW results
   this.showProgress();
   Session.set("BuyHasSearchResults", true);
-  Meteor.call("buyQuery", q, function (error, xml_result) {
+
+  // Search Algo.Travel for Availabilities
+  // TODO!!!
+
+  // Search GetARoom for Availabilities
+  Meteor.call("garBuyQuery", q, function (error, xml_result) {
     console.log("Server: buyQuery call complete");
     window.err = error;
     window.res = result;
@@ -228,7 +233,7 @@ BuySearchContext.prototype.search = function (q)
     }
 
     // Parse out xml result into json
-    var json = xml2json(xml_result);
+    var json = xml2json_GetARoom(xml_result);
     var stays = json["hotel-stays"];
     if (!stays || !stays["hotel_stay"]) {
       that.hideProgress();
@@ -261,7 +266,7 @@ BuySearchContext.prototype.search = function (q)
       that.hideProgress();
     }, 500);
 
-  }); // END buyQuery call
+  }); // END garBuyQuery
 
   // Set up Map
   if (!this.map) {
@@ -323,7 +328,7 @@ var GAR_ResultThumb = function (result, resultID)
   this.propertyID = result["uuid"];
   
   var that = this;
-  Meteor.call('fetchProperty_GAR', this.propertyID, function (error, propertyData) {
+  Meteor.call('garFetchProperty', this.propertyID, function (error, propertyData) {
     if (error) {
       console.log("Could not fetch GAR property with id: "+that.propertyID);
       return;

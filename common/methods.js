@@ -1,28 +1,46 @@
 Meteor.methods({
-  algoFetchProperty: function (id) {
-    if (!Meteor.is_server)
-      return;
+  createUser: function(user) {
+    if (!user)
+      throw new Meteor.Error(1, "Must pass in user object.");
 
-    function parseHotelInfo(xml) {
-      return {
-        name: xml.match(/name="([^"]+)"/)[1],
-        lng: xml.match(/longitude="([^"]+)"/)[1],
-        lat: xml.match(/latitude="([^"]+)"/)[1],
-        photos: [xml.match(/full-size="([^"]+)"/)[1]],
-        description: xml.match(/<descriptions language="en-GB">\s*<description hotel-description-code="hotel-description">\s*<!\[CDATA\[([^\]]+)\]\]>/)[1]
-      };
-    };
+    var now = Clock.now();
+    _.extend(user, {
+      listings: [],
+      when: now,
+      lastLogin: now
+    });
 
-    var options = {auth: "nmahalec@maytia.com:autarisi11"};
-    var url = "https://test-static-shop-api.algo.travel/v1/Hotels/" + id + ".xml";
-    var result = Meteor.http.get(url, options);
-    return parseHotelInfo(result.content);
+    var id = Users.insert(user);
+    return id;
   },
-  algoTestHotelInfo: function () {
-    if (!Meteor.is_server)
-      return;
+  createListing: function(listing) {    
+    listing = listing ? listing : {};
 
-    return Meteor.call("algoFetchProperty", 16658);
+    _.extend(listing, {
+      checkinDate: Clock.today(),
+      checkoutDate: Clock.tomorrow()
+    });
+
+    var id = Listings.insert(listing);
+    return id;
+  },
+  addListing: function(userID, listingID) {
+    var val = {};
+    val["listings"] = listingID;
+    Users.update({_id: userID}, {$addToSet: val});
+    return true;
+  },
+  cityList: function (input) {
+    if (Meteor.is_server) {
+      var url = "https://maps.googleapis.com/maps/api/place/autocomplete/json";
+      url += "?input="+input+"&sensor=false";
+      url += "&types=cities";
+      url += "&key="+window.googAPI_key;
+      console.log(url);
+      var result = Meteor.http.get(url);
+      console.log(result.statusCode);
+      return result.content;
+    }
   },
   algoFetchRefStates: function () {
     if (!Meteor.is_server)
@@ -59,38 +77,69 @@ Meteor.methods({
     var result = Meteor.http.get(url, {auth: "nmahalec@maytia.com:autarisi11"});
     return result.content;
   },
-  createUser: function(user) {
-    if (!user)
-      throw new Meteor.Error(1, "Must pass in user object.");
+  algoFetchProperty: function (id) {
+    if (!Meteor.is_server)
+      return;
 
-    var now = Clock.now();
-    _.extend(user, {
-      listings: [],
-      when: now,
-      lastLogin: now
-    });
+    function parseHotelInfo(xml) {
+      return {
+        name: xml.match(/name="([^"]+)"/)[1],
+        lng: xml.match(/longitude="([^"]+)"/)[1],
+        lat: xml.match(/latitude="([^"]+)"/)[1],
+        photos: [xml.match(/full-size="([^"]+)"/)[1]],
+        description: xml.match(/<descriptions language="en-GB">\s*<description hotel-description-code="hotel-description">\s*<!\[CDATA\[([^\]]+)\]\]>/)[1]
+      };
+    };
 
-    var id = Users.insert(user);
-    return id;
+    var options = {auth: "nmahalec@maytia.com:autarisi11"};
+    var url = "https://test-static-shop-api.algo.travel/v1/Hotels/" + id + ".xml";
+    var result = Meteor.http.get(url, options);
+    return parseHotelInfo(result.content);
   },
-  createListing: function(listing) {    
-    listing = listing ? listing : {};
+  algoBuyQuery: function (q) {
+    if (Meteor.is_server) {
+      this.unblock();
 
-    _.extend(listing, {
-      checkinDate: Clock.today(),
-      checkoutDate: Clock.tomorrow()
-    });
+      // Algo.Travel Search Query
+      var url = "https://test-availability-shop-api.algo.travel/v1/search-hotel-by-area";
+      url += "?currency-code=USD";
 
-    var id = Listings.insert(listing);
-    return id;
+      // Look up areaID
+      var areaID = reverseLookupAreaID(q["where"]);
+      url += "&area-id=" + areaID;
+
+      // Convert Dates to YYYYMMDD format
+      var checkin = convertToYYYYMMDD(q["checkin"]);
+      var checkout = convertToYYYYMMDD(q["checkout"]);
+      url += "&checkin-date=" + checkin;
+      url += "&checkout-date=" + checkout;
+
+      // Number of rooms
+      url += "&number-of-rooms=1";
+      // url += "&number-of-rooms="+q["rooms"];
+
+      // Add adult/child count per room
+      url += "&room-1-adult-count="+q["guests"];
+      url += "&room-1-child-count=0";
+
+      var result;
+      if (QueryCache && QueryCache.findOne({url: url})) {
+        result = QueryCache.findOne({url: url});
+        console.log("Cache Hit: Algo Availabilities.");
+      } else {
+        result = Meteor.http.get(url);
+        result.url = url;
+
+        var status = result.statusCode;
+        if ((status == 200 || status == "200") && QueryCache)
+          QueryCache.insert(result);
+        console.log(status);
+      }
+
+      return result.content;
+    }
   },
-  addListing: function(userID, listingID) {
-    var val = {};
-    val["listings"] = listingID;
-    Users.update({_id: userID}, {$addToSet: val});
-    return true;
-  },
-  buyQuery: function (q) {
+  garBuyQuery: function (q) {
     // TODO: Validate query params
 
     // TODO: Set a timeout on the clientside to look for
@@ -130,7 +179,7 @@ Meteor.methods({
       return result.content;
     }
   },
-  fetchProperty_GAR: function (uuid) {
+  garFetchProperty: function (uuid) {
 
     if (Meteor.is_server) {
       this.unblock();
@@ -167,7 +216,7 @@ Meteor.methods({
       }
 
       // Cache Property Data
-      var json = xml2json(result.content);
+      var json = xml2json_GetARoom(result.content);
       property = json["property"];
       if (property) {
         Properties.insert(property);
@@ -176,18 +225,6 @@ Meteor.methods({
 
       console.log("Failed to retrieve/parse GetARoom hotel with id: "+uuid);
       return;
-    }
-  },
-  cityList: function (input) {
-    if (Meteor.is_server) {
-      var url = "https://maps.googleapis.com/maps/api/place/autocomplete/json";
-      url += "?input="+input+"&sensor=false";
-      url += "&types=cities";
-      url += "&key="+window.googAPI_key;
-      console.log(url);
-      var result = Meteor.http.get(url);
-      console.log(result.statusCode);
-      return result.content;
     }
   },
   // Algo API tests

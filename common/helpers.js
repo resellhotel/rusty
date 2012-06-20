@@ -3,6 +3,18 @@ function iconImageURL(hexColor) {
   return "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + hexColor;
 };
 
+function reverseLookupAreaID (where)
+{
+  // TODO
+  return 123;
+};
+
+function convertToYYYYMMDD (date)
+{
+  var chunks = date.split("/");
+  return chunks[2]+chunks[0]+chunks[1];
+};
+
 // Simple XML to JSON parser
 // Returns {tag1: [{attributes: {}, childNodes: {}}, {attributes: {}, childNodes: {}, etc], 
 //          tag2: [{attributes: {}, childNodes: {}}], 
@@ -111,7 +123,7 @@ function xml2json_GetARoom(xml) {
   if (headerL != -1) {
     var headerR = xml.indexOf(">", headerL);
     var xmlbody = xml.substring(headerR+1);
-    return xml2json(xmlbody);
+    return xml2json_GetARoom(xmlbody);
   }
 
   var data = {};
@@ -140,15 +152,15 @@ function xml2json_GetARoom(xml) {
         data[tagname] = [];
         data[tagname].push(o);
       }
-      data[tagname].push(xml2json(innerXML));
+      data[tagname].push(xml2json_GetARoom(innerXML));
     } else {
-      data[tagname] = xml2json(innerXML);
+      data[tagname] = xml2json_GetARoom(innerXML);
     }
   }
 
   // Should never reach this point...
   return data;
-}; // END xml2json
+}; // END xml2json_GetARoom
 
 if (typeof Forms === "undefined")
   Forms = {};

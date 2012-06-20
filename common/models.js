@@ -5,10 +5,13 @@ Availabilities = new Meteor.Collection("availabilities");
 Properties = new Meteor.Collection("properties");
 QueryCache = new Meteor.Collection("querycache");
 
-// Google Data
-// TODO
 
-// Algo.Travel Reference Data
+// Reference Data
+AlgoAreas = new Meteor.Collection("AlgoAreas");
+// AlgoArea:
+  // areaID
+  // type
+  // (states/cities)
 Cities = new Meteor.Collection("Cities");
 // City:
   // algoID
@@ -37,9 +40,12 @@ if (Meteor.is_server) {
     return Properties.find();
   });
 
-  // Algo.Travel Reference Data
+  // Reference Data
   Meteor.publish('Cities', function () {
     return Cities.find();
+  });
+  Meteor.publish('AlgoAreas', function () {
+    return AlgoAreas.find();
   });
 }
 
@@ -52,13 +58,69 @@ if (Meteor.is_client) {
   Meteor.subscribe('availabilities');
   Meteor.subscribe('querycache');
 
-  // Algo.Travel Reference Data
+  // Reference Data
   Meteor.subscribe("Cities");
+  Meteor.subscribe("AlgoAreas");
 
   // Admin Data
   Meteor.subscribe('visitors'); 
   Meteor.subscribe('AdminSettings');
 }
+
+function rebuildAlgoRefData ()
+{
+  Meteor.call("algoFetchRefStates", function (status, result) {
+    var states = xml2json(result);
+
+    // For all states
+    for (var i = 0; i < states.areas.area.length; i++) {
+      var stateID = states.areas.area[i]["area-id"];
+
+      // Create State Object, if needed
+      if (AlgoAreas.findOne({areaID: stateID})) {
+        // TODO: Get state info, recurse build up cities
+      } else {
+        Meteor.call("algoFetchRefAreaDetail", stateID, function (status, result) {
+          var state = xml2json(result);
+          var stateName = state.area.descriptions[1].text;
+
+
+          // Look up state's cities
+          Meteor.call("algoFetchRefCitiesByState", stateID, function (status, result) {
+            var cities = xml2json(result);
+            
+            // For all cities
+            for (var j = 0; j < cities.areas.area.length; j++) {
+              var cityID = cities.areas.area[j]["area-id"];
+
+              // Get city's name
+              Meteor.call("algoFetchRefAreaDetail", cityID, function (status, result) {
+                var city = xml2json(result);
+                var cityName = state.area.descriptions[1].text;
+
+                // Build Object if it doesn't already exist
+                // if (AlgoAreas)
+                // TODO
+
+
+              });
+            }
+
+          });
+
+        });
+      }
+
+    } // for all states
+
+
+    Meteor.call("algoFetchRefAreaDetail", areaid, function (status, result) {
+      window.b = result;
+      window.c = xml2json(window.b);
+    });
+  });
+
+};
 
 // EXAMPLE GAR PROPERTY
 // <property>
@@ -104,74 +166,3 @@ if (Meteor.is_client) {
 //         </amenity>
 //     </amenities>
 // </property>
-
-// Dummy Availabilities
-Availability = {
-  // TODO: 'where' should be a destination uuid
-  where: "Boston", 
-  checkin: "07/07/2012",
-  checkout: "07/08/2012",
-  rooms: "1",
-  guests: "2",
-
-  property: "ccf7ef8c-0ca6-5ad1-9bbe-ae44a81a242a",
-  price: 322.12
-};
-Availability2 = {
-  // TODO: 'where' should be a destination uuid
-  where: "Boston", 
-  checkin: "07/07/2012",
-  checkout: "07/08/2012",
-  rooms: "1",
-  guests: "2",
-
-  property: "9bde5855-7422-533e-b470-b072c611221c",
-  price: 123.32
-};
-Availability3 = {
-  // TODO: 'where' should be a destination uuid
-  where: "Boston", 
-  checkin: "07/07/2012",
-  checkout: "07/08/2012",
-  rooms: "1",
-  guests: "2",
-
-  property: "acc1ed34-ee88-5746-a2c6-0ce0aed5bb99",
-  price: 155.30
-};
-
-// Dummy Properties
-Property = {
-  uuid: "ccf7ef8c-0ca6-5ad1-9bbe-ae44a81a242a",
-  title: "Ames Hotel",
-  thumbURLs: ["http://image1.urlforimages.com/1215557/exterior.jpg"],
-  lat: 42.35865,
-  lng: 71.057851,
-  description: "Ames, located in the beautiful and historic Ames building, inspires both modern style and old world sophistication. An experience rich with elegant interpretations, complemented by innovative new design by Rockwell Group, Ames brings Boston and its visitors the dynamic experience for which Morgans is known. Ideally located near historic Faneuil Hall and Beacon Hill, the 114-room Boston hotel has a vibrant restaurant and bar offering an atmosphere that is at once refined and playful, a state-of-the art fitness center and suites accented by dramatic, Romanesque arched windows and original fireplaces.",
-  phone: "+1 617 979 8100"
-};
-Property2 = {
-  uuid: "9bde5855-7422-533e-b470-b072c611221c",
-  title: "Comfort Inn North Shore Danvers",
-  thumbURLs: ["http://image1.urlforimages.com/1216656/001extfrnt.jpg"],
-  lat: 42.2,
-  lng: 71.0,
-  description: "It is a comfortable inn!",
-  phone: "+1 617 979 8100"
-};
-Property3 = {
-  uuid: "acc1ed34-ee88-5746-a2c6-0ce0aed5bb99",
-  title: "Rodeway Inn",
-  thumbURLs: ["http://image1.urlforimages.com/1221283/Exterior.jpg"],
-  lat: 42.4,
-  lng: 71.05,
-  description: "Rode is the way.",
-  phone: "+1 617 979 8100"
-};
-
-// Availabilities.insert(Availability);
-// Availabilities.insert(Availability2);
-// Availabilities.insert(Availability3);
-// Properties.insert(Property);
-// Properties.insert(Property2);
-// Properties.insert(Property3);
