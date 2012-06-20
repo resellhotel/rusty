@@ -231,7 +231,7 @@ BuySearchContext.prototype.search = function (q)
     // Parse out xml result into json
     var json = xml2json(xml_result);
     var stays = json["hotels"];
-    if (!stays || !stays[0]) {
+    if (!stays || !stays[0] || !stays[0].childNodes) {
       that.hideProgress();
       alert("Sorry, no results matched your search.");
       return;
