@@ -14,9 +14,9 @@ AlgoAreas = new Meteor.Collection("AlgoAreas");
   // (states/cities)
 Cities = new Meteor.Collection("Cities");
 // City:
-  // algoID
-  // googRef
   // fAddr
+  // algoAreaID
+  // googRef
 
 // Admin Data
 Visitors = new Meteor.Collection("visitors");

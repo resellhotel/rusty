@@ -216,38 +216,50 @@ BuySearchContext.prototype.search = function (q)
   this.showProgress();
   Session.set("BuyHasSearchResults", true);
 
-  // Search Algo.Travel for Availabilities
-  Meteor.call("algoBuyQuery", q, function (error, results) {
-    console.log("Server: buyQuery call complete");
+  // Find AreaID for Algo Search Query
+  reverseLookupAreaID(q["where"], function (areaID) {
+    // Search Algo.Travel for Availabilities, reverse lookup AreaID for the query
+    Meteor.call("algoBuyQuery", q, areaID, function (error, results) {
+      console.log("Server: buyQuery call complete");
 
-    // Abort on Error
-    if (window.err) {
-      that.hideProgress();
-      alert("Oops, this search caused an error! Please try again later.");
-      console.log(error);
-      return;
-    }
+      // Abort on Error
+      if (error) {
+        that.hideProgress();
+        alert("Oops, this search caused an error! Please try again later.");
+        console.log(error);
+        return;
+      }
 
-    // Generate list of ResultThumbs
-    for (var i = 0; i < results.length; i++) {
-      var result = results[i];
-      that.resultThumbs[i] = new GAR_ResultThumb(result, "Algo");
-      that.ThumbListContext.add(that.resultThumbs[i].context);
-    }
-    Meteor.setTimeout(function () {
-      that.ThumbListContext.el.show();
+            
+      if (!results || !results.length) {
+        that.hideProgress();
+        alert("Sorry, no results matched your search.");
+        return;
+      }
+
+      // Generate list of ResultThumbs
+      for (var i = 0; i < results.length; i++) {
+        var result = results[i];
+        that.resultThumbs[i] = new GAR_ResultThumb(result, "Algo");
+        that.ThumbListContext.add(that.resultThumbs[i].context);
+      }
+
       Meteor.setTimeout(function () {
-        that.MapArea.w[0] = -1*LIST_WIDTH;
-        window.BuySearch.forceLayout();
-      }, 600);
-    }, 500);
+        that.ThumbListContext.el.show();
+        Meteor.setTimeout(function () {
+          that.MapArea.w[0] = -1*LIST_WIDTH;
+          window.BuySearch.forceLayout();
+        }, 600);
+      }, 500);
 
-    that.progressBar.setProgress(1);
-    Meteor.setTimeout(function () {
-      that.hideProgress();
-    }, 500);
+      that.progressBar.setProgress(1);
+      Meteor.setTimeout(function () {
+        that.hideProgress();
+      }, 500);
 
-  }); // END garBuyQuery
+    }); // END algoBuyQuery
+
+  }); // END reverseLookupAreaID
 
   // Search GetARoom for Availabilities
   // Meteor.call("garBuyQuery", q, function (error, xml_result) {

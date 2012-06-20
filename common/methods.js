@@ -113,7 +113,8 @@ Meteor.methods({
     var result = Meteor.http.get(url, options);
     return parseHotelInfo(result.content);
   },
-  algoBuyQuery: function (q) {
+  // TODO: Find a cleaner way for this call than passing in the areaID
+  algoBuyQuery: function (q, areaID) {
     if (!Meteor.is_server)
       return;
 
@@ -141,7 +142,6 @@ Meteor.methods({
     url += "?currency-code=USD";
 
     // Look up areaID
-    var areaID = reverseLookupAreaID(q["where"]);
     url += "&area-id=" + areaID;
 
     // Convert Dates to YYYYMMDD format

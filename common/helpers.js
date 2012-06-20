@@ -3,10 +3,30 @@ function iconImageURL(hexColor) {
   return "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + hexColor;
 };
 
-function reverseLookupAreaID (where)
+function getAreaIDByFAddr(fAddr)
 {
-  // TODO
-  return 123;
+  var city = Cities.findOne({fAddr: fAddr});
+  if (!city)
+    throw new Error("No city found with fAddr: "+fAddr);
+  return city.algoAreaID;
+};
+
+function reverseLookupAreaID (where, fn)
+{
+  var chunks = where.split(",");
+  var city = chunks[0];
+  var state = chunks[1];
+
+  var geocoder = new google.maps.Geocoder();
+  geocoder.geocode({'address': where}, function (geocodes, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      var fAddr = geocodes[0].formatted_address;
+      var areaID = getAreaIDByFAddr(fAddr);
+      fn(areaID);
+    } else {
+      console.log("Reverse AreaID Lookup Failed.");
+    }
+  });
 };
 
 function convertToYYYYMMDD (date)
