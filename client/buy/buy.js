@@ -217,14 +217,10 @@ BuySearchContext.prototype.search = function (q)
   Session.set("BuyHasSearchResults", true);
 
   // Search Algo.Travel for Availabilities
-  // TODO!!!
-
-  // Search GetARoom for Availabilities
-  Meteor.call("garBuyQuery", q, function (error, xml_result) {
+  Meteor.call("algoBuyQuery", q, function (error, xml_result) {
     console.log("Server: buyQuery call complete");
-    window.err = error;
-    window.res = result;
 
+    // Abort on Error
     if (window.err) {
       that.hideProgress();
       alert("Oops, this search caused an error! Please try again later.");
@@ -233,24 +229,18 @@ BuySearchContext.prototype.search = function (q)
     }
 
     // Parse out xml result into json
-    var json = xml2json_GetARoom(xml_result);
-    var stays = json["hotel-stays"];
-    if (!stays || !stays["hotel_stay"]) {
+    var json = xml2json(xml_result);
+    var stays = json["hotels"];
+    if (!stays || !stays[0]) {
       that.hideProgress();
       alert("Sorry, no results matched your search.");
       return;
     }
 
-    // Less than 2 stays won't form an array, convert to array
-    // TODO: What if there are 0 stays?
-    var stayList = stays["hotel_stay"];
-    if (!stayList.length)
-      stayList = [stayList];
-
     // Generate list of ResultThumbs
-    for (var i = 0; i < stayList.length; i++) {
-      var result = stayList[i];
-      that.resultThumbs[i] = new GAR_ResultThumb(result);
+    for (var i = 0; i < stays.length; i++) {
+      var result = stays[i];
+      that.resultThumbs[i] = new GAR_ResultThumb(result, "Algo");
       that.ThumbListContext.add(that.resultThumbs[i].context);
     }
     Meteor.setTimeout(function () {
@@ -267,6 +257,53 @@ BuySearchContext.prototype.search = function (q)
     }, 500);
 
   }); // END garBuyQuery
+
+  // Search GetARoom for Availabilities
+  // Meteor.call("garBuyQuery", q, function (error, xml_result) {
+  //   console.log("Server: buyQuery call complete");
+
+  //   if (window.err) {
+  //     that.hideProgress();
+  //     alert("Oops, this search caused an error! Please try again later.");
+  //     console.log(error);
+  //     return;
+  //   }
+
+  //   // Parse out xml result into json
+  //   var json = xml2json_GetARoom(xml_result);
+  //   var stays = json["hotel-stays"];
+  //   if (!stays || !stays["hotel_stay"]) {
+  //     that.hideProgress();
+  //     alert("Sorry, no results matched your search.");
+  //     return;
+  //   }
+
+  //   // Less than 2 stays won't form an array, convert to array
+  //   // TODO: What if there are 0 stays?
+  //   var stayList = stays["hotel_stay"];
+  //   if (!stayList.length)
+  //     stayList = [stayList];
+
+  //   // Generate list of ResultThumbs
+  //   for (var i = 0; i < stayList.length; i++) {
+  //     var result = stayList[i];
+  //     that.resultThumbs[i] = new GAR_ResultThumb(result, "GAR");
+  //     that.ThumbListContext.add(that.resultThumbs[i].context);
+  //   }
+  //   Meteor.setTimeout(function () {
+  //     that.ThumbListContext.el.show();
+  //     Meteor.setTimeout(function () {
+  //       that.MapArea.w[0] = -1*LIST_WIDTH;
+  //       window.BuySearch.forceLayout();
+  //     }, 600);
+  //   }, 500);
+
+  //   that.progressBar.setProgress(1);
+  //   Meteor.setTimeout(function () {
+  //     that.hideProgress();
+  //   }, 500);
+
+  // }); // END garBuyQuery
 
   // Set up Map
   if (!this.map) {
@@ -316,32 +353,66 @@ BuySearchContext.prototype.search = function (q)
 };
 
 // TODO: extend Context
-var GAR_ResultThumb = function (result, resultID)
+var GAR_ResultThumb = function (result, source)
 {
-  this.resultID = resultID;
-  this.result = result;
+  this.result = result; // Crude JSON Result
+  this.source = source; // e.g. GetARoom or Algo.Travel
+  this.selected = false;
 
-  // Listing Data
-  this.price = result["lowest-average"];
-  this.thumbURL = result["thumbnail_filename"];
-  this.hotelTitle = result["title"];
-  this.propertyID = result["uuid"];
+  // Core Listing Data
+  this.price;       // Listed price
+  this.propertyID;  // Hotel property ID
+
+  // Core Hotel Data
+  this.hotelTitle;  // Title of the hotel
+  this.thumbURL;    // URL to main thumbnail
+  // TODO: Add these...
+  this.thumbURLs;   // List of all thumbnails
+  this.photoURLs;   // List of all hotel photos
+  this.latlng;      // Google LatLng of hotel
+
+  if (source == "GAR") {
+    // Listing Data
+    this.price = result["lowest-average"];
+    this.propertyID = result["uuid"];
+    // Hotel Data
+    this.thumbURL = result["thumbnail_filename"];
+    this.hotelTitle = result["title"];
+  } else if (source == "Algo") {
+    // Listing Data
+    this.price = result["net-price"];
+    this.propertyID = result["hotel-id"];
+  }
   
+  // Extracts out necessary property data
   var that = this;
-  Meteor.call('garFetchProperty', this.propertyID, function (error, propertyData) {
+  function extractPropertyData(error, property) {
     if (error) {
-      console.log("Could not fetch GAR property with id: "+that.propertyID);
+      console.log("Could not fetch "+that.source+" property with id: "+that.propertyID);
       return;
     }
-    that.selected = false;
-    that.property = propertyData;
 
-    that.lat = parseFloat(that.property.lat);
-    that.lng = parseFloat(that.property.lng);
-    that.latlngGoog = new google.maps.LatLng(that.lat, that.lng, true);
+    // Extract Lat/Lng, create map pin
+    var lat = parseFloat(property.lat);
+    var lng = parseFloat(property.lng);
+    that.latlngGoog = new google.maps.LatLng(lat, lng, true);
     that.map = window.BuySearch.map;
     that.dropPin();
-  });
+
+    // If Algo result, extract Hotel Data
+    if (that.source == "Algo") {
+      // Hotel Data
+      that.hotelTitle = property.name;
+      that.thumbURL = property.photos[0];
+      // TODO: Reconcile differences between APIs of usable thumbnail photos
+    }
+  };
+  
+  // Fetch the hotel property's data
+  if (this.source == "GAR")
+    Meteor.call('garFetchProperty', this.propertyID, extractPropertyData);
+  else if (this.source == "Algo")
+    Meteor.call('algoFetchProperty', this.propertyID, extractPropertyData);
 
   // Self Context
   this.context = new Context(new SizeSet(200, 200));

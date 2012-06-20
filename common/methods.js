@@ -97,47 +97,51 @@ Meteor.methods({
     return parseHotelInfo(result.content);
   },
   algoBuyQuery: function (q) {
-    if (Meteor.is_server) {
-      this.unblock();
+    if (!Meteor.is_server)
+      return;
 
-      // Algo.Travel Search Query
-      var url = "https://test-availability-shop-api.algo.travel/v1/search-hotel-by-area";
-      url += "?currency-code=USD";
+    this.unblock();
 
-      // Look up areaID
-      var areaID = reverseLookupAreaID(q["where"]);
-      url += "&area-id=" + areaID;
+    // Algo.Travel Search Query
+    var url = "https://test-availability-shop-api.algo.travel/v1/search-hotel-by-area";
+    url += "?currency-code=USD";
 
-      // Convert Dates to YYYYMMDD format
-      var checkin = convertToYYYYMMDD(q["checkin"]);
-      var checkout = convertToYYYYMMDD(q["checkout"]);
-      url += "&checkin-date=" + checkin;
-      url += "&checkout-date=" + checkout;
+    // Look up areaID
+    var areaID = reverseLookupAreaID(q["where"]);
+    url += "&area-id=" + areaID;
 
-      // Number of rooms
-      url += "&number-of-rooms=1";
-      // url += "&number-of-rooms="+q["rooms"];
+    // Convert Dates to YYYYMMDD format
+    var checkin = convertToYYYYMMDD(q["checkin"]);
+    var checkout = convertToYYYYMMDD(q["checkout"]);
+    url += "&checkin-date=" + checkin;
+    url += "&checkout-date=" + checkout;
 
-      // Add adult/child count per room
-      url += "&room-1-adult-count="+q["guests"];
-      url += "&room-1-child-count=0";
+    // Number of rooms
+    url += "&number-of-rooms=1";
+    // url += "&number-of-rooms="+q["rooms"];
 
-      var result;
-      if (QueryCache && QueryCache.findOne({url: url})) {
-        result = QueryCache.findOne({url: url});
-        console.log("Cache Hit: Algo Availabilities.");
-      } else {
-        result = Meteor.http.get(url);
-        result.url = url;
+    // Add adult/child count per room
+    url += "&room-1-adult-count="+q["guests"];
+    url += "&room-1-child-count=0";
 
-        var status = result.statusCode;
-        if ((status == 200 || status == "200") && QueryCache)
-          QueryCache.insert(result);
-        console.log(status);
-      }
+    var result;
+    console.log(url);
 
-      return result.content;
+    if (QueryCache && QueryCache.findOne({url: url})) {
+      result = QueryCache.findOne({url: url});
+      console.log("Cache Hit: Algo Availabilities.");
+    } else {
+      var options = {auth: "nmahalec@maytia.com:autarisi11"};
+      result = Meteor.http.get(url, options);
+      result.url = url;
+
+      var status = result.statusCode;
+      if ((status == 200 || status == "200") && QueryCache)
+        QueryCache.insert(result);
+      console.log(status);
     }
+
+    return result.content;
   },
   garBuyQuery: function (q) {
     // TODO: Validate query params
