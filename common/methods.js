@@ -1,12 +1,28 @@
 Meteor.methods({
+  algoFetchProperty: function (id) {
+    if (!Meteor.is_server)
+      return;
+
+    function parseHotelInfo(xml) {
+      return {
+        name: xml.match(/name="([^"]+)"/)[1],
+        lng: xml.match(/longitude="([^"]+)"/)[1],
+        lat: xml.match(/latitude="([^"]+)"/)[1],
+        photos: [xml.match(/full-size="([^"]+)"/)[1]],
+        description: xml.match(/<descriptions language="en-GB">\s*<description hotel-description-code="hotel-description">\s*<!\[CDATA\[([^\]]+)\]\]>/)[1]
+      };
+    };
+
+    var options = {auth: "nmahalec@maytia.com:autarisi11"};
+    var url = "https://test-static-shop-api.algo.travel/v1/Hotels/" + id + ".xml";
+    var result = Meteor.http.get(url, options);
+    return parseHotelInfo(result.content);
+  },
   algoTestHotelInfo: function () {
     if (!Meteor.is_server)
       return;
 
-    var options = {auth: "nmahalec@maytia.com:autarisi11"};
-    var url = "https://test-static-shop-api.algo.travel/v1/Hotels/16658.xml";
-    var result = Meteor.http.get(url, options);
-    return result.content;
+    return Meteor.call("algoFetchProperty", 16658);
   },
   algoFetchRefStates: function () {
     if (!Meteor.is_server)

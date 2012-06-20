@@ -7,5 +7,5 @@ Meteor.methods({
   },
   emitMessage: function (msg) {
     console.log(msg);
-  }
+  },
 });

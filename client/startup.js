@@ -39,17 +39,16 @@ Meteor.startup(function () {
 var testXml2JsnParser = function () {
   // Algo API Tests
   var algoTests = ["algoTestHotelInfo", "algoFetchRefStates", "algoFetchRefCitiesByState"];
-  var testToCall = 1;
+  var testToCall = 0;
   console.log("Calling " + algoTests[testToCall]);
   Meteor.call(algoTests[testToCall], function (status, result) {
 
     window.result = result;
-    window.parsedResult = xml2json(result);
+    // window.parsedResult = parseHotelInfo(result);
 
     console.log("Finished calling " + algoTests[testToCall] + ", test result values: window.result/parsedResult");
   });
 };
-
 
 // Common Application Logic
 App = {
