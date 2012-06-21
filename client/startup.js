@@ -21,7 +21,7 @@ Meteor.startup(function () {
     guests: 1
   });
 
-  // initFacebookAPI();
+  initFacebookAPI();
   // logVisitor();
 
   // Pull in Admin Debug Settings

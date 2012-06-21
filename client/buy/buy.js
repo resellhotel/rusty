@@ -201,6 +201,7 @@ BuySearchContext.prototype.search = function (q)
 
   // Clean up OLD results
   if (this.resultThumbs && this.resultThumbs.length) {
+    console.log("Removing old search results.");
     this.resultThumbs = [];
     this.ThumbListContext.subcontexts = [];
     this.ThumbListContext.subareas = [];
@@ -212,10 +213,10 @@ BuySearchContext.prototype.search = function (q)
     window.BuySearch.forceLayout();
   }
 
-  // Get NEW results
+  // Start progress bar
   this.showProgress();
+  // Note the presence of results
   Session.set("BuyHasSearchResults", true);
-
   // Find AreaID for Algo Search Query
   var areaID = reverseLookupAreaID(q["where"]);
 
