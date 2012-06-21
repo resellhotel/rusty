@@ -206,9 +206,7 @@ BuySearchContext.prototype.search = function (q)
     this.ThumbListContext.subcontexts = [];
     this.ThumbListContext.subareas = [];
     this.ThumbListContext.el.empty();
-    Meteor.setTimeout(function () {
-      that.ThumbListContext.el.hide();
-    }, 1000);
+    that.ThumbListContext.el.hide();
     this.MapArea.w[0] = 0;
     window.BuySearch.forceLayout();
   }
@@ -253,17 +251,11 @@ BuySearchContext.prototype.search = function (q)
     that.MapArea.w[0] = -1*LIST_WIDTH;
     // Force layout of redefined areas
     window.BuySearch.forceLayout();
-    
+
     Meteor.setTimeout(function () {
       // Animate hiding the progress bar
       that.hideProgress();
-
-      // Recenter the map
-      if (that.map.___center)
-        that.map.setCenter(that.map.___center);
-      else
-        alert("What?! No map center???");
-    }, 1000);
+    }, 500);
 
   }); // END algoBuyQuery
 

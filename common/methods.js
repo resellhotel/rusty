@@ -143,7 +143,6 @@ Meteor.methods({
   // TODO: Find a cleaner way for this call than passing in the areaID
   algoBuyQuery: function (q, areaID) {
     if (!Meteor.is_server) return;
-    this.unblock();
 
     function parseHotelResults(xml) {
       var hotels = xml.split(/<hotel\s/);
@@ -163,10 +162,7 @@ Meteor.methods({
 
     // Algo.Travel Search Query
     var url = "https://test-availability-shop-api.algo.travel/v1/search-hotel-by-area";
-
     url += "?currency-code=USD";
-
-    // Look up areaID
     url += "&area-id=" + areaID;
 
     // Convert Dates to YYYYMMDD format
