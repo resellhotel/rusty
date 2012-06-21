@@ -184,8 +184,15 @@ Meteor.methods({
 
     
     var options = {auth: "nmahalec@maytia.com:autarisi11"};
-    result = httpGetAndCache(url, options);
-    return parseHotelResults(result.content);
+    result = Meteor.http.get(url, options);
+    var status = result.statusCode;
+    console.log(status);
+
+    if (status == 200 || status == "200")
+      return parseHotelResults(result.content);
+
+    // On failure, return nada
+    return null;
   },
   garBuyQuery: function (q) {
     if (!Meteor.is_server) return;
