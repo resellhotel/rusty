@@ -106,7 +106,6 @@ Meteor.methods({
   },
   algoFetchProperty: function (id) {
     if (!Meteor.is_server) return;
-    this.unblock();
 
     function parseHotelInfo(xml) {
       retVal = {};
