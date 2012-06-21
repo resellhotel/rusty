@@ -259,6 +259,8 @@ BuySearchContext.prototype.search = function (q)
 
     }); // END algoBuyQuery
 
+  }, function () { // On reverse lookup failure
+    alert("Sorry, we currently don't have data for this city.");
   }); // END reverseLookupAreaID
 
   // Search GetARoom for Availabilities

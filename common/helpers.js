@@ -6,22 +6,38 @@ function iconImageURL(hexColor) {
 function getAreaIDByFAddr(fAddr)
 {
   var city = Cities.findOne({fAddr: fAddr});
-  if (!city)
-    throw new Error("No city found with fAddr: "+fAddr);
+  if (!city) {
+    console.log("No city found with fAddr: "+fAddr);
+    return null;
+  }
   return city.algoAreaID;
 };
 
-function reverseLookupAreaID (where, fn)
+function reverseLookupAreaID (where, fn, onerror)
 {
   var chunks = where.split(",");
   var city = chunks[0];
   var state = chunks[1];
 
-  var geocoder = new google.maps.Geocoder();
-  geocoder.geocode({'address': where}, function (geocodes, status) {
+  var algoArea = AlgoAreas.findOne({type: "city", name: city});
+  if (algoArea && algoArea.areaID) {
+    fn(algoArea.algoAreaID);
+    return;
+  }
+
+  if (window && !window.geocoder)
+    window.geocoder = new google.maps.Geocoder();
+
+  window.geocoder.geocode({'address': where}, function (geocodes, status) {
     if (status == google.maps.GeocoderStatus.OK) {
       var fAddr = geocodes[0].formatted_address;
       var areaID = getAreaIDByFAddr(fAddr);
+
+      if (!areaID) {
+        onerror();
+        return;
+      }
+
       fn(areaID);
     } else {
       console.log("Reverse AreaID Lookup Failed.");
