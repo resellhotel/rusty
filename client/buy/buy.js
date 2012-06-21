@@ -244,18 +244,25 @@ BuySearchContext.prototype.search = function (q)
       that.ThumbListContext.add(that.resultThumbs[i].context);
     }
 
-    Meteor.setTimeout(function () {
-      that.ThumbListContext.el.show();
-      Meteor.setTimeout(function () {
-        that.MapArea.w[0] = -1*LIST_WIDTH;
-        window.BuySearch.forceLayout();
-      }, 600);
-    }, 500);
-
+    // Finish up progress bar
     that.progressBar.setProgress(1);
+    // Show the seach results panel
+    that.ThumbListContext.el.show();
+    // Resize the map
+    that.MapArea.w[0] = -1*LIST_WIDTH;
+    // Force layout of redefined areas
+    window.BuySearch.forceLayout();
+    
     Meteor.setTimeout(function () {
+      // Animate hiding the progress bar
       that.hideProgress();
-    }, 500);
+
+      // Recenter the map
+      if (that.map.___center)
+        that.map.setCenter(that.map.___center);
+      else
+        alert("What?! No map center???");
+    }, 1000);
 
   }); // END algoBuyQuery
 
@@ -322,7 +329,8 @@ BuySearchContext.prototype.search = function (q)
   // Center the map
   this.geocoder.geocode({'address': q["where"]}, function (geocodes, status) {
     if (status == google.maps.GeocoderStatus.OK) {
-      that.map.setCenter(geocodes[0].geometry.location);
+      that.map.___center = geocodes[0].geometry.location;
+      that.map.setCenter(that.map.___center);
     } else {
       alert("Sorry, we weren't able to find that US city on the map. Did you type the name correctly?");
     }
