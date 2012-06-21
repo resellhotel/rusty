@@ -13,36 +13,40 @@ function getAreaIDByFAddr(fAddr)
   return city.algoAreaID;
 };
 
-function reverseLookupAreaID (where, fn, onerror)
+function reverseLookupAreaID (where)
 {
+  return "19163";
+
   var chunks = where.split(",");
   var city = chunks[0];
   var state = chunks[1];
 
   var algoArea = AlgoAreas.findOne({type: "city", name: city});
-  if (algoArea && algoArea.areaID) {
-    fn(algoArea.algoAreaID);
-    return;
-  }
 
-  if (window && !window.geocoder)
-    window.geocoder = new google.maps.Geocoder();
+  if (algoArea && algoArea.areaID)
+    return algoArea.algoAreaID;
 
-  window.geocoder.geocode({'address': where}, function (geocodes, status) {
-    if (status == google.maps.GeocoderStatus.OK) {
-      var fAddr = geocodes[0].formatted_address;
-      var areaID = getAreaIDByFAddr(fAddr);
+  console.log("Reverse AreaID Lookup Failed.");
+  return null;
 
-      if (!areaID) {
-        onerror();
-        return;
-      }
+  // if (window && !window.geocoder)
+  //   window.geocoder = new google.maps.Geocoder();
 
-      fn(areaID);
-    } else {
-      console.log("Reverse AreaID Lookup Failed.");
-    }
-  });
+  // window.geocoder.geocode({'address': where}, function (geocodes, status) {
+  //   if (status == google.maps.GeocoderStatus.OK) {
+  //     var fAddr = geocodes[0].formatted_address;
+  //     var areaID = getAreaIDByFAddr(fAddr);
+
+  //     if (!areaID) {
+  //       onerror();
+  //       return;
+  //     }
+
+  //     fn(areaID);
+  //   } else {
+  //     console.log("Reverse AreaID Lookup Failed.");
+  //   }
+  // });
 };
 
 function convertToYYYYMMDD (date)
