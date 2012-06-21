@@ -25,6 +25,13 @@ function httpGetAndCache(url, options) {
   return result;
 };
 
+function httpGetNoCache(url, options) {
+  var result = Meteor.http.get(url, options);
+  var status = result.statusCode;
+  console.log(status);
+  return result;
+};
+
 Meteor.methods({
   createUser: function(user) {
     if (!user)
@@ -106,6 +113,7 @@ Meteor.methods({
   },
   algoFetchProperty: function (id) {
     if (!Meteor.is_server) return;
+    this.unblock();
 
     function parseHotelInfo(xml) {
       retVal = {};
@@ -136,7 +144,7 @@ Meteor.methods({
 
     var options = {auth: "nmahalec@maytia.com:autarisi11"};
     var url = "https://test-static-shop-api.algo.travel/v1/Hotels/" + id + ".xml";
-    var result = httpGetAndCache(url, options);
+    var result = httpGetNoCache(url, options);
     return parseHotelInfo(result.content);
   },
   // TODO: Find a cleaner way for this call than passing in the areaID
