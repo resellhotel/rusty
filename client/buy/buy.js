@@ -393,6 +393,7 @@ var GAR_ResultThumb = function (result, source)
   
   // Extracts out necessary property data
   var that = this;
+  that.map = window.BuySearch.map;
   function extractPropertyData(error, property) {
     if (error) {
       console.log("Could not fetch "+that.source+" property with id: "+that.propertyID);
@@ -403,7 +404,6 @@ var GAR_ResultThumb = function (result, source)
     var lat = parseFloat(property.lat);
     var lng = parseFloat(property.lng);
     that.latlngGoog = new google.maps.LatLng(lat, lng, true);
-    that.map = window.BuySearch.map;
     that.dropPin();
 
     // If Algo result, extract Hotel Data
@@ -434,6 +434,7 @@ var GAR_ResultThumb = function (result, source)
   this.context.toggleClass("ResultThumb");
   this.context.el.css('background-repeat', 'no-repeat');
   this.context.el.css('background-size', 'cover');
+  this.context.el.css('background-image', 'url(/img/loading.gif)');
   this.context.el.click(function (e) {that.toggleSelected();});
   this.context.el.hover(
     function (e) {
@@ -497,11 +498,11 @@ GAR_ResultThumb.prototype.dropPin = function ()
 GAR_ResultThumb.prototype.toggleSelected = function ()
 {
   this.selected = !this.selected;
-  if (this.selected)
-    this.pin.setIcon(this.map.iconSelected);
-  else
-    this.pin.setIcon(this.map.iconUnselected);
   this.context.el.toggleClass("selected");
+
+  if (!this.pin) return;
+  if (this.selected) this.pin.setIcon(this.map.iconSelected);
+  else this.pin.setIcon(this.map.iconUnselected);
 };
 GAR_ResultThumb.prototype.toggleInfo = function (event)
 {
@@ -526,14 +527,15 @@ GAR_ResultThumb.prototype.toggleInfo = function (event)
 
 GAR_ResultThumb.prototype.startHover = function ()
 {
+  if (!this.pin) return;
   this.pin.setIcon(this.map.iconHover);
 };
 GAR_ResultThumb.prototype.endHover = function ()
 {
-  if (this.selected)
-    this.pin.setIcon(this.map.iconSelected);
-  else
-    this.pin.setIcon(this.map.iconUnselected);
+  if (!this.pin) return;
+
+  if (this.selected) this.pin.setIcon(this.map.iconSelected);
+  else this.pin.setIcon(this.map.iconUnselected);
 };
 
 // TODO: Clean me up!
