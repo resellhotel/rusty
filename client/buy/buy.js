@@ -316,7 +316,12 @@ BuySearchContext.prototype.search = function (q)
     };
     this.map = new google.maps.Map(this.MapContext.el[0], options);
   }
-  // TODO: cleanly delete old pins
+  
+  // Remove all old pins
+  if (this.map.pins) {
+    for (var i = 0; i < this.map.pins.length; i++)
+      this.map.pins[i].setMap(null);
+  }
   this.map.pins = [];
 
   // Center the map
