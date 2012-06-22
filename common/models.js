@@ -4,10 +4,6 @@ Users = new Meteor.Collection("users");
 Availabilities = new Meteor.Collection("availabilities");
 Properties = new Meteor.Collection("properties");
 
-// Caches
-QueryCache = new Meteor.Collection("querycache");
-DataSources = new Meteor.Collection("datasources");
-
 // Reference Data
 AlgoAreas = new Meteor.Collection("AlgoAreas");
 // AlgoArea:
@@ -42,14 +38,6 @@ if (Meteor.is_server) {
     return Properties.find();
   });
 
-  // Caches
-  Meteor.publish('querycache', function () {
-    return QueryCache.find();
-  });
-  Meteor.publish('datasources', function () {
-    return DataSources.find();
-  });
-
   // Reference Data
   Meteor.publish('Cities', function () {
     return Cities.find();
@@ -66,10 +54,6 @@ if (Meteor.is_client) {
 
   Meteor.subscribe('properties');
   Meteor.subscribe('availabilities');
-
-  // Caches
-  Meteor.subscribe('querycache');
-  Meteor.subscribe('datasources');
 
   // Reference Data
   Meteor.subscribe("Cities");

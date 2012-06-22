@@ -395,8 +395,9 @@ var GAR_ResultThumb = function (result, source)
   var that = this;
   that.map = window.BuySearch.map;
   function extractPropertyData(error, property) {
-    if (error) {
+    if (error || !property) {
       console.log("Could not fetch "+that.source+" property with id: "+that.propertyID);
+      that.context.el.css('background-image', 'url(/img/rh_icon.png)');
       return;
     }
 
